@@ -1,5 +1,6 @@
 site_name: Anandu's Interview Playbook
 site_description: A living, shareable interview-prep playbook.
+site_url: https://ananduvt.github.io/anandu-interview-playbook/
 
 theme:
   name: material
