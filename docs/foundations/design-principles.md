@@ -1,33 +1,69 @@
 # Software Design Principles
 
-## SOLID (object-oriented design)
-- **S — Single Responsibility**: a class should have one reason to change.
-- **O — Open/Closed**: open for extension, closed for modification.
-- **L — Liskov Substitution**: subtypes must be substitutable for their base types without breaking correctness.
-- **I — Interface Segregation**: clients shouldn't depend on interfaces they don't use — prefer small, focused interfaces.
-- **D — Dependency Inversion**: high-level modules shouldn't depend on low-level modules; both depend on abstractions.
+## SOLID Principles
 
-## Other core principles
-- **DRY (Don't Repeat Yourself)** — avoid duplication via reusable abstractions.
-- **KISS (Keep It Simple)** — simplest design that works; favor readability.
-- **YAGNI (You Aren't Gonna Need It)** — don't build features until they're actually needed.
-- **Law of Demeter** — talk only to your immediate dependencies; minimize coupling ("don't talk to strangers").
+**SOLID** is an acronym for the first five **object-oriented design** (OOD) principles by Robert C. Martin (also known as Uncle Bob). These five software development principles are guidelines to follow when building software so that it is easier to scale and maintain.
 
-## Why they matter (interview framing)
-These principles reduce coupling and increase cohesion, which makes code easier to change, test, and extend.
-Be ready to give a one-line example of each — especially SRP, OCP, and DIP, which come up most.
+* **Single Responsibility** Principle (SRP) – A class should have only one reason to change.
+* **Open/Closed** Principle (OCP) – Software entities should be open for extension but closed for modification.
+* **Liskov Substitution** Principle (LSP) – Subtypes should be substitutable for their base types without altering correctness.
+* **Interface Segregation** Principle (ISP) – Clients should not be forced to depend on interfaces they do not use.
+* **Dependency Inversion** Principle (DIP) – High-level modules should not depend on low-level modules; both should depend on abstractions.
 
-## Diagrams
+![](../assets/image2.png)
 
-![SOLID](../assets/image2.png)
+**S — Single Responsibility**
+![](../assets/image3.png)
+***A class should have a single responsibility***
 
-![SOLID](../assets/image3.png)
+If a Class has many responsibilities, it increases the possibility of bugs because making changes to one of its responsibilities, could affect the other ones without you knowing.
 
-![SOLID](../assets/image4.png)
+*Goal: This principle aims to separate behaviours so that if bugs arise as a result of your change, it won’t affect other unrelated behaviours.*
 
-![SOLID](../assets/image5.png)
+**O — Open-Closed**
+![](../assets/image4.png)
+**Classes should be open for extension, but closed for modification**
 
-![SOLID](../assets/image6.png)
+Changing the current behaviour of a Class will affect all the systems using that Class.
+If you want the Class to perform more functions, the ideal approach is to add to the functions that already exist NOT change them.
 
-![SOLID](../assets/image7.png)
+*Goal: This principle aims to extend a Class’s behaviour without changing the existing behaviour of that Class. This is to avoid causing bugs wherever the Class is being used.*
 
+**L — Liskov Substitution**
+**![](../assets/image5.png)**
+
+**If S is a subtype of T, then objects of type T in a program may be replaced with objects of type S without altering any of the desirable properties of that program.**
+
+When a child Class cannot perform the same actions as its parent Class, this can cause bugs.
+If you have a Class and create another Class from it, it becomes a parent and the new Class becomes a child. The child Class should be able to do everything the parent Class can do. This process is called Inheritance.
+The child Class should be able to process the same requests and deliver the same result as the parent Class or it could deliver a result that is of the same type.
+The picture shows that the parent Class delivers Coffee(it could be any type of coffee). It is acceptable for the child Class to deliver Cappucino because it is a specific type of Coffee, but it is NOT acceptable to deliver Water.
+If the child Class doesn’t meet these requirements, it means the child Class is changed completely and violates this principle.
+
+*Goal: This principle aims to enforce consistency so that the parent Class or its child Class can be used in the same way without any errors.*
+
+**I — Interface Segregation**
+**![](../assets/image6.png)**
+**Clients should not be forced to depend on methods that they do not use.**
+
+When a Class is required to perform actions that are not useful, it is wasteful and may produce unexpected bugs if the Class does not have the ability to perform those actions.
+A Class should perform only actions that are needed to fulfil its role. Any other action should be removed completely or moved somewhere else if it might be used by another Class in the future.
+
+*Goal: This principle aims at splitting a set of actions into smaller sets so that a Class executes ONLY the set of actions it requires.*
+
+**D — Dependency Inversion**
+![](../assets/image7.png)
+**High-level modules should not depend on low-level modules. Both should depend on the abstraction.**
+**Abstractions should not depend on details. Details should depend on abstractions.**
+
+Firstly, let’s define the terms used here more simply
+
+High-level Module(or Class): Class that executes an action with a tool.
+Low-level Module (or Class): The tool that is needed to execute the action
+Abstraction: Represents an interface that connects the two Classes.
+Details: How the tool works
+
+This principle says a Class should not be fused with the tool it uses to execute an action. Rather, it should be fused to the interface that will allow the tool to connect to the Class.
+It also says that both the Class and the interface should not know how the tool works. However, the tool needs to meet the specification of the interface.
+
+*Goal: This principle aims at reducing the dependency of a high-level Class on the low-level Class by introducing an interface.*

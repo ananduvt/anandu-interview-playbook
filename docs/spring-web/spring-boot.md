@@ -1,38 +1,62 @@
 # Spring Boot
 
-## Core: IoC & DI
-- The **IoC container** creates/wires/manages beans. **Dependency Injection** supplies collaborators.
-- **Constructor injection** preferred (immutability, testability, no reflection on fields).
-- Stereotypes: `@Component`, `@Service`, `@Repository`, `@Controller`/`@RestController`.
+## Spring Boot
 
-## Bean scopes & lifecycle
-- **singleton** (default, must be **stateless**), prototype, request/session.
-- Lifecycle: instantiate → inject → `@PostConstruct` → ready → `@PreDestroy`.
+| Spring | Spring Boot |
+| :---- | :---- |
+| Spring is an open-source lightweight framework widely used to develop enterprise applications. | Spring Boot is built on top of the conventional spring framework, widely used to develop REST APIs. |
+| The most important feature of the Spring Framework is dependency injection. | The most important feature of the Spring Boot is Autoconfiguration. |
+| It helps to create a loosely coupled application. | It helps to create a stand-alone application. |
+| To run the Spring application, we need to set the server explicitly. | Spring Boot provides embedded servers such as Tomcat and Jetty etc. |
+| To run the Spring application, a deployment descriptor is required. | There is no requirement for a deployment descriptor. |
+| To create a Spring application, the developers write lots of code. | It reduces the lines of code. |
+| It doesn’t provide support for the in-memory database. | It provides support for the in-memory database such as H2. |
+| Developers need to write boilerplate code for smaller tasks. | In Spring Boot, there is reduction in boilerplate code. |
+| Developers have to define dependencies manually in the pom.xml file. | pom.xml file internally handles the required dependencies. |
 
-## Configuration
-- `@Configuration` + `@Bean`; `@Value("${prop:default}")`; `@ConfigurationProperties` for grouped props.
-- Profiles (`@Profile`, `application-<profile>.yml`); externalized config; `bootstrap.yml`.
-- **Auto-configuration** + **starters** (opinionated dependency bundles).
+Ioc & dependency injection
 
-## Web
-- `@RestController`, `@GetMapping/@PostMapping`, `@PathVariable/@RequestBody/@RequestParam`, `ResponseEntity`.
-- Global errors: `@ControllerAdvice` + `@ExceptionHandler`.
+SpringBoot
+Advantage
+Annotations
+Circuit Breaker
+Spring Cloud
+Spring MVC
+DevTools
 
-## AOP
-Cross-cutting concerns (logging, tx, security) via proxies. JDK dynamic proxy (interface) vs CGLIB (class).
-**Self-invocation bypasses the proxy.**
+Java env variable precedence (springbboot too)
+Property order - https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
+Spring profiles
+Multiple db connection from Java spring
+Spring boot profiles
+Transaction - all or nothing =- spring boot
 
-## Transactions
-`@Transactional` — proxy commits on normal return, **rolls back on unchecked exceptions** by default
-(`rollbackFor` for checked). Propagation (REQUIRED, REQUIRES_NEW), isolation levels.
+[https://www.geeksforgeeks.org/spring-mvc-framework/](https://www.geeksforgeeks.org/spring-mvc-framework/)
 
-## Boot 3
-Java 17+ baseline, **Jakarta** namespace (`javax.*`→`jakarta.*`), Spring 6, `SecurityFilterChain` bean (no
-`WebSecurityConfigurerAdapter`), observability via Micrometer.
+[https://medium.com/@TechiesSpot/mastering-mvc-in-java-spring-boot-a-comprehensive-guide-f7353a06fd61](https://medium.com/@TechiesSpot/mastering-mvc-in-java-spring-boot-a-comprehensive-guide-f7353a06fd61)
 
-## Resilience
-No built-in circuit breaker — use **Resilience4j** (successor to the deprecated **Hystrix**): circuit breaker,
-retry, rate limiter, bulkhead, time limiter. See [Scalability & Resilience](../system-design/scalability-resilience.md).
+[https://www.jrebel.com/blog/spring-annotations-cheat-sheet](https://www.jrebel.com/blog/spring-annotations-cheat-sheet)
 
-## Actuator
-Health, metrics (`/actuator/health`, `/metrics`, `/loggers`), Prometheus endpoint for scraping.
+[https://www.baeldung.com/spring-qualifier-annotation](https://www.baeldung.com/spring-qualifier-annotation)
+
+## Hystrix circuit breaker
+
+[https://www.geeksforgeeks.org/implementing-a-basic-circuit-breaker-with-hystrix-in-spring-boot-microservices/](https://www.geeksforgeeks.org/implementing-a-basic-circuit-breaker-with-hystrix-in-spring-boot-microservices/)
+[https://www.baeldung.com/spring-cloud-netflix-hystrix](https://www.baeldung.com/spring-cloud-netflix-hystrix)
+[https://cloud.spring.io/spring-cloud-netflix/multi/multi__circuit_breaker_hystrix_clients.html](https://cloud.spring.io/spring-cloud-netflix/multi/multi__circuit_breaker_hystrix_clients.html)
+
+The Hystrix circuit breaker is an open-source Java library that helps prevent cascading failures in distributed systems. It's a fault tolerance technique that monitors services and temporarily rejects calls when they're not behaving normally.
+
+**How it works**
+
+* Hystrix monitors services for failures
+* When a service fails above a certain threshold, the circuit breaker opens
+* The circuit breaker prevents further calls to the failing service
+* The developer can provide a fallback, such as another Hystrix protected call, static data, or an empty value
+
+**Hystrix benefits**
+
+* Prevents cascading failures: Stops failures from spreading throughout a system
+* Improves resilience: Helps systems recover quickly from failures
+* Provides fault tolerance: Protects against latency and failure from dependencies
+* Enables monitoring and alerting: Provides near real-time monitoring and alerting
