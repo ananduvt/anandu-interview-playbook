@@ -47,12 +47,50 @@ plugins:
 nav:
   - Home: index.md
   - Foundations:
+      - SDLC & Methodologies: foundations/sdlc.md
       - Design Principles: foundations/design-principles.md
+      - Networking: foundations/networking.md
+      - RegEx: foundations/regex.md
+      - Testing / QA: foundations/testing.md
+  - Data Structures & Algorithms:
+      - Data Structures: dsa/data-structures.md
+      - Algorithms: dsa/algorithms.md
+      - Coding Problems: dsa/coding-problems.md
+  - System Design:
+      - Fundamentals: system-design/fundamentals.md
+      - Scalability & Resilience: system-design/scalability-resilience.md
   - Java:
+      - Basics: java/basics.md
+      - OOP: java/oop.md
+      - Design Patterns: java/design-patterns.md
+      - Collections: java/collections.md
+      - Strings & Primitives: java/strings-primitives.md
+      - Exceptions: java/exceptions.md
+      - Functional (Lambdas & Streams): java/functional.md
+      - Concurrency & Threads: java/concurrency.md
+      - Testing: java/testing.md
+      - Logging: java/logging.md
+      - Advanced: java/advanced.md
       - Versions & Features: java/versions.md
   - Spring & Web:
+      - Spring Boot: spring-web/spring-boot.md
+      - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
+      - Security: spring-web/security.md
+      - JPA & ORM: spring-web/jpa-orm.md
   - Databases: databases/index.md
   - Distributed & Cloud:
       - Microservices Principles: distributed-cloud/principles.md
+      - Messaging (Kafka): distributed-cloud/messaging.md
+      - Caching: distributed-cloud/caching.md
+      - AWS: distributed-cloud/aws.md
+  - DevOps:
+      - Git: devops/git.md
+      - Build Tools: devops/build-tools.md
+      - CI/CD: devops/ci-cd.md
+  - Security & Vulnerabilities: security/index.md
+  - Interview Prep:
+      - Question Bank: interview-prep/question-bank.md
+      - Quick Reference: interview-prep/quick-reference.md
+  - Resources: resources/index.md
   - Backlog: backlog.md
