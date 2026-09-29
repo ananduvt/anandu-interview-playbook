@@ -31,3 +31,8 @@ methods**, if two interfaces provide the same default, the class **must override
 ## Related
 - `final` (no override/extend/reassign), `static` (class-level), `this`/`super`.
 - SOLID → [Design Principles](../foundations/design-principles.md).
+
+## Diagrams
+
+![Diamond Problem](../assets/image20.png)
+

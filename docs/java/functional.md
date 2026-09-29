@@ -36,3 +36,8 @@ Avoid nulls: `Optional.ofNullable(x).map(...).orElseGet(...)`. Don't call `.get(
 
 ## Parallel streams
 `.parallelStream()` uses the common ForkJoinPool — only for CPU-bound, large, stateless, associative ops.
+
+## Diagrams
+
+![Java Streams](../assets/image28.png)
+

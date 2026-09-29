@@ -39,3 +39,8 @@ public static Config get() {
     return instance;
 }
 ```
+
+## Diagrams
+
+![Design Patterns](../assets/image19.png)
+

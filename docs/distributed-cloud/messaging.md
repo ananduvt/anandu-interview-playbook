@@ -32,3 +32,22 @@ At-most-once, at-least-once (default, needs idempotent consumers), exactly-once 
 
 ## Patterns
 Pub/sub, work queues, event sourcing, **CQRS** (separate read/write models), the outbox pattern for reliable publish.
+
+## Diagrams
+
+![Messaging Systems](../assets/image34.png)
+
+![Messaging Systems](../assets/image35.png)
+
+![Messaging Systems](../assets/image36.png)
+
+![Messaging Systems](../assets/image37.png)
+
+![Messaging Systems](../assets/image38.png)
+
+![Kafka ecosystem](../assets/image39.png)
+
+![Kafka](../assets/image40.png)
+
+![Kafka](../assets/image41.png)
+

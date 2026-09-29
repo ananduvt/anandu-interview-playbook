@@ -39,3 +39,12 @@
 
 ## IPC (inter-process communication)
 Pipes, message queues, shared memory, sockets — across processes (vs threads sharing memory in one process).
+
+## Diagrams
+
+![Thread Life Cycle](../assets/image29.png)
+
+![Runnable vs Callable](../assets/image30.png)
+
+![Thread Pool](../assets/image31.png)
+

@@ -24,3 +24,12 @@ Declarative desired state in git; a controller (**Argo CD**/Flux) syncs the clus
 - Fast, reliable pipelines; fail fast; quality gates (coverage, security scans).
 - Immutable artifacts promoted across envs (dev → UAT → prod); no rebuild per env.
 - Automated rollback; secrets from a vault, never in the pipeline config.
+
+## Diagrams
+
+![CI/CD](../assets/image47.png)
+
+![CI/CD](../assets/image48.png)
+
+![CI/CD](../assets/image49.png)
+

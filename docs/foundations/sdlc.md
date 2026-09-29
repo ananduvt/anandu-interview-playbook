@@ -35,3 +35,28 @@ See [Design Principles](design-principles.md) for SOLID, DRY, KISS, YAGNI, Law o
 
 ## Environments
 `dev → test/QA → UAT → staging → prod` — progressively production-like; config externalized per env.
+
+## Diagrams
+
+![Waterfall](../assets/image8.png)
+
+![Agile](../assets/image9.png)
+
+![Agile](../assets/image10.png)
+
+![BDD & TDD](../assets/image11.png)
+
+![Semantic Versioning](../assets/image12.png)
+
+![Semantic Versioning](../assets/image13.png)
+
+![Semantic Versioning](../assets/image14.png)
+
+![Semantic Versioning](../assets/image15.png)
+
+![Programming Paradigms](../assets/image16.png)
+
+![Programming Paradigms](../assets/image17.png)
+
+![Environments](../assets/image18.png)
+

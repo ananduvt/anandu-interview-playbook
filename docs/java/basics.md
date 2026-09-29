@@ -30,3 +30,20 @@
 
 ## `public static void main(String[] args)`
 JVM entry point; `static` (no instance needed), `void`, `String[]` args. Wrong signature compiles but won't run.
+
+## Diagrams
+
+![JDK vs JRE vs JVM](../assets/image21.png)
+
+![JDK / JRE / JVM](../assets/image22.png)
+
+![JDK / JRE / JVM](../assets/image23.png)
+
+![Java Memory Management](../assets/image24.png)
+
+![Java Core](../assets/image25.png)
+
+![Java Core](../assets/image26.png)
+
+![Java Core](../assets/image27.png)
+

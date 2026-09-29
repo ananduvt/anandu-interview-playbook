@@ -21,3 +21,8 @@
 ## Interview framing
 - RDBMS favor **ACID** (strong consistency); many NoSQL stores favor **BASE / AP** (availability + eventual consistency).
 - Pick based on requirements: financial ledgers → ACID; high-availability feeds/carts → AP + eventual consistency.
+
+## Diagrams
+
+![ACID](../assets/image32.png)
+

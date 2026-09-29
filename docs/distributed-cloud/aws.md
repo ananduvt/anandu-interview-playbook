@@ -26,3 +26,18 @@
 
 ## Shared Responsibility Model
 AWS secures *of* the cloud (hardware, managed services); you secure *in* the cloud (data, IAM, config, patching).
+
+## Diagrams
+
+![Cloud Service Models](../assets/image33.png)
+
+![Availability Zones](../assets/image42.png)
+
+![IAM Groups](../assets/image43.png)
+
+![IAM Policies](../assets/image44.png)
+
+![EC2 Instance Types](../assets/image45.png)
+
+![Security Groups](../assets/image46.png)
+

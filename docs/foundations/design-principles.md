@@ -16,3 +16,18 @@
 ## Why they matter (interview framing)
 These principles reduce coupling and increase cohesion, which makes code easier to change, test, and extend.
 Be ready to give a one-line example of each — especially SRP, OCP, and DIP, which come up most.
+
+## Diagrams
+
+![SOLID](../assets/image2.png)
+
+![SOLID](../assets/image3.png)
+
+![SOLID](../assets/image4.png)
+
+![SOLID](../assets/image5.png)
+
+![SOLID](../assets/image6.png)
+
+![SOLID](../assets/image7.png)
+

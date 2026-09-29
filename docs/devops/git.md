@@ -29,3 +29,8 @@ Git detects renames by content similarity. Use `git mv old new` (stages delete +
 - `git stash` / `git stash pop` — shelve WIP.
 - `git cherry-pick <sha>` — apply a specific commit.
 - `git reset --soft/--mixed/--hard` — move HEAD (hard discards changes — careful).
+
+## Diagrams
+
+![Git Pull vs Rebase](../assets/image50.png)
+
