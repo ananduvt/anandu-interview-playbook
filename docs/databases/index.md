@@ -1,6 +1,5 @@
 # Databases
 
-## Data Base
 
 ## ACID
 

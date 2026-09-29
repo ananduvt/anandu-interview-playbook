@@ -1,6 +1,5 @@
 # Build Tools
 
-## Build Tools
 
 ## Gradle
 
@@ -23,5 +22,3 @@
 | Project Configuration | For declaring the project configuration, it does not use the XML files. | For declaring the project configuration, it uses the XML files. |
 | Based on | Graph of task dependencies that do the work. | On the phases of the fixed and linear model. |
 | Goal | To add functionality in the project is the main goal of the Gradle. | To finish the project in the given timeline is the main goal of the Maven. |
-
-## CI/CD

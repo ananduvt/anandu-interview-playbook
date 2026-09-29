@@ -1,6 +1,5 @@
 # Java Basics
 
-## Java Basics
 
 ### Java Editions
 

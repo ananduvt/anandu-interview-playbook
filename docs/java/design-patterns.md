@@ -1,6 +1,5 @@
 # Design Patterns
 
-## Java Design Patterns
 
 [https://refactoring.guru/design-patterns/java](https://refactoring.guru/design-patterns/java)
 [https://vmsoftwarehouse.com/the-10-most-popular-types-of-design-patterns-in-java](https://vmsoftwarehouse.com/the-10-most-popular-types-of-design-patterns-in-java)

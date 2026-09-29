@@ -1,6 +1,5 @@
 # Collections Framework
 
-## Collections Framework
 
 **?? image**
 

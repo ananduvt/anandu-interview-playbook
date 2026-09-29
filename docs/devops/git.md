@@ -1,6 +1,5 @@
 # Git
 
-## GIT
 
 	init
 	clone

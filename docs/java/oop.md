@@ -1,6 +1,5 @@
 # OOP Concepts
 
-## OOP Concepts
 
 **Object-Oriented Programming (OOP)** is a programming paradigm based on the concept of "objects", which can contain data in the form of fields (attributes or properties) and code in the form of procedures (methods or functions). Java is an object-oriented programming language, and it embodies several key OOP concepts. Here are the fundamental OOP concepts in Java:
 

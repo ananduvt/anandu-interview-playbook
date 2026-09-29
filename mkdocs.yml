@@ -58,7 +58,9 @@ nav:
       - Coding Problems: dsa/coding-problems.md
   - System Design:
       - Fundamentals: system-design/fundamentals.md
+      - Building Blocks: system-design/building-blocks.md
       - Scalability & Resilience: system-design/scalability-resilience.md
+      - Worked Examples: system-design/worked-examples.md
   - Java:
       - Basics: java/basics.md
       - OOP: java/oop.md
@@ -74,11 +76,15 @@ nav:
       - Versions & Features: java/versions.md
   - Spring & Web:
       - Spring Boot: spring-web/spring-boot.md
+      - Spring Cloud & Microservices: spring-web/spring-cloud.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
       - Security: spring-web/security.md
       - JPA & ORM: spring-web/jpa-orm.md
-  - Databases: databases/index.md
+  - Databases:
+      - Overview (ACID/BASE/CAP): databases/index.md
+      - SQL & Relational: databases/sql.md
+      - Scaling & NoSQL: databases/scaling.md
   - Distributed & Cloud:
       - Microservices Principles: distributed-cloud/principles.md
       - Messaging (Kafka): distributed-cloud/messaging.md
@@ -88,9 +94,13 @@ nav:
       - Git: devops/git.md
       - Build Tools: devops/build-tools.md
       - CI/CD: devops/ci-cd.md
+      - Docker & Containers: devops/docker.md
+      - Kubernetes: devops/kubernetes.md
+      - Observability: devops/observability.md
   - Security & Vulnerabilities: security/index.md
   - Interview Prep:
       - Question Bank: interview-prep/question-bank.md
+      - Behavioral / STAR: interview-prep/behavioral.md
       - Quick Reference: interview-prep/quick-reference.md
   - Resources: resources/index.md
   - Backlog: backlog.md
