@@ -46,3 +46,13 @@ plugins:
 # Only files under docs/ are published. The internal/ folder at repo root is never built.
 nav:
   - Home: index.md
+  - Foundations:
+      - Design Principles: foundations/design-principles.md
+  - Java:
+      - Versions & Features: java/versions.md
+  - Spring & Web:
+      - API Styles & Protocols: spring-web/api-styles.md
+  - Databases: databases/index.md
+  - Distributed & Cloud:
+      - Microservices Principles: distributed-cloud/principles.md
+  - Backlog: backlog.md

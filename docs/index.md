@@ -1,17 +1,20 @@
-# Welcome 👋
+# Interview Playbook 👋
 
-This is a **living interview-prep playbook** — a shareable, always-up-to-date collection of notes.
+A **living, shareable interview-prep playbook** — always-up-to-date study notes across CS fundamentals,
+Java, Spring, databases, distributed systems, and more.
 
 !!! note "Work in progress"
-    The site scaffold is in place. Content will be added next.
+    Content is being migrated section-by-section. See the [Backlog](backlog.md) for what's queued.
 
-## What this is
-- A single place for interview-prep material (system design, languages, concurrency, behavioral, and more).
-- **Auto-updating**: when the notes change, this site updates automatically.
-- **Collaborative**: a small group can maintain it via pull requests.
+## Sections
+- **Foundations** — [Design Principles](foundations/design-principles.md) (SDLC, networking, RegEx, testing coming)
+- **Java** — [Versions & Features](java/versions.md) (basics, OOP, collections, concurrency… coming)
+- **Spring & Web** — [API Styles & Protocols](spring-web/api-styles.md) (Spring Boot, security… coming)
+- **Databases** — [ACID / BASE / CAP](databases/index.md)
+- **Distributed & Cloud** — [Microservices Principles](distributed-cloud/principles.md) (messaging, caching, AWS… coming)
+- **DSA, System Design, DevOps, Security, Resources** — coming
+- **[Backlog](backlog.md)** — pending topics to work on
 
-## How it's organized
-- `docs/` — everything published to this site.
-- `internal/` — private notes kept in the repo but **not** published here.
-
-More sections coming soon.
+## How to use
+- Browse by section in the left nav, or search (top bar).
+- Each page is focused and interview-oriented with likely follow-ups.
