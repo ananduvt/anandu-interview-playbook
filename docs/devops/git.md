@@ -37,7 +37,7 @@ The choice between git pull and git rebase depends on the situation:
 * Use git rebase on a feature branch before merging to create a cleaner history, but avoid it on shared branches after they have been pushed remotely to prevent complications for collaborators.
 * git pull --rebase combines the fetch and rebase steps, offering a shortcut for rebasing while pulling.
 
-![](../assets/image50.png)
+![](../assets/git-merge-vs-rebase.png)
 
 ## File rename
 

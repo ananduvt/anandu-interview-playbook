@@ -27,7 +27,7 @@ Choose an AWS Region based on
 * They’re separate from each other, so that they’re isolated from disasters
 * They’re connected with high bandwidth, ultra-low latency networking
 
-![](../assets/image42.png)
+![](../assets/aws-region-availability-zones.png)
 
 ## AWS Points of Presence (Edge Locations)
 
@@ -44,7 +44,7 @@ Users are people within your organization, and can be grouped
 
 Groups only contain users, not other groups
 Users don’t have to belong to a group, and user can belong to multiple groups
-![](../assets/image43.png)
+![](../assets/iam-users-groups.png)
 
 ## Roles
 
@@ -58,7 +58,7 @@ Common roles:
 
 ## Policies
 
-![](../assets/image44.png)
+![](../assets/iam-policy-structure.png)
 Consists of
 
 * **Version**: policy language version, always include “2012-10-17”
@@ -170,7 +170,7 @@ Important security practices for EC2 involve securing your VPC, configuring secu
 
 ## EC2 Instance types
 
-![](../assets/image45.png)
+![](../assets/ec2-instance-types.png)
 
 Amazon EC2 offers a broad selection of instance types tailored to diverse workloads, providing flexibility in choosing the ideal combination of CPU, memory, storage, and networking capacity. These instance types are organized into different families, each designed for specific use cases.
 
@@ -287,7 +287,7 @@ In summary, EC2 User Data is a valuable tool for automating the setup and custom
 * All inbound traffic is blocked by default
 * All outbound traffic is authorised by default
 
-![](../assets/image46.png)
+![](../assets/aws-security-groups.png)
 
 AWS Security Groups act as a virtual firewall for your EC2 instances to control incoming and outgoing traffic. This means you can regulate which network traffic is allowed or denied access to your instances based on rules you define.
 

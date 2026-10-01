@@ -12,7 +12,7 @@ Don’t have ambiguous requirements - no changes once it is underway
 4. **Verification or testing**
 5. **Deployment and maintenance**
 
-![](../assets/image8.png)
+![](../assets/waterfall-model.png)
 
 The Waterfall Model, is a linear and sequential approach to software development. It was one of the earliest methodologies used for software development and remains in use today, especially in certain industries where strict requirements and regulations are common, such as in government or aerospace projects. The Waterfall Method is characterized by its distinct phases, each of which must be completed before moving on to the next. Here are the typical phases
 
@@ -46,7 +46,7 @@ Agile methodologies, such as Scrum, Kanban, and Extreme Programming (XP), provid
 
 #### **Scrum**
 
-![](../assets/image9.png)
+![](../assets/scrum-framework.png)
 Scrum is one of the most widely used Agile methodologies for managing software development projects. It provides a framework for teams to collaborate effectively and deliver high-quality software iteratively. Scrum emphasizes communication, transparency, and adaptability throughout the development process. Here are some key concepts and components of Scrum:
 
 1. **Roles**
@@ -72,7 +72,7 @@ Scrum promotes transparency, inspection, and adaptation, allowing teams to respo
 
 Kanban is a popular Lean workflow management method for defining, managing and improving services that deliver knowledge work. It helps you visualize work, maximize efficiency, and improve continuously. Work is represented on **Kanban boards**, allowing you to optimize work delivery across multiple teams and handle even the most complex projects in a single environment.
 
-![](../assets/image10.png)
+![](../assets/kanban-board.png)
 
 Kanban is a visual management method used to manage work as it moves through a process. Originating from the Toyota Production System, Kanban has been adapted and widely applied in various industries beyond manufacturing, including software development, project management, and service-oriented environments. Kanban emphasizes continuous improvement, workflow optimization, and limiting work in progress (WIP)
 
@@ -94,7 +94,7 @@ Kanban provides a flexible and adaptable approach to managing work, allowing tea
 
 ## BDD & TDD
 
-![](../assets/image11.png)
+![](../assets/bdd-vs-tdd.png)
 
 **Behavior Driven Development (BDD)**
 Behavior Driven Development (BDD) is a development technique which focuses more on a software application’s behavior. Mainly it creates an executable specification that fails because the respective feature doesn’t exist, then writing the simplest code that can make the specification pass and as a result we get the required behavior implemented in the system.  Actually it is a team methodology where Developers, Customer, QAs are involved in it.
@@ -135,7 +135,7 @@ Test Driven Development (TDD) is a development technique which focuses more on t
 
 ## Semantic Versioning
 
-![](../assets/image12.png)
+![](../assets/semantic-versioning.png)
 
 Given a version number **MAJOR.MINOR.PATCH**, increment the:
 
@@ -143,11 +143,11 @@ Given a version number **MAJOR.MINOR.PATCH**, increment the:
 * **MINOR** version when you add functionality in a backward compatible manner
 * **PATCH** version when you make backward compatible bug fixed
 
-![](../assets/image13.png)
+![](../assets/semantic-versioning-detail-1.png)
 
-![](../assets/image14.png)
+![](../assets/semantic-versioning-detail-2.png)
 
- ![](../assets/image15.png)
+ ![](../assets/semantic-versioning-detail-3.png)
 
 Valid identifiers are in the set [A-Za-z0-9] and cannot be empty. **Pre-release metadata** is identified by appending a hyphen to the end of the SemVer sequence. Thus a pre-release for version 1.0.0 could be 1.0.0-alpha.1. Then if another build is needed, it would become 1.0.0-alpha.2, and so on. Note that names cannot contain leading zeros, but hyphens are allowed in names for pre-release identifiers.
 
@@ -166,8 +166,8 @@ Valid identifiers are in the set [A-Za-z0-9] and cannot be empty. **Pre-release 
 
 ## Programming Paradigms
 
-![](../assets/image16.png)
-![](../assets/image17.png)
+![](../assets/programming-paradigms-1.png)
+![](../assets/programming-paradigms-2.png)
 
 | Basis of Comparison | Imperative Paradigm | Declarative Paradigm |
 | :---- | :---- | :---- |
@@ -248,6 +248,6 @@ Valid identifiers are in the set [A-Za-z0-9] and cannot be empty. **Pre-release 
 
 ## SDLC Envs
 
-![](../assets/image18.png)
+![](../assets/sdlc-environments.png)
 ?? Devops - tasks - dev task -
 ?? Sass and others

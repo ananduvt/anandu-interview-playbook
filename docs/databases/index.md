@@ -3,7 +3,7 @@
 
 ## ACID
 
-![](../assets/image32.png)
+![](../assets/acid-transaction.png)
 
 * A transaction is a group of operations executed as a single unit of work.
   An example of a transaction is when money is transferred between bank accounts. Money must be debited from one account and credited to another.

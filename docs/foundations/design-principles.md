@@ -10,10 +10,10 @@
 * **Interface Segregation** Principle (ISP) – Clients should not be forced to depend on interfaces they do not use.
 * **Dependency Inversion** Principle (DIP) – High-level modules should not depend on low-level modules; both should depend on abstractions.
 
-![](../assets/image2.png)
+![](../assets/solid-principles-overview.png)
 
 **S — Single Responsibility**
-![](../assets/image3.png)
+![](../assets/srp-single-responsibility.png)
 ***A class should have a single responsibility***
 
 If a Class has many responsibilities, it increases the possibility of bugs because making changes to one of its responsibilities, could affect the other ones without you knowing.
@@ -21,7 +21,7 @@ If a Class has many responsibilities, it increases the possibility of bugs becau
 *Goal: This principle aims to separate behaviours so that if bugs arise as a result of your change, it won’t affect other unrelated behaviours.*
 
 **O — Open-Closed**
-![](../assets/image4.png)
+![](../assets/ocp-open-closed.png)
 **Classes should be open for extension, but closed for modification**
 
 Changing the current behaviour of a Class will affect all the systems using that Class.
@@ -30,7 +30,7 @@ If you want the Class to perform more functions, the ideal approach is to add to
 *Goal: This principle aims to extend a Class’s behaviour without changing the existing behaviour of that Class. This is to avoid causing bugs wherever the Class is being used.*
 
 **L — Liskov Substitution**
-**![](../assets/image5.png)**
+**![](../assets/lsp-liskov-substitution.png)**
 
 **If S is a subtype of T, then objects of type T in a program may be replaced with objects of type S without altering any of the desirable properties of that program.**
 
@@ -43,7 +43,7 @@ If the child Class doesn’t meet these requirements, it means the child Class i
 *Goal: This principle aims to enforce consistency so that the parent Class or its child Class can be used in the same way without any errors.*
 
 **I — Interface Segregation**
-**![](../assets/image6.png)**
+**![](../assets/isp-interface-segregation.png)**
 **Clients should not be forced to depend on methods that they do not use.**
 
 When a Class is required to perform actions that are not useful, it is wasteful and may produce unexpected bugs if the Class does not have the ability to perform those actions.
@@ -52,7 +52,7 @@ A Class should perform only actions that are needed to fulfil its role. Any othe
 *Goal: This principle aims at splitting a set of actions into smaller sets so that a Class executes ONLY the set of actions it requires.*
 
 **D — Dependency Inversion**
-![](../assets/image7.png)
+![](../assets/dip-dependency-inversion.png)
 **High-level modules should not depend on low-level modules. Both should depend on the abstraction.**
 **Abstractions should not depend on details. Details should depend on abstractions.**
 

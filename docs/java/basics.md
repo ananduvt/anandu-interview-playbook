@@ -102,7 +102,7 @@ Versions and features explained ???
 
 ### JDK, JRE, JVM
 
-![](../assets/image21.png)
+![](../assets/jdk-jre-jvm.png)
 
 | JVM - Java Virtual Machine | JRE - Java Runtime Environment | JDK - Java Development Kit |
 | :---- | :---- | :---- |
@@ -148,9 +148,9 @@ Versions and features explained ???
 
     C1 is designed to run faster and produce less optimized code, while C2, on the other hand, takes a little more time to run but produces a better-optimized code. The client compiler is a better fit for desktop applications since we don’t want to have long pauses for the JIT-compilation. The server compiler is better for long-running server applications that can spend more time on the compilation.
 
-![](../assets/image22.png)
+![](../assets/jit-compiler.png)
 
-![](../assets/image23.png)
+![](../assets/class-loaders.png)
 **Class Loaders**
 [https://www.baeldung.com/java-classloaders](https://www.baeldung.com/java-classloaders)
 
@@ -217,7 +217,7 @@ Methods like **System.gc() or Runtime.getRuntime().gc()** only request the JVM t
 **Java Memory Structure**
 [https://freedium.cfd/https://dip-mazumder.medium.com/java-memory-model-a-comprehensive-guide-ba9643b839e](https://freedium.cfd/https://dip-mazumder.medium.com/java-memory-model-a-comprehensive-guide-ba9643b839e)
 
-**![](../assets/image24.png)**
+**![](../assets/java-memory-structure.png)**
 
 * **Heap Memory**
   * The heap is the primary memory area where objects are allocated. It's a shared resource among all threads in a Java application.
@@ -260,14 +260,14 @@ Java out of memory , heap memory issue
 
 #### Access modifiers
 
-**![](../assets/image25.png)**
+**![](../assets/access-modifiers.png)**
 
 1. **public**
 2. **private**
 3. **protected**
 4. **default**
 
-   ![](../assets/image26.png)
+   ![](../assets/access-modifiers-scope.png)
 
 5. **final**
 
@@ -354,7 +354,7 @@ The Java compiler or JVM looks for the main method when it starts executing a Ja
 
 The execution of the Java program, the java.exe is called. The Java.exe in turn makes Java Native Interface or JNI calls, and they load the JVM. The java.exe parses the command line, generates a new String array, and invokes the main() method. By default, the main thread is always a non-daemon thread.
 
-![](../assets/image27.png)
+![](../assets/java-main-method.png)
 
 **public**
 It is an Access modifier, which specifies from where and who can access the method. Making the main() method public makes it globally available. It is made public so that JVM can invoke it from outside the class as it is not present in the current class.

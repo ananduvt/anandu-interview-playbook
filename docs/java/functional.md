@@ -186,7 +186,7 @@ Functional interfaces are included in Java SE 8 with Lambda expressions and Meth
 * **Terminal operations** in Java Streams are the operations that produce a final result or a side-effect
 * **Intermediate operations** in Java Streams allow you to transform or filter the elements of a stream in a lazy manner.
 
-![](../assets/image28.png)
+![](../assets/java-streams-operations.png)
 
 * Streams are wrappers around a data source, allowing us to operate with that data source and making bulk processing convenient and fast.
 

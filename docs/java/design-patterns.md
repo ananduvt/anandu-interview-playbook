@@ -5,7 +5,7 @@
 [https://vmsoftwarehouse.com/the-10-most-popular-types-of-design-patterns-in-java](https://vmsoftwarehouse.com/the-10-most-popular-types-of-design-patterns-in-java)
 [https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial](https://www.digitalocean.com/community/tutorials/java-design-patterns-example-tutorial)
 
-![](../assets/image19.png)
+![](../assets/design-patterns-types.png)
 
 1. ### Creational  Design Pattern
 

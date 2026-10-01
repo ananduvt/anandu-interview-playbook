@@ -185,7 +185,7 @@ Dependency represents a relationship where one class (client) depends on another
 
 ## Diamond Problem
 
-![](../assets/image20.png)
+![](../assets/diamond-problem.png)
 
 Talking about Multiple inheritance is when a child class inherits the properties from more than one parent and the methods for the parents are the same (Method name and parameters are exactly the same) then the child gets confused about which method will be called. This problem in Java is called the Diamond problem.
 

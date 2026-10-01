@@ -4,7 +4,7 @@
 
 ## Service models
 
-![](../assets/image33.png)
+![](../assets/cloud-service-models.png)
 
 * **IaaS, or infrastructure as a service**, is on-demand access to cloud-hosted physical and virtual servers, storage and networking—the backend IT infrastructure for running applications and workloads in the cloud.
 * **PaaS, or platform as a service**, is on-demand access to a complete, ready-to-use, cloud-hosted platform for developing, running, maintaining and managing applications.

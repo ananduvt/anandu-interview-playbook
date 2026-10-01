@@ -43,7 +43,7 @@
 4. Blocked (Non-runnable state)
 5. Dead
 
-![](../assets/image29.png)
+![](../assets/thread-lifecycle.png)
 
 ## Thread Creation
 
@@ -311,7 +311,7 @@ class FutureTaskExample {
 
 ### Runnable vs Callable
 
-![](../assets/image30.png)
+![](../assets/runnable-vs-callable.png)
 
 | Feature | Runnable | Callable |
 | :---- | :---- | :---- |
@@ -327,7 +327,7 @@ class FutureTaskExample {
 [https://www.geeksforgeeks.org/thread-pools-java/](https://www.geeksforgeeks.org/thread-pools-java/)
 [https://dev.to/danielrendox/thread-runnable-callable-executorservice-and-future-all-the-ways-to-create-threads-in-java-2o86](https://dev.to/danielrendox/thread-runnable-callable-executorservice-and-future-all-the-ways-to-create-threads-in-java-2o86)
 
-![](../assets/image31.png)
+![](../assets/thread-pool.png)
 
 Creating too many threads, for example, 100, is not efficient because only some of them will be scheduled. The rest will wait until the ones that are executing finish their work and die. Only then will they take their place. In addition, many threads consume lots of time and resources being born and dying.
 

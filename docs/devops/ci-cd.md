@@ -27,9 +27,9 @@ Declarative desired state in git; a controller (**Argo CD**/Flux) syncs the clus
 
 ## Diagrams
 
-![CI/CD](../assets/image47.png)
+![CI/CD](../assets/ci-cd-pipeline.png)
 
-![CI/CD](../assets/image48.png)
+![CI/CD](../assets/devops-lifecycle-tools.png)
 
-![CI/CD](../assets/image49.png)
+![CI/CD](../assets/devops-toolchain.png)
 

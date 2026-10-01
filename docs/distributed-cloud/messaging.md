@@ -7,7 +7,7 @@
 
 A **messaging system** is responsible for transferring data among services, applications, processes, or servers. Such a system helps **decouple** different parts of a distributed system by providing an **asynchronous** way of transferring messaging between the sender and the receiver. Hence, all senders (or producers) and receivers (or consumers) focus on the data/message without worrying about the mechanism used to share the data.
 
-![](../assets/image34.png)
+![](../assets/messaging-system-overview.png)
 
 There are two common ways to handle messages: **Queuing** and **Publish-Subscribe**.
 
@@ -15,20 +15,20 @@ There are two common ways to handle messages: **Queuing** and **Publish-Subscrib
 
 In the queuing model, messages are stored sequentially in a queue. Producers push messages to the rear of the queue, and consumers extract the messages from the front of the queue.
 
-![](../assets/image35.png)
+![](../assets/message-queue-model.png)
 
 A particular message can be consumed by a maximum of one consumer only. Once a consumer grabs a message, it is removed from the queue such that the next consumer will get the next message. This is a great model for distributing message-processing among multiple consumers. But this also limits the system as multiple consumers cannot read the same message from the queue.
 
-![](../assets/image36.png)
+![](../assets/message-queue-consumers.png)
 
 **Publish-subscribe messaging system**
 In the pub-sub (short for publish-subscribe) model, messages are divided into topics. A publisher (or a producer) sends a message to a topic that gets stored in the messaging system under that topic. Subscribers (or the consumer) subscribe to a topic to receive every message published to that topic. Unlike the Queuing model, the pub-sub model allows multiple consumers to get the same message; if two consumers subscribe to the same topic, they will receive all messages published to that topic.
 
-![](../assets/image37.png)
+![](../assets/pub-sub-model.png)
 
 The messaging system that stores and maintains the messages is commonly known as the message **broker**. It provides a loose coupling between publishers and subscribers, or producers and consumers of data.
 
-![](../assets/image38.png)
+![](../assets/message-broker.png)
 
 The message broker stores published messages in a queue, and subscribers read them from the queue. Hence, subscribers and publishers do not have to be synchronized. This **loose coupling** enables subscribers and publishers to read and write messages at different rates.
 
@@ -53,11 +53,11 @@ To summarize, a message system is deployed in an application stack for the follo
 [Kafka | Confluent Documentation](https://docs.confluent.io/kafka/overview.html)
 [Introduction to Apache Kafka?](https://medium.com/@erkndmrl/introduction-to-apache-kafka-574301baf96)
 
-![](../assets/image39.png)
+![](../assets/kafka-overview.png)
 
-![](../assets/image40.png)
+![](../assets/kafka-ecosystem.png)
 
-![](../assets/image41.png)
+![](../assets/kafka-use-cases.png)
 
 ## Basics
 
