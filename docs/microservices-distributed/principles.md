@@ -109,6 +109,282 @@ The **12-Factor App** is a methodology for building **scalable, maintainable, an
 * Supports **DevOps, CI/CD, and microservices architectures**.
 * Ensures **consistency between development and production environments**.
 
+## Microservice Design Patterns
+
+### Resilience Patterns
+
+**Circuit Breaker**
+- Prevents cascading failures by monitoring a downstream service
+- States: **Closed** (working) → **Open** (failing, rejects calls) → **Half-Open** (tests if service recovered)
+- Implementation: Hystrix, Resilience4J, Spring Cloud Circuit Breaker
+```java
+@CircuitBreaker(name = "userService", fallbackMethod = "fallback")
+public User getUser(String id) {
+    return restTemplate.getForObject("http://user-service/users/" + id, User.class);
+}
+
+public User fallback(String id, Exception ex) {
+    return new User(id, "Unknown", false);  // Graceful degradation
+}
+```
+
+**Retry Pattern**
+- Retries failed requests with exponential backoff
+- Useful for transient failures (network hiccup)
+```java
+@Retry(name = "userService", fallbackMethod = "fallback")
+public User getUser(String id) { ... }
+```
+
+**Timeout Pattern**
+- Prevents hanging on slow/dead services
+- Configured per call: `timeout: 5s`
+- Without timeout: thread starvation, cascading failure
+
+**Bulkhead Pattern**
+- Isolates resources (thread pools, connections) per service
+- Failure in one service doesn't exhaust all resources
+- Example: Separate pools for external APIs, internal DBs
+
+### Communication Patterns
+
+**Saga Pattern (Distributed Transactions)**
+- Coordinates work across multiple services without distributed 2PC locks
+- Two approaches:
+  - **Choreography**: Services emit events; others react. Decoupled but complex to trace.
+  - **Orchestration**: Central coordinator tells services what to do. Simpler logic, but coordinator is SPOF.
+
+```java
+// Choreography example
+@Service
+public class OrderService {
+    @Transactional
+    public void createOrder(Order order) {
+        order.setStatus("PENDING");
+        orderRepo.save(order);
+        eventPublisher.publishEvent(new OrderCreatedEvent(order));  // Fire-and-forget
+    }
+}
+
+@Service
+@Transactional
+public class PaymentService {
+    @EventListener
+    public void onOrderCreated(OrderCreatedEvent event) {
+        try {
+            processPayment(event.getOrder());
+            eventPublisher.publishEvent(new PaymentCompletedEvent(...));
+        } catch (PaymentException e) {
+            eventPublisher.publishEvent(new PaymentFailedEvent(...));
+        }
+    }
+}
+
+@Service
+public class OrderService {
+    @EventListener
+    public void onPaymentFailed(PaymentFailedEvent event) {
+        order.setStatus("CANCELLED");
+        orderRepo.save(order);  // Rollback via compensation action
+    }
+}
+```
+
+**API Gateway Pattern**
+- Single entry point for all clients; routes to backend services
+- Responsibilities: Authentication, rate limiting, logging, request transformation
+- Tools: Kong, AWS API Gateway, Spring Cloud Gateway
+```java
+@Configuration
+public class GatewayConfig {
+    @Bean
+    public RouteLocator routes(RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("userService", r -> r.path("/users/**").uri("http://user-service"))
+            .route("orderService", r -> r.path("/orders/**").uri("http://order-service"))
+            .build();
+    }
+}
+```
+
+**Service Discovery Pattern**
+- Services register themselves; clients discover addresses dynamically
+- Tools: Eureka, Consul, Kubernetes DNS
+- Eliminates hardcoding of IP/ports; handles failures + auto-scaling
+```yaml
+# application.yml
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: ${HOSTNAME:localhost}
+
+spring:
+  application:
+    name: user-service  # Registers as "USER-SERVICE"
+```
+
+**Load Balancer Pattern**
+- Distributes traffic across multiple instances
+- Strategies: Round-robin, least connections, weighted, consistent hash
+- Client-side (Spring Cloud LoadBalancer) or server-side (Nginx, AWS ELB)
+
+### Data Patterns
+
+**Database-Per-Service**
+- Each microservice has its own database (or schema)
+- Avoids shared state; enables independent scaling + tech choices
+- Trade-off: Distributed queries are hard (need event logs or sync APIs)
+
+**Event Sourcing**
+- Stores all state changes as immutable events
+- Rebuild current state by replaying events
+- Benefits: Audit trail, temporal queries, event-driven architecture
+```java
+@Entity
+public class Account {
+    private Long id;
+    private BigDecimal balance;
+    
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<AccountEvent> events;  // Immutable log
+}
+
+public class AccountEvent {
+    private Long id;
+    private Long accountId;
+    private String eventType;  // CREATED, CREDITED, DEBITED
+    private BigDecimal amount;
+    private LocalDateTime timestamp;
+}
+```
+
+**CQRS (Command Query Responsibility Segregation)**
+- Separates read model from write model
+- Write service normalizes data into write DB; read service denormalizes into read cache/DB
+- Benefits: Optimize reads and writes independently; eventual consistency
+```
+Client → API Gateway
+       ↓ (Command) ↓ (Query)
+   Write Service  Read Service (Cache)
+       ↓              ↓
+   Master DB      Read Cache
+       ↓
+   Event Stream → Updates Read Cache
+```
+
+## Deployment Patterns
+
+### Blue-Green Deployment
+- Two identical production environments: Blue (current) and Green (new version)
+- Deploy to Green, test, then switch traffic (instant cutover)
+- Rollback: Switch back to Blue
+- Downtime: Zero (assuming Blue still running)
+- Cost: 2x infrastructure
+```yaml
+# Load balancer config (Nginx, HAProxy, AWS ALB)
+upstream backend {
+    server blue-instances;   # Switch to green-instances for deploy
+}
+server {
+    location / {
+        proxy_pass http://backend;
+    }
+}
+```
+
+### Canary Deployment
+- Gradually shift traffic from old version (Canary, 5%) → new version (Stable, 95%)
+- Monitor metrics; if error rate spikes, rollback
+- Downtime: Zero; blast radius: Limited
+- Risk: Lower than big bang, but still affects subset of users
+```yaml
+# Istio VirtualService (Kubernetes)
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-service
+spec:
+  hosts:
+  - my-service
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: my-service
+        subset: v1
+      weight: 95  # Old version
+    - destination:
+        host: my-service
+        subset: v2
+      weight: 5   # New version (canary)
+```
+
+### Rolling Deployment
+- Gradually replace old instances with new ones (e.g., 1 at a time, 25%, 50%, 75%, 100%)
+- Downtime: Zero (if using load balancer + health checks)
+- Blast radius: Gradual, detected early
+- Most common in Kubernetes (default)
+```yaml
+# Kubernetes Deployment
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1           # Max 1 extra pod during deploy
+      maxUnavailable: 0     # Min 0 unavailable (always available)
+  template:
+    spec:
+      containers:
+      - name: app
+        image: my-app:v2
+        readinessProbe:     # Health check before serving traffic
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+```
+
+### Shadow/Parallel Deployment
+- New version runs alongside old, mirroring real traffic
+- No impact on users (they see old version responses)
+- Validates new version before switcher traffic
+- Cost: 2x during test period
+```yaml
+# Istio: Mirror traffic for validation
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-service
+spec:
+  hosts:
+  - my-service
+  http:
+  - route:
+    - destination:
+        host: my-service
+        subset: v1
+      weight: 100
+    mirror:
+      host: my-service
+      subset: v2        # Mirrors traffic, but ignores v2 response
+    mirrorPercent: 100  # Mirror 100% of traffic
+```
+
+### Deployment Comparison
+
+| Strategy | Downtime | Risk | Cost | Rollback | Best For |
+|----------|----------|------|------|----------|----------|
+| **Big Bang** | High | High | Low | Slow | Non-critical, off-hours |
+| **Blue-Green** | Zero | Medium | High (2x) | Instant | Critical systems, small blast radius |
+| **Canary** | Zero | Low | Normal | Quick | Production, high-traffic systems |
+| **Rolling** | Zero | Low | Normal | Quick | Kubernetes, stateless apps |
+| **Shadow** | Zero | Very Low | High (2x) | N/A | Validation before deploy |
+
 [https://www.geeksforgeeks.org/microservices-interview-questions/](https://www.geeksforgeeks.org/microservices-interview-questions/)
 
 [https://www.baeldung.com/cs/service-discovery-microservices](https://www.baeldung.com/cs/service-discovery-microservices)
