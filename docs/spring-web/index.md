@@ -11,8 +11,12 @@ Master Spring Framework for building enterprise web applications: core concepts,
 Spring Boot fundamentals: @SpringBootApplication, @Configuration, @Bean, stereotypes (@Service, @Repository, @Controller), request handling annotations, basic property configuration.
 
 ### [Spring Boot Advanced](spring-boot-advanced.md)
-**Dependency Injection - Bean Lifecycle - Application Lifecycle - Profiles - Environment Configuration - Profiles - Conditional Beans**  
-Advanced Spring concepts: DI patterns (constructor/setter/field), bean lifecycle hooks (@PostConstruct, @PreDestroy), application startup/shutdown flow, environment-specific profiles with examples, conditional bean creation, Hystrix circuit breaker.
+**Dependency Injection - Bean Lifecycle - Application Lifecycle - Profiles - Environment Configuration - Conditional Beans**  
+Advanced Spring concepts: DI patterns (constructor/setter/field), bean lifecycle hooks (@PostConstruct, @PreDestroy), application startup/shutdown flow, environment-specific profiles with examples, conditional bean creation.
+
+### [Spring Boot Circuit Breaker](spring-boot-circuit-breaker.md)
+**Circuit Breaker - Resilience4j - Hystrix - Failsafe - Sentinel - Vavr - Fault Tolerance - Retry/Timeout/Bulkhead**  
+Fault tolerance patterns: circuit breaker states (CLOSED/OPEN/HALF_OPEN), Resilience4j implementation with examples, framework comparison (Hystrix, Vavr, Failsafe, Sentinel), combining patterns, migration guide.
 
 ### [Web Services](web-services.md)
 **SOAP - WSDL - REST Principles - Web Services Standards - XML/JSON Serialization**  

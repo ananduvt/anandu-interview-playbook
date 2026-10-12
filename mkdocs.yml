@@ -89,6 +89,7 @@ nav:
       - Overview: spring-web/index.md
       - Spring Boot: spring-web/spring-boot.md
       - Spring Boot Advanced: spring-web/spring-boot-advanced.md
+      - Spring Boot Circuit Breaker: spring-web/spring-boot-circuit-breaker.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
       - Security: spring-web/security.md
