@@ -44,10 +44,20 @@ When documenting performance, GC, caching, or profiling:
 - **Before/After**: Show poor pattern vs. optimized pattern (e.g., N+1 query problem)
 - **Example**: See `docs/java-patterns-advanced/advanced.md` (GC section), `docs/java-patterns-advanced/logging-performance.md` (performance tuning)
 
-## File size targets
+## File size targets & splitting strategy
 - **Target range**: 300–600 lines per file (optimal for readability and maintenance)
-- **When to split**: If a file grows beyond 600 lines, consider breaking into subtopics (e.g., Streams split from Functional Programming)
+- **When to split**: If a file grows beyond 600 lines, break into subtopics with `-advanced`, `-deep-dive`, or topic-specific suffixes
+  - Example: `spring-boot.md` (fundamentals) + `spring-boot-advanced.md` (DI, lifecycle, profiles)
+  - Add cross-references between files to guide readers
 - **When to keep together**: Related concepts that readers need simultaneously (e.g., all Spring Boot annotations in one file with cross-references)
+
+## Updating related files after content changes
+When adding or significantly modifying content:
+1. **Update section index pages** (e.g., `spring-web/index.md`) with new one-liners and keywords for new topics
+2. **Register new files in `mkdocs.yml`** navigation if creating separate files
+3. **Update parent/overview pages** with links and descriptions
+4. **Cross-reference** between related topics (e.g., "See [Spring Boot Advanced](spring-boot-advanced.md) for...")
+5. **Check file sizes** and split if exceeding 600 lines before committing
 
 ## Structure
 - Add new pages under `docs/` and register them in `mkdocs.yml` `nav`.

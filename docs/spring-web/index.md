@@ -7,8 +7,12 @@ Master Spring Framework for building enterprise web applications: core concepts,
 ## Topics
 
 ### [Spring Boot](spring-boot.md)
-**Spring Boot - IoC/DI - Bean Scopes - Annotations - Configuration - Profiles - Actuator**  
-Spring fundamentals: dependency injection patterns (constructor first), bean lifecycle, component scopes (singleton, prototype, request, session), @SpringBootApplication, @Configuration, profiles for dev/prod environments.
+**Spring Boot - Annotations - Auto-Configuration - Stereotypes - Request Handling - Configuration Files**  
+Spring Boot fundamentals: @SpringBootApplication, @Configuration, @Bean, stereotypes (@Service, @Repository, @Controller), request handling annotations, basic property configuration.
+
+### [Spring Boot Advanced](spring-boot-advanced.md)
+**Dependency Injection - Bean Lifecycle - Application Lifecycle - Profiles - Environment Configuration - Profiles - Conditional Beans**  
+Advanced Spring concepts: DI patterns (constructor/setter/field), bean lifecycle hooks (@PostConstruct, @PreDestroy), application startup/shutdown flow, environment-specific profiles with examples, conditional bean creation, Hystrix circuit breaker.
 
 ### [Web Services](web-services.md)
 **SOAP - WSDL - REST Principles - Web Services Standards - XML/JSON Serialization**  
