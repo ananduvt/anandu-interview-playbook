@@ -50,16 +50,19 @@ plugins:
 nav:
   - Home: index.md
   - Foundations:
+      - Overview: foundations/index.md
       - SDLC & Methodologies: foundations/sdlc.md
       - Design Principles: foundations/design-principles.md
       - Networking: foundations/networking.md
       - RegEx: foundations/regex.md
       - Testing / QA: foundations/testing.md
   - Data Structures & Algorithms:
+      - Overview: dsa/index.md
       - Data Structures: dsa/data-structures.md
       - Algorithms: dsa/algorithms.md
       - Coding Problems: dsa/coding-problems.md
   - System Design:
+      - Overview: system-design/index.md
       - Fundamentals: system-design/fundamentals.md
       - Building Blocks: system-design/building-blocks.md
       - Scalability & Resilience: system-design/scalability-resilience.md
@@ -72,16 +75,19 @@ nav:
       - Exceptions: java-core/exceptions.md
       - Versions & Features: java-core/versions-features.md
   - Java Collections & Concurrency:
+      - Overview: java-collections-concurrency/index.md
       - Collections: java-collections-concurrency/collections.md
       - Functional Programming: java-collections-concurrency/functional-programming.md
       - Streams: java-collections-concurrency/streams.md
       - Concurrency & Threads: java-collections-concurrency/concurrency.md
       - Testing: java-collections-concurrency/testing.md
   - Java Patterns & Advanced:
+      - Overview: java-patterns-advanced/index.md
       - Design Patterns: java-patterns-advanced/design-patterns.md
       - Logging & Performance: java-patterns-advanced/logging-performance.md
       - Advanced Topics: java-patterns-advanced/advanced.md
   - Spring & Web:
+      - Overview: spring-web/index.md
       - Spring Boot: spring-web/spring-boot.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
@@ -92,13 +98,16 @@ nav:
       - SQL & Relational: databases/sql.md
       - Scaling & NoSQL: databases/scaling.md
   - Microservices & Distributed Systems:
+      - Overview: microservices-distributed/index.md
       - Principles & Patterns: microservices-distributed/principles.md
       - Spring Cloud Implementation: microservices-distributed/spring-cloud.md
       - Messaging (Kafka): microservices-distributed/messaging.md
   - Cloud Services:
+      - Overview: distributed-cloud/index.md
       - Caching: distributed-cloud/caching.md
       - AWS: distributed-cloud/aws.md
   - DevOps:
+      - Overview: devops/index.md
       - Git: devops/git.md
       - Build Tools: devops/build-tools.md
       - CI/CD: devops/ci-cd.md
@@ -107,6 +116,7 @@ nav:
       - Observability: devops/observability.md
   - Security & Vulnerabilities: security/index.md
   - Interview Prep:
+      - Overview: interview-prep/index.md
       - Question Bank: interview-prep/question-bank.md
       - Behavioral / STAR: interview-prep/behavioral.md
       - Quick Reference: interview-prep/quick-reference.md
