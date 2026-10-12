@@ -65,6 +65,7 @@ nav:
       - Scalability & Resilience: system-design/scalability-resilience.md
       - Worked Examples: system-design/worked-examples.md
   - Java Core:
+      - Overview: java-core/index.md
       - Basics: java-core/basics.md
       - OOP: java-core/oop.md
       - Strings & Primitives: java-core/strings-primitives.md

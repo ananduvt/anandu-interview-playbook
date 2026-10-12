@@ -11,8 +11,6 @@ Java has several editions, each catering to different platforms and use cases
   * Java SE also includes the Java Runtime Environment (JRE), which is required to run Java applications on end-user devices.
   * Java SE is widely used for developing a variety of applications, including enterprise software, mobile apps, and games.
 
-.
-
 * **Java Enterprise Edition**
   * Java EE is a set of specifications and APIs for developing enterprise-scale applications, particularly web-based and distributed systems.
   * It provides a runtime environment and libraries for building server-side components such as servlets, JavaServer Pages (JSP), Enterprise JavaBeans (EJB), and Java Persistence API (JPA).
