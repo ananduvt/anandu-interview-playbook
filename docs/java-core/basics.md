@@ -29,76 +29,7 @@ Java has several editions, each catering to different platforms and use cases
   * It provides a set of APIs for developing graphical user interfaces, multimedia applications, and 2D/3D graphics.
   * JavaFX is designed to work seamlessly with Java SE, allowing developers to create cross-platform applications using familiar Java programming techniques.
 
-### Java Versions
-
-[https://pianalytix.com/java-versions-its-features/](https://pianalytix.com/java-versions-its-features/)
-[https://ioflood.com/blog/java-versions/](https://ioflood.com/blog/java-versions/)
-[https://howtodoinjava.com/series/java-versions-features/](https://howtodoinjava.com/series/java-versions-features/)
-[https://www.marcobehler.com/guides/a-guide-to-java-versions-and-features](https://www.marcobehler.com/guides/a-guide-to-java-versions-and-features)
-
-1. **Java  8 aka Spider**
-* Lambda expression support in APIs
-* Stream API
-* Functional interface and default methods
-* Optionals
-* Nashorn – JavaScript runtime which allows developers to embed JavaScript code within applications
-* Annotation on Java Types
-* java.time package for date and time manipulation
-
-2. **Java 9**
-* The biggest change is the modularization i.e. Java modules.
-* Enhancements to the Java platform including the new HTTP/2 client, and the new process API.
-* Deprecation of the Applet API.
-* Project Jigsaw modularizes the JDK, aiming for better scalability, maintainability, and performance.
-* Jshell - can try out simple commands and get immediate results.
-* Interfaces got private methods:
-* Improvements in Stream API
-  * Limiting Stream with takeWhile() and dropWhile() methods
-  * Overloaded Stream iterate method
-  * New Stream ofNullable() method
-* Collection API Updates
-  * Collections got a couple of new helper methods, to easily construct Lists, Sets and Maps.
-* Optionals got the sorely missed ifPresentOrElse method.
-* HTTP 2 Client
-
-3. **Java 10**
-
-		Var Keyword, Garbage Collector Interface.
-
-4. **Java 11 & 12**
-
-		API updates
-
-5. **Java 13**
-
-		text blocks
-		Switch Expression Enhancements
-
-6. **Java 14 & 15**
-
-		records
-		Developer oriented updates
-
-7. **Java 16**
-   made the Java Records and Pattern matching the standard features of the Java language.
-
-8. **Java 17**
-
-		Spring enhanced support
-
-**LTS versions - Long-Term Support**
-These are specific versions of Java SE (Standard Edition) that Oracle designates for extended support.
-
-* Benefits: LTS releases receive bug fixes and security patches for a longer period compared to regular releases, ensuring stability and compatibility for your applications.
-
-* Support Duration: LTS versions are typically supported for at least 4 years with Premier Support from Oracle, followed by an additional 3 years of Extended Support.
-
-* Current LTS versions: As of April 2024, the current LTS versions are Java 8, 11, 17, and 21.
-  * Java 8 through at least 2030
-  * Java 11 through 2026
-  * Java 17 through at least 2029
-
-Versions and features explained ???
+**For Java versions and feature timeline**, see [Versions & Features](versions-features.md).
 
 ### JDK, JRE, JVM
 
