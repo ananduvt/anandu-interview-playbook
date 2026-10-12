@@ -19,6 +19,38 @@ Read these instructions before adding or changing repository content. This repos
 - Prefer updating existing topic files over creating duplicates, and follow the existing directory structure and writing style.
 - Preserve existing content unless the requested change requires editing it.
 
+## Content patterns for complex topics
+
+### Annotations & API References
+When documenting APIs, annotations, or large feature sets:
+- **Summary table**: List annotation/API with purpose (2–3 columns max)
+- **Code examples**: Show constructor, setter, and field patterns; highlight best practices (constructor first)
+- **Configuration YAML**: Provide realistic config with comments explaining each field
+- **Profile-specific examples**: Show dev vs. prod configurations when relevant
+- **Example**: See `docs/spring-web/spring-boot.md` (common annotations section)
+
+### Design Patterns & Architecture
+When documenting patterns (microservices, distributed systems, deployment strategies):
+- **Organize by category**: Group similar patterns (e.g., resilience patterns, communication patterns, data patterns)
+- **One pattern = motivation + phases + example + trade-offs**
+- **Code example**: Show real Spring/Java code when feasible; include both framework-native and custom implementations
+- **Comparison table**: When multiple similar patterns exist, contrast by throughput, latency, cost, rollback speed, etc.
+- **Diagrams**: Use Mermaid for flow (event choreography, state transitions, deployment cutover)
+- **Example**: See `docs/microservices-distributed/principles.md` (design patterns, deployment patterns sections)
+
+### Performance & Tuning
+When documenting performance, GC, caching, or profiling:
+- **Issue → Root Cause → Fix** table format for quick lookup
+- **Real config examples**: Show JVM flags, YAML tuning parameters, with concrete values
+- **Tools section**: List tools with their specific use case and one-liner command
+- **Before/After**: Show poor pattern vs. optimized pattern (e.g., N+1 query problem)
+- **Example**: See `docs/java-patterns-advanced/advanced.md` (GC section), `docs/java-patterns-advanced/logging-performance.md` (performance tuning)
+
+## File size targets
+- **Target range**: 300–600 lines per file (optimal for readability and maintenance)
+- **When to split**: If a file grows beyond 600 lines, consider breaking into subtopics (e.g., Streams split from Functional Programming)
+- **When to keep together**: Related concepts that readers need simultaneously (e.g., all Spring Boot annotations in one file with cross-references)
+
 ## Structure
 - Add new pages under `docs/` and register them in `mkdocs.yml` `nav`.
 - Keep `docs/index.md` as the landing/welcome page.

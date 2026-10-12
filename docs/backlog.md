@@ -18,12 +18,15 @@ Pending topics to write up, grouped by new structure. Move each into its proper 
 ## Java Patterns & Advanced
 - Singleton & Builder patterns; thread-safe singleton (double-checked locking)
 - Lombok annotations
-- JVM args and their uses; profiling & performance tuning
+- ✅ **DONE**: Garbage Collection (G1, tuning, diagnostics)
+- ✅ **DONE**: Performance tuning (memory, caching, DB optimization, thread pools, profiling)
 - Reflection basics; annotation processing
 
 ## Spring & Web
-- `@SpringBootApplication`, `@Configuration`, dependency injection deep-dive
-- `@ControllerAdvice` exception handling
+- ✅ **DONE**: Core annotations (`@SpringBootApplication`, `@Configuration`, stereotypes, injection)
+- ✅ **DONE**: Common annotations (40+ with examples: request handling, config, transactions, async)
+- ✅ **DONE**: Exception handling with `@ControllerAdvice`
+- ✅ **DONE**: Transaction management and profiles
 - Spring Security config for role-based login; securing an API
 - API versioning; setting HTTP `202 Accepted`
 - HTTP methods deep-dive (GET/PUT/POST/DELETE); `PATCH` vs `PUT`
@@ -37,12 +40,13 @@ Pending topics to write up, grouped by new structure. Move each into its proper 
 - Redis cache basics ([heap DS ref](https://www.geeksforgeeks.org/heap-data-structure/))
 
 ## Microservices & Distributed Systems
-- API gateway, load balancer, sidecar pattern
-- Service discovery (Eureka/Consul)
+- ✅ **DONE**: Resilience patterns (Circuit Breaker, Retry, Timeout, Bulkhead)
+- ✅ **DONE**: Communication patterns (Saga choreography, API Gateway, Service Discovery, Load Balancer)
+- ✅ **DONE**: Data patterns (Database-Per-Service, Event Sourcing, CQRS)
+- ✅ **DONE**: Deployment patterns (Blue-Green, Canary, Rolling, Shadow)
 - gRPC / RPC calls
 - Distributed consensus & eventual consistency
-- Saga pattern for distributed transactions
-- Circuit breaker & resilience patterns
+- Sidecar pattern
 
 ## Cloud Services
 - Infrastructure as Code (Terraform, CloudFormation)
