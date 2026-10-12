@@ -1,4 +1,4 @@
-site_name: Anandu's Interview Playbook
+site_name: Interview Playbook
 site_description: A living, shareable interview-prep playbook.
 site_url: https://ananduvt.github.io/anandu-interview-playbook/
 
@@ -46,7 +46,6 @@ markdown_extensions:
 plugins:
   - search
 
-# Only files under docs/ are published. The internal/ folder at repo root is never built.
 nav:
   - Home: index.md
   - Foundations:

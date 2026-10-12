@@ -3,11 +3,9 @@
 Read these instructions before adding or changing repository content. This repository maintains a structured interview preparation knowledge base in Markdown and publishes it with MkDocs.
 
 ## Publishing model
-- Files under `docs/` are **published to a public site**. Files under `internal/` are **private** (never built).
-- **Never put employer/client-specific info in `docs/`**: no internal system/service names, endpoints,
-  ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs. Describe things generically
-  (e.g. "an aggregation microservice", "a downstream transaction service").
-- Internal/context-only material (with real names, tickets, etc.) may live in `internal/` for reference.
+- All content under `docs/` is **published to a public site** (GitHub Pages).
+- **Never put employer/client-specific info in `docs/`**: no internal system/service names, endpoints, ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs. Describe things generically (e.g. "an aggregation microservice", "a downstream transaction service").
+- Use real-world examples and general technical knowledge; prioritize interview-useful content.
 
 ## Content style
 - One topic per Markdown file. Keep pages focused and scannable.

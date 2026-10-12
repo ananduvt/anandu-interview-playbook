@@ -6,18 +6,22 @@ A living, shareable interview-prep playbook. Notes live as Markdown and are publ
 ## Structure
 ```
 .
-├── docs/            # published to the site (Markdown)
-│   └── index.md     # welcome page
-├── internal/        # private notes kept in the repo, NOT published
-├── mkdocs.yml       # site config (theme, nav)
-├── AGENTS.md        # conventions for humans + AI editors
-└── README.md
+├── docs/            # site content (Markdown) — published to GitHub Pages
+│   ├── index.md     # home page
+│   ├── java-core/   # Java fundamentals
+│   ├── spring-web/  # Spring Framework
+│   ├── ...          # other topic sections
+├── mkdocs.yml       # site config (theme, navigation)
+├── AGENTS.md        # conventions for content contributors
+└── README.md        # this file
 ```
 
-## Golden rule
-Anything under `docs/` becomes **public**. Keep it free of employer/client identifiers
-(internal system names, endpoints, ticket IDs, hostnames, account/client IDs). Private context goes in
-`internal/`, which is never built into the site.
+## Guidelines for Contributors
+All content under `docs/` is **public**. Keep it free of employer/client identifiers:
+- No internal system/service names, endpoints, ticket IDs, hostnames
+- No cluster names, account/client IDs, or internal URLs
+- Describe things generically (e.g., "an aggregation microservice", "a downstream service")
+- Use real-world examples and general technical knowledge
 
 ## Run locally
 
