@@ -12,7 +12,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     SDLC & methodologies, design principles, networking, RegEx, testing
 
-    [:octicons-arrow-right-24: Open](foundations/sdlc.md)
+    [:octicons-arrow-right-24: Open](foundations/index.md)
 
 -   :material-sitemap:{ .lg .middle } **Data Structures & Algorithms**
 
@@ -20,7 +20,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Data structures, algorithms, coding problems
 
-    [:octicons-arrow-right-24: Open](dsa/data-structures.md)
+    [:octicons-arrow-right-24: Open](dsa/index.md)
 
 -   :material-vector-arrange-below:{ .lg .middle } **System Design**
 
@@ -28,7 +28,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Fundamentals, building blocks, scalability & resilience, worked examples
 
-    [:octicons-arrow-right-24: Open](system-design/fundamentals.md)
+    [:octicons-arrow-right-24: Open](system-design/index.md)
 
 -   :fontawesome-brands-java:{ .lg .middle } **Java Core**
 
@@ -36,7 +36,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Basics, OOP, strings & primitives, exceptions, versions & features
 
-    [:octicons-arrow-right-24: Open](java-core/basics.md)
+    [:octicons-arrow-right-24: Open](java-core/index.md)
 
 -   :fontawesome-brands-java:{ .lg .middle } **Java Collections & Concurrency**
 
@@ -44,7 +44,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Collections, functional programming, concurrency & threads, testing
 
-    [:octicons-arrow-right-24: Open](java-collections-concurrency/collections.md)
+    [:octicons-arrow-right-24: Open](java-collections-concurrency/index.md)
 
 -   :fontawesome-brands-java:{ .lg .middle } **Java Patterns & Advanced**
 
@@ -52,7 +52,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Design patterns, logging & performance, advanced topics
 
-    [:octicons-arrow-right-24: Open](java-patterns-advanced/design-patterns.md)
+    [:octicons-arrow-right-24: Open](java-patterns-advanced/index.md)
 
 -   :material-leaf:{ .lg .middle } **Spring & Web**
 
@@ -60,7 +60,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Spring Boot, web services, API styles, security, JPA/ORM
 
-    [:octicons-arrow-right-24: Open](spring-web/spring-boot.md)
+    [:octicons-arrow-right-24: Open](spring-web/index.md)
 
 -   :material-database:{ .lg .middle } **Databases**
 
@@ -76,7 +76,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Principles & patterns, Spring Cloud, messaging (Kafka), resilience
 
-    [:octicons-arrow-right-24: Open](microservices-distributed/principles.md)
+    [:octicons-arrow-right-24: Open](microservices-distributed/index.md)
 
 -   :material-cloud-outline:{ .lg .middle } **Cloud Services**
 
@@ -84,7 +84,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Caching, AWS, infrastructure as code
 
-    [:octicons-arrow-right-24: Open](distributed-cloud/caching.md)
+    [:octicons-arrow-right-24: Open](distributed-cloud/index.md)
 
 -   :material-cog-sync:{ .lg .middle } **DevOps**
 
@@ -92,7 +92,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Git, build tools, CI/CD, Docker, Kubernetes, observability
 
-    [:octicons-arrow-right-24: Open](devops/git.md)
+    [:octicons-arrow-right-24: Open](devops/index.md)
 
 -   :material-shield-lock:{ .lg .middle } **Security & Vulnerabilities**
 
@@ -108,7 +108,7 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     Question bank, behavioral / STAR, quick reference
 
-    [:octicons-arrow-right-24: Open](interview-prep/question-bank.md)
+    [:octicons-arrow-right-24: Open](interview-prep/index.md)
 
 -   :material-link-variant:{ .lg .middle } **Resources**
 
