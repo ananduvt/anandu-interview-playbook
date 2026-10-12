@@ -1,7 +1,6 @@
 # Interview Playbook 👋
 
-A **living, shareable interview-prep playbook** — study notes across CS fundamentals, Java, Spring,
-databases, distributed systems, DevOps, and more.
+A **living, shareable interview-prep playbook** — study notes across CS fundamentals, Java (Core, Collections, Patterns), Spring, databases, microservices & distributed systems, cloud, DevOps, and more.
 
 ## Sections
 
@@ -31,19 +30,35 @@ databases, distributed systems, DevOps, and more.
 
     [:octicons-arrow-right-24: Open](system-design/fundamentals.md)
 
--   :fontawesome-brands-java:{ .lg .middle } **Java**
+-   :fontawesome-brands-java:{ .lg .middle } **Java Core**
 
     ---
 
-    Basics, OOP, patterns, collections, functional, concurrency, versions
+    Basics, OOP, strings & primitives, exceptions, versions & features
 
-    [:octicons-arrow-right-24: Open](java/basics.md)
+    [:octicons-arrow-right-24: Open](java-core/basics.md)
+
+-   :fontawesome-brands-java:{ .lg .middle } **Java Collections & Concurrency**
+
+    ---
+
+    Collections, functional programming, concurrency & threads, testing
+
+    [:octicons-arrow-right-24: Open](java-collections-concurrency/collections.md)
+
+-   :fontawesome-brands-java:{ .lg .middle } **Java Patterns & Advanced**
+
+    ---
+
+    Design patterns, logging & performance, advanced topics
+
+    [:octicons-arrow-right-24: Open](java-patterns-advanced/design-patterns.md)
 
 -   :material-leaf:{ .lg .middle } **Spring & Web**
 
     ---
 
-    Spring Boot, Spring Cloud, web services, API styles, security, JPA/ORM
+    Spring Boot, web services, API styles, security, JPA/ORM
 
     [:octicons-arrow-right-24: Open](spring-web/spring-boot.md)
 
@@ -55,13 +70,21 @@ databases, distributed systems, DevOps, and more.
 
     [:octicons-arrow-right-24: Open](databases/index.md)
 
--   :material-cloud-outline:{ .lg .middle } **Distributed & Cloud**
+-   :material-sitemap-outline:{ .lg .middle } **Microservices & Distributed Systems**
 
     ---
 
-    Microservices, messaging (Kafka), caching, AWS
+    Principles & patterns, Spring Cloud, messaging (Kafka), resilience
 
-    [:octicons-arrow-right-24: Open](distributed-cloud/principles.md)
+    [:octicons-arrow-right-24: Open](microservices-distributed/principles.md)
+
+-   :material-cloud-outline:{ .lg .middle } **Cloud Services**
+
+    ---
+
+    Caching, AWS, infrastructure as code
+
+    [:octicons-arrow-right-24: Open](distributed-cloud/caching.md)
 
 -   :material-cog-sync:{ .lg .middle } **DevOps**
 

@@ -64,22 +64,24 @@ nav:
       - Building Blocks: system-design/building-blocks.md
       - Scalability & Resilience: system-design/scalability-resilience.md
       - Worked Examples: system-design/worked-examples.md
-  - Java:
-      - Basics: java/basics.md
-      - OOP: java/oop.md
-      - Design Patterns: java/design-patterns.md
-      - Collections: java/collections.md
-      - Strings & Primitives: java/strings-primitives.md
-      - Exceptions: java/exceptions.md
-      - Functional (Lambdas & Streams): java/functional.md
-      - Concurrency & Threads: java/concurrency.md
-      - Testing: java/testing.md
-      - Logging: java/logging.md
-      - Advanced: java/advanced.md
-      - Versions & Features: java/versions.md
+  - Java Core:
+      - Basics: java-core/basics.md
+      - OOP: java-core/oop.md
+      - Strings & Primitives: java-core/strings-primitives.md
+      - Exceptions: java-core/exceptions.md
+      - Versions & Features: java-core/versions-features.md
+  - Java Collections & Concurrency:
+      - Collections: java-collections-concurrency/collections.md
+      - Functional Programming: java-collections-concurrency/functional-programming.md
+      - Streams: java-collections-concurrency/streams.md
+      - Concurrency & Threads: java-collections-concurrency/concurrency.md
+      - Testing: java-collections-concurrency/testing.md
+  - Java Patterns & Advanced:
+      - Design Patterns: java-patterns-advanced/design-patterns.md
+      - Logging & Performance: java-patterns-advanced/logging-performance.md
+      - Advanced Topics: java-patterns-advanced/advanced.md
   - Spring & Web:
       - Spring Boot: spring-web/spring-boot.md
-      - Spring Cloud & Microservices: spring-web/spring-cloud.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
       - Security: spring-web/security.md
@@ -88,9 +90,11 @@ nav:
       - Overview (ACID/BASE/CAP): databases/index.md
       - SQL & Relational: databases/sql.md
       - Scaling & NoSQL: databases/scaling.md
-  - Distributed & Cloud:
-      - Microservices Principles: distributed-cloud/principles.md
-      - Messaging (Kafka): distributed-cloud/messaging.md
+  - Microservices & Distributed Systems:
+      - Principles & Patterns: microservices-distributed/principles.md
+      - Spring Cloud Implementation: microservices-distributed/spring-cloud.md
+      - Messaging (Kafka): microservices-distributed/messaging.md
+  - Cloud Services:
       - Caching: distributed-cloud/caching.md
       - AWS: distributed-cloud/aws.md
   - DevOps:

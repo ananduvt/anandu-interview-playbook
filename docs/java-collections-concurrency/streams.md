@@ -1,187 +1,4 @@
-# Functional Java (Lambdas & Streams)
-
-## Lambda Expressions
-
-**(argument) -> (body)**
-
-Before Java 8, we would usually create a class for every case where we needed to encapsulate a single piece of functionality. This implied a lot of unnecessary boilerplate code to define something that served as a primitive function representation.
-
-A lambda expression is a short block of code which takes in parameters and returns a value. Lambda expressions are similar to methods, but they do not need a name and they can be implemented right in the body of a method.
-
-* Enable to treat functionality as a method argument, or code as data.
-* A function that can be created without belonging to any class.
-* A lambda expression can be passed around as if it was an object and executed on demand.
-
-**Java lambda functions can be only used with functional interfaces.Lambda expressions are just like functions and they accept parameters just like functions.**
-
-**Advantages**
-
-* Reduced Lines of Code
-* Sequential and Parallel Execution Support
-* Passing Behaviors into methods
-* Higher Efficiency with Laziness
-
-There are three Lambda Expression Parameters
-
-1. Zero Parameter
-   () -> System.out.println("Zero parameter lambda");
-
-2. Single Parameter
-   (p) -> System.out.println("One parameter: " + p);
-
-3. Multiple Parameters
-   (p1, p2) -> System.out.println("Multiple parameters: " + p1 + ", " + p2);
-
-Eg:
-interface StringFunction {
-   String run(String str);
- }
-  public class Main {
-   public static void main(String[] args) {
-     StringFunction exclaim = (s) -> s + "!";
-     StringFunction ask = (s) -> s + "?";
-     printFormatted("Hello", exclaim);
-     printFormatted("Hello", ask);
-   }
-   public static void printFormatted(String str, StringFunction format) {
-     String result = format.run(str);
-     System.out.println(result);
-   }
- }
-—-----------------------------------------------------------------------------
-//Traditional approach
-private static boolean isPrime(int number) {
-   if(number < 2) return false;
-   for(int i=2; i<number; i++){
-       if(number % i == 0) return false;
-   }
-   return true;
-}
-
-//Declarative approach
-private static boolean isPrime(int number) {
-   return number > 1
-           && IntStream.range(2, number).noneMatch(
-                   index -> number % index == 0);
-}
-private static boolean isPrime(int number) {
-   IntPredicate isDivisible = index -> number % index == 0;
-
-   return number > 1
-           && IntStream.range(2, number).noneMatch(
-                   isDivisible);
-}
-—-----------------------------------------------------------------------------
-public static int sumWithCondition(List<Integer> numbers, Predicate<Integer> predicate) {
-   return numbers.parallelStream()
-           .filter(predicate)
-           .mapToInt(i -> i)
-           .sum();
-}
-
-//sum of all numbers
-sumWithCondition(numbers, n -> true)
-//sum of all even numbers
-sumWithCondition(numbers, i -> i%2==0)
-//sum of all numbers greater than 5
-sumWithCondition(numbers, i -> i>5)
-
-### Double Colon (::) Operator
-
-**<Class name>::<method name>**
-
-The double colon (::) operator, also known as method reference operator in Java, is used to call a **method by referring** to it with the help of its class directly. They behave exactly as the lambda expressions. The only difference it has from lambda expressions is that this uses **direct reference to the method** by name instead of providing a delegate to the method.
-
-There are four kinds of method references:
-
-* Reference to a static method ClassName::staticMethodName
-* Reference to an instance method of a particular object Object::instanceMethodName
-* Reference to an instance method of an arbitrary object of a particular type ContainingType::methodName–
-* Reference to a constructor ClassName::new
-
-* (ClassName::methodName)
-* (objectOfClass::methodName)
-* (super::methodName)
-* (ClassName::methodName)
-* (ClassName::new)
-
-Eg:
-
-* **System::getProperty**
-* **System.out::println**
-* **"abc"::length**
-* **ArrayList::new**
-* **Int[]::new**
-
-### Functional Interfaces
-
-Any interface with a **SAM(Single Abstract Method)** is a functional interface, and its implementation may be treated as lambda expressions. A functional interface can have any number of default methods.
-Eg:
-
-* **Runnable** –> This interface only contains the run() method.
-* **Comparable** –> This interface only contains the compareTo() method.
-* **ActionListener** –> This interface only contains the actionPerformed() method.
-* **Callable** –> This interface only contains the call() method.
-
-Functional interfaces are included in Java SE 8 with Lambda expressions and Method references in order to make code more readable, clean, and straightforward. Functional interfaces are interfaces that ensure that they include precisely only one abstract method. Functional interfaces are used and executed by representing the interface with an annotation called **@FunctionalInterface**. Functional interfaces can contain only one abstract method. However, they can include any quantity of default and static methods.
-
-**Four main kinds of functional interfaces**
-
-1. **Consumer**
-   Consumer<Integer> consumer = (value) -> System.out.println(value);
-
-   List<String> names = Arrays.asList("John", "Freddy", "Samuel");
-   names.forEach(name -> System.out.println("Hello, " + name));
-
-2. **Predicate**
-   public interface Predicate<T> {
-      boolean test(T t);
-   }
-
-   List<String> names = Arrays.asList("Angela", "Aaron", "Bob", "Claire", "David");
-
-   List<String> namesWithA = names.stream()
-    .filter(name -> name.startsWith("A"))
-    .collect(Collectors.toList());
-
-3. **Function**
-   @FunctionalInterface
-   public interface BiFunction<T, U, R>
-   {
-     R apply(T t, U u);
-      .......
-   }
-
-   Map<String, Integer> nameMap = new HashMap<>();
-   Integer value = nameMap.computeIfAbsent("John", s -> s.length());
-
-4. **Supplier**
-   @FunctionalInterface
-   public interface Supplier<T>{
-   // gets a result
-   ………….
-   // returns the specific result
-   …………
-   T.get();
-   }
-
-### BI Function
-
-**REF**
-
-1. [https://www.baeldung.com/java-8-functional-interfaces](https://www.baeldung.com/java-8-functional-interfaces)
-2. [https://www.digitalocean.com/community/tutorials/java-8-functional-interfaces](https://www.digitalocean.com/community/tutorials/java-8-functional-interfaces)
-3. [https://www.baeldung.com/java-bifunction-interface](https://www.baeldung.com/java-bifunction-interface)
-
-**REF**
-
-1. [https://stackify.com/streams-guide-java-8/](https://stackify.com/streams-guide-java-8/)
-2. [https://www.geeksforgeeks.org/stream-in-java/](https://www.geeksforgeeks.org/stream-in-java/)
-3. [https://www.baeldung.com/java-8-streams\](https://www.baeldung.com/java-8-streams\)
-4. [https://www.scaler.com/topics/java/streams-in-java/](https://www.scaler.com/topics/java/streams-in-java/)
-5. [https://www.geeksforgeeks.org/comparing-streams-to-loops-in-java/](https://www.geeksforgeeks.org/comparing-streams-to-loops-in-java/)
-
-## Java Streams
+# Streams
 
 * **Terminal operations** in Java Streams are the operations that produce a final result or a side-effect
 * **Intermediate operations** in Java Streams allow you to transform or filter the elements of a stream in a lazy manner.
@@ -192,7 +9,7 @@ Functional interfaces are included in Java SE 8 with Lambda expressions and Meth
 
 * A stream does not store data and, in that sense, is not a data structure. It also never modifies the underlying data source.
 
-* Streams don’t change the original data structure, they only provide the result as per the pipelined methods.
+* Streams don't change the original data structure, they only provide the result as per the pipelined methods.
 
 * Each intermediate operation is lazily executed and returns a stream as a result, hence various intermediate operations can be pipelined. Terminal operations mark the end of the stream and return the result.
 
@@ -200,7 +17,7 @@ Functional interfaces are included in Java SE 8 with Lambda expressions and Meth
 
 * Computation on the source data is only performed when the terminal operation is initiated, and source elements are consumed only as needed.
 
-* All intermediate operations are lazy, so they’re not executed until a result of a processing is actually needed.
+* All intermediate operations are lazy, so they're not executed until a result of a processing is actually needed.
 
 Streams offer several advantages over traditional iteration approaches in Java programming:
 
@@ -224,7 +41,7 @@ Streams offer several advantages over traditional iteration approaches in Java p
 
 Overall, streams enable more efficient, concise, and expressive data processing in Java, making it easier to write robust, scalable, and maintainable applications.
 
-### Stream Creation
+## Stream Creation
 
 In Java, you can create streams from various data sources, including collections, arrays, I/O resources, and numerical ranges
 
@@ -281,9 +98,9 @@ Stream<Integer> stream = Stream.iterate(0, n -> n + 2);
    The generate() method accepts a Supplier<T> for element generation. As the resulting stream is infinite, the developer should specify the desired size, or the generate() method will work until it reaches the memory limit:
 
 Stream<String> streamGenerated = Stream.generate(() -> "element").limit(10);
-The code above creates a sequence of ten strings with the value “element.”
+The code above creates a sequence of ten strings with the value "element."
 
-### Intermediate operations
+## Intermediate operations
 
 Intermediate operations in Java Streams allow you to transform or filter the elements of a stream in a lazy manner.
 
@@ -343,7 +160,7 @@ stream.dropWhile(x -> x < 5)
 Disables the ordering of elements in the stream.
 stream.unordered()
 
-### Terminal operations
+## Terminal operations
 
 Terminal operations in Java Streams are the operations that produce a final result or a side-effect.
 
@@ -407,7 +224,7 @@ String[] array = stream.toArray(String[]::new)
 
 These terminal operations trigger the evaluation of the stream and produce a final result or perform a side-effect. Once a terminal operation is called on a stream, the stream cannot be reused.
 
-### Java Collectors
+## Java Collectors
 
 Collectors is one of the utility class in JDK which contains a lot of utility functions. It is mostly used with Stream API as a final step.
 
@@ -433,27 +250,27 @@ Collectors is one of the utility class in JDK which contains a lot of utility fu
 | **summingDouble()** | List<Double>  doubleValues = Arrays.asList(1.1,2.0,3.0,4.0,5.0,5.0); Double sum = doubleValues     .stream()     .collect(Collectors.summingDouble(x ->x)); // output: 20.1  |
 | **summingLong()** | List<Long> longValues = Arrays.asList(100l,200l,300l); Long sum = longValues    .stream()    .collect(Collectors.summingLong(x ->x)); // output: 600  |
 
-### Comparisons
+## Comparisons
 
 | Advantages of Streams  | Advantages of Loops  |
 | :---- | :---- |
 | Streams are a more declarative style. Or a more expressive style. | Performance: A for loop through an array is extremely lightweight both in terms of heap and CPU usage. If raw speed and memory thriftiness is a priority, using a stream is worse. |
-| Streams have a strong affinity with functions. Java 8 introduces lambdas and functional interfaces, which opens a whole toolbox of powerful techniques. Streams provide the most convenient and natural way to apply functions to sequences of objects. | Familiarity: The world is full of experienced procedural programmers, from many language backgrounds, for whom loops are familiar and streams are novel. In some environments, you want to write code that’s familiar to that kind of person. |
-| Streams encourage less mutability. This is sort of related to the functional programming aspect i.e., the kind of programs we write using streams tend to be the kind of programs where we don’t modify objects. | Cognitive overhead: Because of its declarative nature, and increased abstraction from what’s happening underneath, you may need to build a new mental model of how code relates to execution. Actually, you only need to do this when things go wrong, or if you need to deeply analyze performance or subtle bugs. When it “just works”, it just works. |
-| Streams encourage loose coupling. Our stream-handling code doesn’t need to know the source of the stream or its eventual terminating method. | Debuggers are improving, but even now, when we are stepping through stream code in a debugger, it can be harder work than the equivalent loop, because a simple loop is very close to the variables and code locations that a traditional debugger works with. |
+| Streams have a strong affinity with functions. Java 8 introduces lambdas and functional interfaces, which opens a whole toolbox of powerful techniques. Streams provide the most convenient and natural way to apply functions to sequences of objects. | Familiarity: The world is full of experienced procedural programmers, from many language backgrounds, for whom loops are familiar and streams are novel. In some environments, you want to write code that's familiar to that kind of person. |
+| Streams encourage less mutability. This is sort of related to the functional programming aspect i.e., the kind of programs we write using streams tend to be the kind of programs where we don't modify objects. | Cognitive overhead: Because of its declarative nature, and increased abstraction from what's happening underneath, you may need to build a new mental model of how code relates to execution. Actually, you only need to do this when things go wrong, or if you need to deeply analyze performance or subtle bugs. When it "just works", it just works. |
+| Streams encourage loose coupling. Our stream-handling code doesn't need to know the source of the stream or its eventual terminating method. | Debuggers are improving, but even now, when we are stepping through stream code in a debugger, it can be harder work than the equivalent loop, because a simple loop is very close to the variables and code locations that a traditional debugger works with. |
 | Streams can succinctly express quite sophisticated behavior. |  |
 
 | Sequential Stream | Parallel Stream |
 | :---- | :---- |
 | Runs on a single-core of the computer | Utilize the multiple cores of the computer.  |
 | Performance is poor | The performance is high.  |
-| Order is maintained  | Doesn’t care about the order,  |
+| Order is maintained  | Doesn't care about the order,  |
 | Only a single iteration at a time just like the for-loop.   | Operates multiple iterations simultaneously in different available cores.  |
 | Each iteration waits for currently running one to finish,  | Waits only if no cores are free or available at a given time,  |
 | More reliable and less error,  | Less reliable and error-prone.   |
 | Platform independent, | Platform dependent |
 
-### Questions
+## Questions
 
 1. **What is a Stream in Java?**
    * Answer: A Stream in Java is a sequence of elements supporting sequential and parallel aggregate operations. It is not a data structure but a view of the data that can be manipulated using functional-style operations.
@@ -483,7 +300,7 @@ Collectors is one of the utility class in JDK which contains a lot of utility fu
 12. **What are the benefits of using Streams in Java?**
     * Answer: Benefits include concise and readable code, easier parallelism, improved productivity with functional-style operations, and the ability to focus on the what rather than the how of data processing.
 
-### Practical Questions
+## Practical Questions
 
 **Write a Stream operation to find the first even number greater than 10 in a list of integers.**
 List<Integer> numbers = Arrays.asList(5, 8, 15, 20, 25);
@@ -615,7 +432,7 @@ List<Integer> squares = numbers.stream()
                               `.average()`
                               `.orElse(0.0);`
 
-??? stream.parallel vs parallelStream
+## References
 
 [https://www.geeksforgeeks.org/difference-between-stream-of-and-arrays-stream-method-in-java/](https://www.geeksforgeeks.org/difference-between-stream-of-and-arrays-stream-method-in-java/)
 
@@ -624,4 +441,7 @@ List<Integer> squares = numbers.stream()
 [https://medium.com/@vino7tech/difference-between-stream-and-parallel-stream-in-java-8-0c20004706d2](https://medium.com/@vino7tech/difference-between-stream-and-parallel-stream-in-java-8-0c20004706d2)
 
 [https://www.geeksforgeeks.org/difference-between-stream-of-and-arrays-stream-method-in-java/](https://www.geeksforgeeks.org/difference-between-stream-of-and-arrays-stream-method-in-java/)
+
 [https://medium.com/@javageeksociety/arrays-stream-vs-stream-of-in-java-8-be7d6b757e4e](https://medium.com/@javageeksociety/arrays-stream-vs-stream-of-in-java-8-be7d6b757e4e)
+
+**Related**: See [Functional Programming](functional-programming.md) for lambdas, method references, and functional interfaces used in Stream operations.
