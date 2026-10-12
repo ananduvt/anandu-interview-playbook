@@ -338,22 +338,292 @@ public class MailService {
 
 ---
 
-## Hystrix Circuit Breaker
+---
 
-[Implementing Hystrix](https://www.geeksforgeeks.org/implementing-a-basic-circuit-breaker-with-hystrix-in-spring-boot-microservices/) | [Spring Cloud Netflix Hystrix](https://www.baeldung.com/spring-cloud-netflix-hystrix) | [Official Docs](https://cloud.spring.io/spring-cloud-netflix/multi/multi__circuit_breaker_hystrix_clients.html)
+## Circuit Breaker Pattern
 
-The Hystrix circuit breaker is an open-source Java library that helps prevent cascading failures in distributed systems. It's a fault tolerance technique that monitors services and temporarily rejects calls when they're not behaving normally.
+A circuit breaker is a fault-tolerance pattern that prevents cascading failures in distributed systems. It monitors service calls and temporarily stops calling a failing service to allow recovery.
 
-### How it works
+### Circuit Breaker States
 
-* Hystrix monitors services for failures
-* When a service fails above a certain threshold, the circuit breaker opens
-* The circuit breaker prevents further calls to the failing service
-* The developer can provide a fallback, such as another Hystrix protected call, static data, or an empty value
+```
+CLOSED (normal operation)
+  ↓ (failures exceed threshold)
+OPEN (block calls, fail fast)
+  ↓ (after timeout, attempt recovery)
+HALF_OPEN (test if service recovered)
+  ↓ (success → CLOSED; failure → OPEN)
+```
 
-### Hystrix benefits
+### Spring Cloud Circuit Breaker (Modern Approach)
 
-* Prevents cascading failures: Stops failures from spreading throughout a system
-* Improves resilience: Helps systems recover quickly from failures
-* Provides fault tolerance: Protects against latency and failure from dependencies
-* Enables monitoring and alerting: Provides near real-time monitoring and alerting
+**Dependencies:**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+</dependency>
+```
+
+**Configuration:**
+```yaml
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        slidingWindowSize: 10          # Track last 10 calls
+        failureRateThreshold: 50       # Open if 50% fail
+        slowCallRateThreshold: 100     # Open if 100% are slow
+        slowCallDurationThreshold: 2s  # Call > 2s is "slow"
+        waitDurationInOpenState: 30s   # Wait 30s before trying again
+        permittedNumberOfCallsInHalfOpenState: 3  # Allow 3 test calls
+      
+      # Define fallback separately (optional)
+      default:
+        slidingWindowSize: 100
+        failureRateThreshold: 50
+```
+
+**Implementation with `@CircuitBreaker` annotation:**
+```java
+@Service
+public class PaymentService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+    
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    // Protected method with circuit breaker
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
+    public PaymentResponse processPayment(Order order) {
+        logger.info("Processing payment for order: {}", order.getId());
+        
+        // This call will be monitored by circuit breaker
+        ResponseEntity<PaymentResponse> response = restTemplate.postForEntity(
+            "http://payment-service/api/pay",
+            order,
+            PaymentResponse.class
+        );
+        
+        return response.getBody();
+    }
+    
+    // Fallback method (called when circuit is OPEN)
+    // Signature must match the protected method (same params, return type)
+    private PaymentResponse paymentFallback(Order order, CircuitBreakerOpenException ex) {
+        logger.warn("Circuit breaker OPEN - using fallback for order: {}", order.getId());
+        
+        // Option 1: Return cached/default response
+        return new PaymentResponse(
+            order.getId(),
+            "PENDING",  // Mark as pending for manual retry
+            "Payment service temporarily unavailable. Will retry automatically."
+        );
+        
+        // Option 2: Throw exception and let caller handle
+        // throw new PaymentUnavailableException("Payment service down", ex);
+    }
+}
+```
+
+**Circuit Breaker with Resilience4j and Retry:**
+```java
+@Service
+public class OrderService {
+    
+    @Autowired
+    private PaymentService paymentService;
+    
+    // Combine circuit breaker + retry
+    @CircuitBreaker(name = "orderService", fallbackMethod = "orderFallback")
+    @Retry(name = "orderService", fallbackMethod = "orderFallback")
+    public Order placeOrder(Order order) {
+        // Try up to 3 times (default)
+        // If still fails, circuit breaker takes over
+        PaymentResponse payment = paymentService.processPayment(order);
+        
+        if (!"SUCCESS".equals(payment.getStatus())) {
+            throw new PaymentFailedException("Payment failed: " + payment.getReason());
+        }
+        
+        order.setStatus("CONFIRMED");
+        return order;
+    }
+    
+    private Order orderFallback(Order order, Exception ex) {
+        order.setStatus("RETRY_LATER");
+        return order;
+    }
+}
+```
+
+### Monitoring Circuit Breaker Status
+
+```java
+@RestController
+@RequestMapping("/api/circuit-breaker")
+public class CircuitBreakerMonitorController {
+    
+    @Autowired
+    private CircuitBreakerRegistry circuitBreakerRegistry;
+    
+    @GetMapping("/status")
+    public Map<String, Object> getStatus() {
+        CircuitBreaker cb = circuitBreakerRegistry.circuitBreaker("paymentService");
+        CircuitBreakerMetrics metrics = cb.getMetrics();
+        
+        return Map.of(
+            "state", cb.getState(),  // CLOSED, OPEN, HALF_OPEN
+            "failureRate", metrics.getFailureRate() + "%",
+            "slowCallRate", metrics.getSlowCallRate() + "%",
+            "successfulCalls", metrics.getNumberOfSuccessfulCalls(),
+            "failedCalls", metrics.getNumberOfFailedCalls(),
+            "slowCalls", metrics.getNumberOfSlowCalls()
+        );
+    }
+}
+```
+
+### Programmatic Circuit Breaker Usage
+
+```java
+@Service
+public class InventoryService {
+    
+    @Autowired
+    private CircuitBreakerFactory circuitBreakerFactory;
+    
+    public InventoryResponse checkInventory(String itemId) {
+        // Create circuit breaker dynamically
+        CircuitBreaker circuitBreaker = circuitBreakerFactory
+            .create("inventoryService");
+        
+        return circuitBreaker.run(
+            () -> {
+                // Protected call
+                return callInventoryAPI(itemId);
+            },
+            throwable -> {
+                // Fallback
+                return new InventoryResponse(itemId, 0, "Service unavailable");
+            }
+        );
+    }
+    
+    private InventoryResponse callInventoryAPI(String itemId) {
+        // Actual API call
+        return new InventoryResponse(itemId, 100, "Available");
+    }
+}
+```
+
+### Real-World Scenario
+
+```java
+@Service
+public class PaymentGatewayService {
+    
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    @Autowired
+    private NotificationService notificationService;
+    
+    @CircuitBreaker(name = "externalPaymentGateway", fallbackMethod = "handlePaymentFailure")
+    @Retry(name = "externalPaymentGateway")  // Retry before circuit opens
+    @Timeout(name = "externalPaymentGateway")  // Fail if takes > configured time
+    public ChargeResult chargeCard(PaymentRequest request) {
+        try {
+            ResponseEntity<ChargeResult> response = restTemplate.postForEntity(
+                "https://api.payment-gateway.com/charge",
+                request,
+                ChargeResult.class
+            );
+            
+            return response.getBody();
+            
+        } catch (RestClientException e) {
+            // Retry will catch this and retry automatically
+            // If retries exhaust, circuit breaker opens
+            throw e;
+        }
+    }
+    
+    // Fallback: handle gracefully when circuit is open
+    private ChargeResult handlePaymentFailure(
+        PaymentRequest request,
+        Exception ex
+    ) {
+        String transactionId = UUID.randomUUID().toString();
+        
+        // Log for manual processing
+        logger.error("Payment gateway circuit open. Storing for retry. TxnID: {}", transactionId, ex);
+        
+        // Notify customer
+        notificationService.sendEmail(
+            request.getCustomerEmail(),
+            "Payment Status",
+            "Your payment is being processed. Reference: " + transactionId
+        );
+        
+        // Return pending status (not failed)
+        return new ChargeResult(
+            transactionId,
+            "PENDING",
+            "Gateway temporarily unavailable. Retry scheduled.",
+            request.getAmount()
+        );
+    }
+}
+```
+
+**Configuration for the above scenario:**
+```yaml
+resilience4j:
+  circuitbreaker:
+    instances:
+      externalPaymentGateway:
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        permittedNumberOfCallsInHalfOpenState: 5
+  
+  retry:
+    instances:
+      externalPaymentGateway:
+        maxAttempts: 3
+        waitDuration: 1000
+        retryExceptions:
+          - java.net.SocketTimeoutException
+          - org.springframework.web.client.ResourceAccessException
+  
+  timelimit:
+    instances:
+      externalPaymentGateway:
+        timeoutDuration: 5s  # Fail if call takes > 5 seconds
+```
+
+### Circuit Breaker Benefits & Trade-offs
+
+| Benefit | Example |
+|---------|---------|
+| **Fail fast** | Return error immediately instead of waiting for timeout |
+| **Prevent cascades** | Stop calling failed service; doesn't overload it |
+| **Graceful degradation** | Use fallback (cache, default value) instead of complete failure |
+| **Auto-recovery** | Automatically retry after timeout (HALF_OPEN state) |
+| **Observability** | Monitor health via metrics (failure rate, latency) |
+
+| Trade-off | Mitigation |
+|-----------|-----------|
+| **Complexity** | Use annotations; framework handles state transitions |
+| **Stale fallback data** | Combine with cache; document fallback behavior |
+| **False positives** | Tune thresholds per service (slow vs. fast endpoints) |
+| **Cascading opens** | Use bulkhead pattern (separate thread pools) for isolation |
+
+### Related Patterns
+
+- **Retry**: Re-attempt failed calls (exponential backoff)
+- **Timeout**: Fail fast if call takes too long
+- **Bulkhead**: Isolate resources (thread pools) per service
+- **Fallback**: Provide alternate behavior when primary fails
