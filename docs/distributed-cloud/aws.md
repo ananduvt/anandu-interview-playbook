@@ -347,4 +347,394 @@ Session Manager provides secure and auditable access without requiring open inbo
 **4. EC2 Serial Console**
 The serial console offers a low-level connection for troubleshooting boot and network issues. You can access it through the EC2 console. However, it only allows one active connection per instance, requires a 30-second wait between sessions, and has limited regional availability.
 
+## Lambda
+
+AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers.
+
+### Key Features
+- **Event-driven**: Triggered by events from S3, DynamoDB, API Gateway, Kinesis, SNS, SQS, etc.
+- **Auto-scaling**: Automatically scales to handle any workload
+- **Pricing**: Pay only for compute time (100ms granularity) + requests
+- **Languages**: Python, Node.js, Java, C#, Go, Ruby, and custom runtimes
+- **Timeout**: Default 3s, max 15 minutes
+
+### Use Cases
+- Microservices (REST APIs via API Gateway)
+- Data processing (S3 uploads → transform → DynamoDB)
+- Real-time file processing (CloudTrail logs)
+- Scheduled tasks (CloudWatch Events + Cron)
+- Webhook handlers
+- Backend for mobile/web apps
+
+### Best Practices
+- Keep functions small and single-purpose
+- Minimize cold start (keep dependencies lightweight, use layers)
+- Store secrets in Secrets Manager, not environment variables
+- Use VPC only when necessary (adds cold start latency)
+- Monitor with CloudWatch Logs and X-Ray
+- Set appropriate timeout and memory allocation
+
+### Example: Lambda Handler
+```python
+import json
+
+def lambda_handler(event, context):
+    # event: Input from trigger (S3, API Gateway, etc.)
+    # context: Runtime info (function name, request ID, etc.)
+    
+    body = json.loads(event.get('body', '{}'))
+    result = process_data(body)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps(result),
+        'headers': {'Content-Type': 'application/json'}
+    }
+
+def process_data(data):
+    # Business logic
+    return {'success': True, 'processed': data}
+```
+
+### Lambda + API Gateway
+Create REST endpoints:
+```
+POST /api/users → Lambda → DynamoDB (create user)
+GET /api/users/{id} → Lambda → DynamoDB (fetch user)
+```
+
+---
+
+## S3 (Simple Storage Service)
+
+Object storage for files, backups, data lakes, static websites.
+
+### Key Concepts
+- **Buckets**: Root containers (globally unique names)
+- **Objects**: Files stored in buckets (key = full path)
+- **Regions**: Buckets are region-specific
+- **Versioning**: Keep multiple versions of objects
+- **Lifecycle Policies**: Automatically move/delete old objects
+
+### Storage Classes (Cost vs Access Speed)
+| Class | Cost | Access Speed | Use Case |
+|-------|------|--------------|----------|
+| **S3 Standard** | High | Instant | Frequently accessed data |
+| **S3 Intelligent-Tiering** | Auto | Auto moves between tiers | Unknown access patterns |
+| **S3 Standard-IA** | Low | Instant (retrieval fee) | Infrequently accessed |
+| **S3 Glacier** | Very Low | Hours (restore time) | Archival, compliance, backups |
+| **S3 Glacier Deep Archive** | Lowest | 12+ hours | Long-term archival |
+
+### Access Control
+- **Bucket Policies**: JSON policies for bucket-level access
+- **ACLs**: Object-level access (mostly replaced by policies)
+- **Pre-signed URLs**: Temporary access to private objects
+- **IAM Roles**: Service roles with S3 permissions
+
+### Security
+- **Encryption**: At-rest (SSE-S3, SSE-KMS), in-transit (HTTPS)
+- **Versioning**: Protect against accidental deletes
+- **MFA Delete**: Require MFA to permanently delete objects
+- **Block Public Access**: Default block all public access
+
+### Common Operations
+```python
+import boto3
+
+s3 = boto3.client('s3')
+
+# Upload file
+s3.upload_file('local.txt', 'my-bucket', 'path/to/remote.txt')
+
+# Download file
+s3.download_file('my-bucket', 'path/to/file.txt', 'local.txt')
+
+# List objects
+response = s3.list_objects_v2(Bucket='my-bucket', Prefix='logs/')
+for obj in response['Contents']:
+    print(obj['Key'])
+
+# Delete object
+s3.delete_object(Bucket='my-bucket', Key='path/to/file.txt')
+
+# Generate pre-signed URL (expires in 1 hour)
+url = s3.generate_presigned_url(
+    'get_object',
+    Params={'Bucket': 'my-bucket', 'Key': 'file.txt'},
+    ExpiresIn=3600
+)
+```
+
+---
+
+## RDS (Relational Database Service)
+
+Managed SQL databases (MySQL, PostgreSQL, MariaDB, Oracle, SQL Server).
+
+### Advantages over EC2 database
+- ✅ Automated backups, patching, scaling
+- ✅ Multi-AZ failover for high availability
+- ✅ Read replicas for scaling reads
+- ✅ No infrastructure management
+- ❌ Less control over database configuration
+
+### Deployment Options
+- **Single-AZ**: Single instance, no failover
+- **Multi-AZ**: Primary + standby (automatic failover)
+- **Read Replicas**: Async copies for read scaling (different region possible)
+
+### Backup & Restore
+- **Automated Backups**: Daily snapshots, 35-day retention
+- **Manual Snapshots**: On-demand backups
+- **Point-in-Time Restore**: Restore to any moment within backup window
+- **Backup Window**: Specify when backups run (impacts performance)
+
+### Performance
+- **Instance Type**: db.t3.micro to db.x2iedn (large memory)
+- **Storage**: Scalable storage, auto-scaling available
+- **IOPS**: Provisioned or auto-scaled
+- **Read Replicas**: Offload reads to async copies (within AWS or other regions)
+
+### Security
+- Encryption at-rest (AWS KMS), in-transit (SSL/TLS)
+- Subnet groups for VPC deployment
+- Security groups for network access
+- IAM authentication (instead of passwords)
+
+### Example: RDS + Lambda
+```python
+import boto3
+import pymysql
+
+rds_endpoint = 'my-db.xxx.rds.amazonaws.com'
+
+def lambda_handler(event, context):
+    conn = pymysql.connect(
+        host=rds_endpoint,
+        user='admin',
+        password=get_secret('db-password'),  # From Secrets Manager
+        database='mydb'
+    )
+    
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE id = %s', (event['userId'],))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    
+    return {'statusCode': 200, 'body': result}
+```
+
+---
+
+## DynamoDB
+
+Fully managed NoSQL database (key-value + document).
+
+### Core Concepts
+- **Table**: Collection of items
+- **Item**: Record with attributes (like JSON document)
+- **Key**: Partition key (required) + sort key (optional)
+- **Attributes**: Fields with values (dynamic schema)
+
+### Throughput Capacity
+- **Provisioned Mode**: Pay for reserved RCU/WCU (read/write capacity units)
+- **On-Demand Mode**: Pay per-request (unpredictable workloads)
+- **1 RCU**: 1 strongly consistent read/sec (4KB) or 2 eventually consistent reads/sec
+- **1 WCU**: 1 write/sec (1KB)
+
+### Data Types
+- String, Number, Boolean
+- List, Map (nested objects)
+- String Set, Number Set, Binary Set
+- Null, Binary
+
+### Query vs Scan
+- **Query**: Use partition key (+ sort key range) → fast, efficient
+- **Scan**: Table-wide search → slow, expensive (avoid in production)
+- **ProjectionExpression**: Fetch only needed attributes
+
+### Global Tables
+- Multi-region replication (eventually consistent)
+- Read from nearest region
+- Write to any region (synchronized)
+
+### TTL (Time To Live)
+Automatically delete items after expiration:
+```json
+{
+  "userId": "12345",
+  "data": "...",
+  "expiresAt": 1699564800  // Unix timestamp
+}
+```
+
+### Example: DynamoDB + Lambda
+```python
+import boto3
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('users')
+
+def lambda_handler(event, context):
+    # Put item
+    table.put_item(Item={
+        'userId': '12345',
+        'name': 'John Doe',
+        'email': 'john@example.com',
+        'expiresAt': int(time.time()) + 86400  # Expire in 1 day
+    })
+    
+    # Get item
+    response = table.get_item(Key={'userId': '12345'})
+    user = response.get('Item')
+    
+    # Query with partition key
+    response = table.query(
+        KeyConditionExpression='userId = :uid',
+        ExpressionAttributeValues={':uid': '12345'}
+    )
+    
+    # Scan with filter (avoid!)
+    response = table.scan(
+        FilterExpression='#status = :status',
+        ExpressionAttributeNames={'#status': 'status'},
+        ExpressionAttributeValues={':status': 'active'}
+    )
+    
+    return {'statusCode': 200, 'items': response.get('Items', [])}
+```
+
+---
+
+## VPC & Networking
+
+### VPC (Virtual Private Cloud)
+- Isolated network within AWS
+- Subnets divide VPC into smaller segments
+- CIDR blocks define IP ranges (e.g., 10.0.0.0/16)
+
+### Subnets
+- **Public Subnet**: Has route to Internet Gateway → instances get public IPs
+- **Private Subnet**: No direct internet → use NAT Gateway for outbound traffic
+- **Multi-AZ**: Deploy across availability zones for HA
+
+### Internet Gateway
+- Enables communication between VPC and internet
+- Attach to VPC + add route in route table
+
+### NAT Gateway
+- Allows private instances to access internet (one-way)
+- Sits in public subnet
+- Assign Elastic IP
+
+### Security Groups vs NACLs
+| Feature | Security Group | NACL |
+|---------|---|---|
+| Level | Instance | Subnet |
+| Stateful | Yes | No |
+| Rules | Allow only | Allow + Deny |
+| Performance | Higher | Lower |
+
+### Route Table
+Determines where traffic is sent:
+```
+Destination       Target
+10.0.0.0/16       Local (within VPC)
+0.0.0.0/0         Internet Gateway (to internet)
+10.1.0.0/16       VPN Connection (to on-prem)
+```
+
+### VPC Peering
+Connect two VPCs privately (no internet exposure):
+```
+VPC A (10.0.0.0/16) ←→ VPC B (10.1.0.0/16)
+```
+
+---
+
+## Other Critical Services
+
+### CloudFront (CDN)
+- Cache content at 600+ edge locations
+- Low latency for global users
+- Integrate with S3, ALB, Lambda@Edge
+- DDoS protection (Shield Standard included)
+
+### ElastiCache
+- In-memory caching (Redis, Memcached)
+- Reduce database load
+- Session storage
+- Leaderboards, real-time analytics
+
+### SNS (Simple Notification Service)
+- Publish-Subscribe messaging
+- Send emails, SMS, push notifications
+- Fan-out pattern (one message → many subscribers)
+
+### SQS (Simple Queue Service)
+- Decoupled message processing
+- FIFO vs Standard queues
+- Visibility timeout, dead-letter queues
+- Lambda → SQS → Workers
+
+### Kinesis
+- Real-time streaming data
+- Analytics, dashboards
+- High throughput, low latency
+
+---
+
+## Monitoring & Logging
+
+### CloudWatch
+- Metrics (CPU, disk, network)
+- Logs (application, system events)
+- Alarms (trigger on thresholds)
+- Dashboards
+
+### CloudTrail
+- API audit logs
+- Who did what, when
+- Compliance, forensics
+
+### X-Ray
+- Distributed tracing
+- Visualize service calls
+- Performance bottlenecks
+
+---
+
+## Cost Optimization
+
+1. **Right-sizing**: Choose appropriate instance types
+2. **Spot Instances**: 70% discount but can be interrupted
+3. **Reserved Instances / Savings Plans**: 1-3 year commitment discount
+4. **Scheduled Scaling**: Scale down non-production at night
+5. **Storage Optimization**: Use Glacier for old data
+6. **Terminate unused resources**: Turn off dev/test environments
+
+---
+
+## Best Practices
+
+✅ **Do's**
+- Use least-privilege IAM policies
+- Enable MFA on root account
+- Use Secrets Manager for credentials
+- Enable encryption everywhere (S3, RDS, EBS)
+- Monitor with CloudWatch/CloudTrail
+- Design for multi-AZ failover
+- Use VPC for isolation
+
+❌ **Don'ts**
+- Don't use root AWS account
+- Don't hardcode credentials
+- Don't make S3 buckets public (unless necessary)
+- Don't use default security groups
+- Don't ignore AWS billing alerts
+- Don't store backups in same region (no DR)
+
+---
+
 ## EC2 – Instance Storage

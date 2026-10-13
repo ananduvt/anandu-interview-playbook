@@ -79,26 +79,30 @@ nav:
       - Collections: java-collections-concurrency/collections.md
       - Functional Programming: java-collections-concurrency/functional-programming.md
       - Streams: java-collections-concurrency/streams.md
-      - Concurrency & Threads: java-collections-concurrency/concurrency.md
-      - Threading & Virtual Threads: java-collections-concurrency/threading.md
+      - Concurrency, Threads & Virtual Threads: java-collections-concurrency/concurrency.md
       - Testing: java-collections-concurrency/testing.md
   - Java Patterns & Advanced:
       - Overview: java-patterns-advanced/index.md
       - Design Patterns: java-patterns-advanced/design-patterns.md
       - Logging & Performance: java-patterns-advanced/logging-performance.md
       - Advanced Topics: java-patterns-advanced/advanced.md
-  - Spring & Web:
+  - Spring Core & Web:
       - Overview: spring-web/index.md
       - Spring Boot: spring-web/spring-boot.md
       - Spring Annotations & Components: spring-web/spring-annotations-components.md
       - Spring Boot Advanced: spring-web/spring-boot-advanced.md
-      - Spring Boot Circuit Breaker: spring-web/spring-boot-circuit-breaker.md
-      - Spring Threading & Async: spring-web/spring-threading.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
-      - Security: spring-web/security.md
+      - Exception Handling: spring-web/spring-exceptions.md
+  - Spring Security & Data:
+      - Security & RBAC: spring-web/security.md
       - JWT & OAuth2: spring-web/jwt-oauth.md
       - JPA & ORM: spring-web/jpa-orm.md
+  - Spring Patterns & Observability:
+      - Circuit Breaker & Resilience: spring-web/spring-boot-circuit-breaker.md
+      - Threading & Async: spring-web/spring-threading.md
+      - WebFlux & Reactive: spring-web/spring-webflux.md
+      - Actuator & Monitoring: spring-web/spring-boot-actuator.md
   - Databases:
       - Overview (ACID/BASE/CAP): databases/index.md
       - SQL & Relational: databases/sql.md
@@ -108,8 +112,7 @@ nav:
       - ML Fundamentals: ai-ml/fundamentals.md
       - ML Algorithms: ai-ml/algorithms.md
       - Deep Learning: ai-ml/deep-learning.md
-      - LLMs & Transformers: ai-ml/llms-transformers.md
-      - RAG & Generative AI: ai-ml/rag-generative.md
+      - LLMs, RAG & Generative AI: ai-ml/llms-transformers.md
       - AI & Java Integration: ai-ml/ai-java.md
   - Microservices & Distributed Systems:
       - Overview: microservices-distributed/index.md
@@ -120,13 +123,15 @@ nav:
   - Cloud Services:
       - Overview: distributed-cloud/index.md
       - Caching: distributed-cloud/caching.md
+      - Redis Advanced: distributed-cloud/redis.md
       - AWS: distributed-cloud/aws.md
-  - DevOps:
+  - DevOps Fundamentals:
       - Overview: devops/index.md
       - Git: devops/git.md
       - Build Tools: devops/build-tools.md
       - CI/CD: devops/ci-cd.md
       - Docker & Containers: devops/docker.md
+  - DevOps Infrastructure:
       - Kubernetes: devops/kubernetes.md
       - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
       - Observability: devops/observability.md
