@@ -83,6 +83,361 @@
 | The user authentication is identified with username, password, face recognition, retina scan, fingerprints, etc.  | The user authorization is carried out through the access rights to resources by using roles that have been pre-defined. |
 | Example: Employees in a company are required to authenticate through the network before accessing their company email. | Example: After an employee successfully authenticates, the system determines what information the employees are allowed to access.  |
 
-?? GraphQL
-?? API Auth Methods
- ?? SSO - JWT - Auth mechanisms
+---
+
+## GraphQL
+
+**GraphQL** — Query language for APIs; clients request exactly the fields they need from a single endpoint.
+
+### Core Concepts
+
+- **Single Endpoint**: Usually POST /graphql (vs REST with multiple URLs)
+- **Strongly Typed Schema**: Defines all possible queries, mutations, and subscriptions
+- **No Over/Under-fetching**: Get exactly what you need in one request
+- **Resolvers**: Functions that fetch data for each field
+
+### Query vs Mutation vs Subscription
+
+**Query** (read):
+```graphql
+query {
+  user(id: 123) {
+    name
+    email
+    posts {
+      id
+      title
+    }
+  }
+}
+```
+
+**Mutation** (write):
+```graphql
+mutation {
+  createUser(input: {name: "John", email: "john@example.com"}) {
+    id
+    name
+  }
+}
+```
+
+**Subscription** (real-time):
+```graphql
+subscription {
+  userCreated {
+    id
+    name
+  }
+}
+```
+
+### Advantages Over REST
+
+- **One Request**: Fetch user + posts + comments in single call (REST needs 3 requests)
+- **Flexible**: Frontend chooses fields; backend doesn't need separate endpoints
+- **Strongly Typed**: Schema serves as documentation and IDE autocomplete
+- **Real-time**: Built-in subscriptions for live updates
+
+### Disadvantages
+
+- **Complexity**: Steeper learning curve, complex queries hard to optimize
+- **Caching**: HTTP caching works better with REST; GraphQL needs custom caching
+- **Monitoring**: Harder to track errors and performance (all POST to same endpoint)
+- **File Upload**: Not as straightforward as REST multipart forms
+
+### When to Use GraphQL
+
+✅ **Use if:**
+- Complex/nested data fetching
+- Multiple client types (web, mobile, IoT) with different data needs
+- Real-time data important (subscriptions)
+- Rapid frontend iteration
+
+❌ **Avoid if:**
+- Simple CRUD operations (REST is simpler)
+- File uploads important
+- Team unfamiliar with GraphQL
+- Real-time not needed
+
+### Spring Boot GraphQL Integration
+
+```java
+// Dependency
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-graphql</artifactId>
+</dependency>
+
+// schema.graphqls
+type Query {
+  user(id: ID!): User
+  users: [User!]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  posts: [Post!]!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+  author: User!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+}
+
+// Controller
+@Controller
+public class UserGraphQL {
+    private UserService userService;
+    private PostService postService;
+    
+    @QueryMapping
+    public User user(@Argument Long id) {
+        return userService.findById(id);
+    }
+    
+    @QueryMapping
+    public List<User> users() {
+        return userService.findAll();
+    }
+    
+    @MutationMapping
+    public User createUser(@Argument CreateUserInput input) {
+        return userService.create(input);
+    }
+    
+    @SchemaMapping
+    public List<Post> posts(User user) {
+        return postService.findByAuthor(user);
+    }
+}
+
+// Client request
+POST /graphql
+{
+  "query": "{ user(id: 1) { name email posts { title } } }"
+}
+
+// Response
+{
+  "data": {
+    "user": {
+      "name": "John",
+      "email": "john@example.com",
+      "posts": [
+        {"title": "GraphQL Intro"},
+        {"title": "REST vs GraphQL"}
+      ]
+    }
+  }
+}
+```
+
+---
+
+## API Authentication & Authorization Methods
+
+### Authentication Mechanisms
+
+#### 1. Basic Authentication
+Username + password in Authorization header (base64 encoded):
+```
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+- ✅ Simple, no session needed
+- ❌ Credentials exposed if not over HTTPS
+- ❌ Can't log out (always re-authenticate)
+- **Use**: Simple APIs, internal services
+
+#### 2. API Keys
+Secret token passed in header or query param:
+```
+Authorization: Bearer sk_live_123456789
+X-API-Key: sk_live_123456789
+```
+
+- ✅ Simple to implement and use
+- ❌ No standard format
+- ❌ If leaked, entire API compromised
+- **Use**: Public APIs, third-party integrations
+
+#### 3. JWT (JSON Web Tokens)
+Stateless token containing claims (user, roles, expiry):
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+Token structure: `header.payload.signature`
+- ✅ Stateless, scales well
+- ✅ Can include roles/permissions
+- ✅ Works across services
+- ❌ Can't revoke until expiry (need blacklist)
+- **Use**: SPAs, microservices, mobile apps
+
+#### 4. OAuth 2.0
+Delegated authorization (user doesn't share password):
+```
+Authorization: Bearer <access_token>
+```
+
+Flow:
+1. User redirects to OAuth provider
+2. User grants permission
+3. App receives auth code
+4. App exchanges code for access token
+5. App uses token to access API
+
+- ✅ User password never shared with app
+- ✅ User can revoke access anytime
+- ✅ Standardized protocol
+- ❌ More complex setup
+- **Use**: Third-party integrations, social login
+
+#### 5. OpenID Connect (OIDC)
+OAuth 2.0 + authentication (adds ID token with user info):
+```json
+{
+  "access_token": "...",
+  "id_token": "eyJ...",  // User info
+  "token_type": "Bearer"
+}
+```
+
+- ✅ Combines auth + authorization
+- ✅ User identity verified
+- ❌ More complex
+- **Use**: Enterprise SSO, third-party identity
+
+#### 6. Mutual TLS (mTLS)
+Certificate-based authentication for service-to-service:
+```
+Client certificate → Server validates → Mutual trust
+```
+
+- ✅ Strongest security (client + server certs)
+- ✅ No passwords
+- ❌ Complex certificate management
+- **Use**: Microservices, internal APIs
+
+#### 7. Session-Based (Cookies)
+Server creates session, stores in memory/DB, returns session ID in cookie:
+```
+Set-Cookie: JSESSIONID=abc123; HttpOnly; Secure
+```
+
+- ✅ Built-in to web frameworks
+- ✅ Familiar to developers
+- ❌ Requires server-side storage
+- ❌ Doesn't scale across servers (needs session replication)
+- **Use**: Traditional monolithic apps
+
+### Comparison Table
+
+| Method | Stateless | Scalable | Secure | Use Case |
+|--------|-----------|----------|--------|----------|
+| **Basic Auth** | ✅ | ✅ | ❌ | Internal APIs only |
+| **API Keys** | ✅ | ✅ | ⚠️ | Public APIs, third-party |
+| **JWT** | ✅ | ✅ | ✅ | Modern SPAs, microservices |
+| **OAuth 2.0** | ✅ | ✅ | ✅ | Third-party integrations |
+| **OIDC** | ✅ | ✅ | ✅ | Enterprise SSO |
+| **mTLS** | ✅ | ✅ | ✅✅ | Service-to-service |
+| **Session** | ❌ | ❌ | ✅ | Monolithic apps |
+
+### Single Sign-On (SSO)
+
+**SSO** — User logs in once, accesses multiple applications without re-authentication.
+
+#### How SSO Works
+
+1. User visits App A
+2. App A redirects to SSO Server (e.g., Okta, Azure AD, Keycloak)
+3. User logs in with identity provider
+4. SSO Server redirects back to App A with token
+5. User now authenticated in App A
+6. User visits App B
+7. App B redirects to same SSO Server
+8. SSO Server recognizes user (already logged in)
+9. App B receives token without user re-authenticating
+
+#### Common Protocols
+
+- **SAML 2.0**: XML-based, enterprise standard
+- **OpenID Connect**: Modern, JWT-based, uses OAuth 2.0
+- **Kerberos**: Unix/Windows domain authentication
+
+#### Spring Boot SSO Example (OAuth 2.0)
+
+```yaml
+# application.yml
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          okta:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            scope: openid,profile,email
+            redirect-uri: http://localhost:8080/login/oauth2/code/okta
+        provider:
+          okta:
+            issuer-uri: https://your-okta-domain.okta.com
+            user-name-attribute: name
+```
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+            .oauth2Login()
+                .defaultSuccessUrl("/home");
+        return http.build();
+    }
+}
+```
+
+### Authorization Strategies
+
+#### Role-Based Access Control (RBAC)
+Users have roles, roles have permissions:
+```
+User → Roles (ADMIN, USER) → Permissions (read, write, delete)
+```
+
+#### Attribute-Based Access Control (ABAC)
+Fine-grained policies based on attributes:
+```
+if (user.role == "ADMIN" AND resource.classification == "PUBLIC") → allow
+if (user.department == resource.owner_dept AND time.is_business_hours()) → allow
+```
+
+#### OAuth 2.0 Scopes
+Request specific permissions:
+```
+scope=read:users,write:posts
+→ Can read users but only write posts (not other resources)
+```
+
+---
+
+**See also:** [Web Fundamentals - Security](../../foundations/web-fundamentals.md), [Spring Security & RBAC](security.md), [JWT & OAuth2](jwt-oauth.md)
