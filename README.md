@@ -1,7 +1,14 @@
 # Anandu's Interview Playbook
 
 A living, shareable interview-prep playbook. Notes live as Markdown and are published as a static site
-(Material for MkDocs). The **repo is private**; the **published site is public** (scrubbed content only).
+(Material for MkDocs).
+
+## Published site
+
+**Live**: https://ananduvt.github.io/anandu-interview-playbook/
+
+Hosted on GitHub Pages. Auto-rebuilds on merge to `main`.
+
 
 ## Structure
 ```
@@ -16,12 +23,25 @@ A living, shareable interview-prep playbook. Notes live as Markdown and are publ
 └── README.md        # this file
 ```
 
-## Guidelines for Contributors
-All content under `docs/` is **public**. Keep it free of employer/client identifiers:
-- No internal system/service names, endpoints, ticket IDs, hostnames
-- No cluster names, account/client IDs, or internal URLs
-- Describe things generically (e.g., "an aggregation microservice", "a downstream service")
-- Use real-world examples and general technical knowledge
+## Contributing
+
+All content under `docs/` is **public**. Before contributing, read:
+
+1. **[AGENTS.md](AGENTS.md)** — Core rules for editors (file size targets, splitting strategy, no commit without review, safety guidelines)
+2. **[CONTRIBUTING.md](CONTRIBUTING.md)** — Content style and patterns (how to write annotations, design patterns, performance sections; section index page templates)
+
+### Quick Guidelines
+- **No internal identifiers**: No system/service names, endpoints, ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs
+- **Describe generically**: e.g., "an aggregation microservice", "a downstream service"
+- **Interview-focused**: Use real-world examples and general technical knowledge
+- **Stay within limits**: Aim for 300–600 lines per file; split if it grows beyond 600 lines
+- **Max 6 subtopics per section**: If more, create a new parent section
+- **🔄 Update related files**: When adding/changing content, ALWAYS update:
+  - Section index pages (`docs/*/index.md`)
+  - `mkdocs.yml` navigation
+  - `docs/index.md` home page
+  - Cross-references between topics
+- **Review before merge**: Never commit without approval
 
 ## Run locally
 
@@ -33,12 +53,6 @@ python3 -m venv .venv && .venv\Scripts\Activate.ps1  # Windows PowerShell
 pip install mkdocs-material
 mkdocs serve                                           # http://127.0.0.1:8000
 ```
-
-## Published site
-
-**Live**: https://ananduvt.github.io/anandu-interview-playbook/
-
-Hosted on GitHub Pages. Auto-rebuilds on merge to `main`.
 
 ## Maintaining
 
