@@ -97,6 +97,7 @@ nav:
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
       - Security: spring-web/security.md
+      - JWT & OAuth2: spring-web/jwt-oauth.md
       - JPA & ORM: spring-web/jpa-orm.md
   - Databases:
       - Overview (ACID/BASE/CAP): databases/index.md
@@ -132,7 +133,6 @@ nav:
   - Security & Vulnerabilities: security/index.md
   - Interview Prep:
       - Overview: interview-prep/index.md
-      - Question Bank: interview-prep/question-bank.md
       - Behavioral / STAR: interview-prep/behavioral.md
       - Quick Reference: interview-prep/quick-reference.md
   - Interview Questions:
@@ -151,5 +151,4 @@ nav:
           - DevOps: interview-questions/verbal/verbal-devops-questions.md
           - ML/AI: interview-questions/verbal/verbal-ml-ai-questions.md
   - Resources: resources/index.md
-  - Backlog: backlog.md
   - Feedback: feedback.md

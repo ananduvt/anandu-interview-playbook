@@ -39,8 +39,12 @@ API design paradigms: REST conventions (GET/POST/PUT/DELETE/PATCH), GraphQL quer
 Centralized exception handling: @ControllerAdvice for global handlers, @ExceptionHandler mapping exceptions to HTTP responses, validation error handling, custom exception hierarchies, async exception handling.
 
 ### [Security](security.md)
-**Authentication - Authorization - Spring Security - OAuth2 - JWT - SSL/TLS - CORS**  
-API security: user authentication (session vs. token-based), role-based authorization, Spring Security configuration, OAuth2 flows, JWT validation, HTTPS/TLS, cross-origin handling.
+**Authentication - Authorization - Spring Security - OAuth2 - SSL/TLS - CORS - OWASP Top 10**  
+API security fundamentals: user authentication, role-based authorization, Spring Security configuration, HTTPS/TLS, cross-origin handling, OWASP defenses.
+
+### [JWT & OAuth2](jwt-oauth.md)
+**JWT Tokens - OAuth2 Flows - Token Refresh - Role-Based Access - Authentication Filters - Security Best Practices**  
+Token-based authentication: JWT structure and validation, OAuth2 grant types, implementation with Spring Security, refresh token patterns, token blacklisting, multi-tenancy, security best practices.
 
 ### [JPA & ORM](jpa-orm.md)
 **JPA - Hibernate - Entity Mapping - Relationships - Query Language - Transactions - Lazy/Eager Loading**  

@@ -1,0 +1,15 @@
+1) read backlog.md and add all missing topics , then remove the backlog.md , from nav too 
+2) do same with - docs/interview-prep/question-bank.md , check if topics are there and add them , then 
+move these questions to question bank. 
+3) add below topics
+  caching
+  spring caching
+  spring security
+  how @transactional works
+  Spring Cloud annotations (like microservices configuration)
+  authentication mechanisms ,username/password,  JWT, oAuth so on 
+  JPA , hibernete and mybatis
+  Types of dbs , sql & no-sql , examples
+  DB related principles like normalization
+  Cloud - Aws services and basics
+  
