@@ -134,6 +134,7 @@ nav:
   - DevOps Infrastructure:
       - Kubernetes: devops/kubernetes.md
       - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
+      - Kubernetes Advanced (Helm & Istio): devops/kubernetes-advanced.md
       - Observability: devops/observability.md
   - Security & Vulnerabilities: security/index.md
   - Interview Prep:
