@@ -34,6 +34,10 @@ Web service architectures: SOAP vs. REST trade-offs, WSDL contracts, RESTful res
 **REST - GraphQL - gRPC - OpenAPI/Swagger - HATEOAS - Versioning - Status Codes**  
 API design paradigms: REST conventions (GET/POST/PUT/DELETE/PATCH), GraphQL query language, gRPC binary protocol, API documentation with Swagger/OpenAPI, deprecation strategies.
 
+### [Exception Handling](spring-exceptions.md)
+**@ControllerAdvice - @ExceptionHandler - Global Error Handling - Validation Errors - HTTP Status Codes - Error Response DTO**  
+Centralized exception handling: @ControllerAdvice for global handlers, @ExceptionHandler mapping exceptions to HTTP responses, validation error handling, custom exception hierarchies, async exception handling.
+
 ### [Security](security.md)
 **Authentication - Authorization - Spring Security - OAuth2 - JWT - SSL/TLS - CORS**  
 API security: user authentication (session vs. token-based), role-based authorization, Spring Security configuration, OAuth2 flows, JWT validation, HTTPS/TLS, cross-origin handling.

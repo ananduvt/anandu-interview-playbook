@@ -102,6 +102,14 @@ nav:
       - Overview (ACID/BASE/CAP): databases/index.md
       - SQL & Relational: databases/sql.md
       - Scaling & NoSQL: databases/scaling.md
+  - AI & Machine Learning:
+      - Overview: ai-ml/index.md
+      - ML Fundamentals: ai-ml/fundamentals.md
+      - ML Algorithms: ai-ml/algorithms.md
+      - Deep Learning: ai-ml/deep-learning.md
+      - LLMs & Transformers: ai-ml/llms-transformers.md
+      - RAG & Generative AI: ai-ml/rag-generative.md
+      - AI & Java Integration: ai-ml/ai-java.md
   - Microservices & Distributed Systems:
       - Overview: microservices-distributed/index.md
       - Principles & Patterns: microservices-distributed/principles.md

@@ -70,6 +70,14 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     [:octicons-arrow-right-24: Open](databases/index.md)
 
+-   :material-brain:{ .lg .middle } **AI & Machine Learning**
+
+    ---
+
+    ML fundamentals, algorithms, deep learning, LLMs, RAG, Java integration
+
+    [:octicons-arrow-right-24: Open](ai-ml/index.md)
+
 -   :material-sitemap-outline:{ .lg .middle } **Microservices & Distributed Systems**
 
     ---
