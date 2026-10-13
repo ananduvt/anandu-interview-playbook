@@ -90,6 +90,7 @@ nav:
   - Spring & Web:
       - Overview: spring-web/index.md
       - Spring Boot: spring-web/spring-boot.md
+      - Spring Annotations & Components: spring-web/spring-annotations-components.md
       - Spring Boot Advanced: spring-web/spring-boot-advanced.md
       - Spring Boot Circuit Breaker: spring-web/spring-boot-circuit-breaker.md
       - Spring Threading & Async: spring-web/spring-threading.md
@@ -118,6 +119,7 @@ nav:
       - CI/CD: devops/ci-cd.md
       - Docker & Containers: devops/docker.md
       - Kubernetes: devops/kubernetes.md
+      - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
       - Observability: devops/observability.md
   - Security & Vulnerabilities: security/index.md
   - Interview Prep:

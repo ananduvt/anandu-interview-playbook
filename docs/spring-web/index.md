@@ -7,8 +7,12 @@ Master Spring Framework for building enterprise web applications: core concepts,
 ## Topics
 
 ### [Spring Boot](spring-boot.md)
-**Spring Boot - Annotations - Auto-Configuration - Stereotypes - Request Handling - Configuration Files**  
-Spring Boot fundamentals: @SpringBootApplication, @Configuration, @Bean, stereotypes (@Service, @Repository, @Controller), request handling annotations, basic property configuration.
+**Spring Boot - Auto-Configuration - Request Handling - Configuration Files - Starter Dependencies**  
+Spring Boot fundamentals: @SpringBootApplication, @Configuration, @Bean, request handling annotations, basic property configuration, starter dependencies.
+
+### [Spring Annotations & Components](spring-annotations-components.md)
+**@Component - @Service - @Repository - @Controller - @RestController - Bean Lifecycle - Component Scanning - Qualifiers**  
+Stereotype annotations and bean management: @Component, @Service, @Repository, @Controller vs @RestController, bean scopes (singleton/prototype), component scanning process, @Qualifier/@Primary disambiguation, real-world layered architecture.
 
 ### [Spring Boot Advanced](spring-boot-advanced.md)
 **Dependency Injection - Bean Lifecycle - Application Lifecycle - Profiles - Environment Configuration - Conditional Beans**  
