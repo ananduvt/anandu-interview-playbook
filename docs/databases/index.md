@@ -79,7 +79,64 @@ Types of DB ?
 	Triggers
 	Procedures
 
-Db Types ??
+## Database Types
+
+### Relational (SQL)
+- MySQL, PostgreSQL, Oracle, SQL Server, MariaDB
+- **Structure:** Tables with rows/columns, ACID transactions
+- **Use:** Business apps, financial systems, anything needing transactions
+- **Pros:** Strong consistency, complex queries (JOINs), ACID guarantees
+- **Cons:** Less flexible schema, scaling horizontally is hard
+
+### NoSQL
+
+#### Document Databases
+- MongoDB, CouchDB, Firebase
+- **Structure:** JSON-like documents, flexible schema
+- **Use:** Content management, user profiles, catalogs
+- **Pros:** Flexible, fast reads/writes, scales horizontally
+- **Cons:** No strong ACID, eventual consistency
+
+#### Key-Value Stores
+- Redis, Memcached, DynamoDB
+- **Structure:** Simple key → value mapping
+- **Use:** Caching, sessions, leaderboards, real-time
+- **Pros:** Ultra-fast, simple, scales well
+- **Cons:** Limited query capabilities
+
+#### Column-Family Databases
+- HBase, Cassandra, Google BigTable
+- **Structure:** Data stored by column families (optimized for analytics)
+- **Use:** Time-series data, analytics, massive scale (petabytes)
+- **Pros:** Extreme scalability, columnar compression
+- **Cons:** Complex, eventual consistency
+
+#### Graph Databases
+- Neo4j, ArangoDB
+- **Structure:** Nodes and relationships
+- **Use:** Social networks, recommendations, knowledge graphs
+- **Pros:** Fast relationship queries, natural modeling
+- **Cons:** Specialized use cases
+
+#### Search Engines
+- Elasticsearch, Solr
+- **Structure:** Inverted indexes for full-text search
+- **Use:** Search, logging, analytics
+- **Pros:** Fast full-text search, powerful aggregations
+- **Cons:** Not transactional
+
+### When to Use Which
+
+| Need | Type | Example |
+|------|------|---------|
+| **ACID transactions** | SQL | Banking, inventory |
+| **Flexible schema** | Document (MongoDB) | Content management |
+| **Ultra-fast reads/writes** | Key-Value (Redis) | Caching, sessions |
+| **Time-series/analytics** | Column-Family (Cassandra) | Metrics, logs |
+| **Relationships** | Graph (Neo4j) | Social network |
+| **Full-text search** | Search (Elasticsearch) | Search results |
+
+**[See more: SQL & Relational](sql.md) | [NoSQL & Scaling](scaling.md)**
 
 Db improvements / efficiency - design principles
 

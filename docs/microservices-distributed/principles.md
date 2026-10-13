@@ -14,7 +14,40 @@
 
 **BPO,** Business process outsourcing is a method of subcontracting various business-related operations to third-party vendors.
 
-rds vs s3 ??
+### RDS vs S3
+
+**RDS (Relational Database Service)**
+- **What:** Managed SQL database (MySQL, PostgreSQL, Oracle, SQL Server)
+- **Storage:** Structured data in tables with rows/columns
+- **Use Cases:** Business apps, transactions, complex queries, consistency-critical data
+- **Access:** Query language (SQL), structured access
+- **Pricing:** Pay per DB instance size + storage
+- **Scaling:** Vertical (bigger instance), limited horizontal scaling
+
+**S3 (Simple Storage Service)**
+- **What:** Object storage (files, blobs, unstructured data)
+- **Storage:** Any file type (images, videos, backups, documents, logs)
+- **Use Cases:** File storage, backups, archives, static assets, data lakes
+- **Access:** HTTP GET/PUT/DELETE by key
+- **Pricing:** Pay per GB stored + data transfer
+- **Scaling:** Unlimited horizontal scaling, unlimited objects
+
+**When to Use Which:**
+
+| Scenario | Choice | Why |
+|----------|--------|-----|
+| User data, transactions | RDS | Needs ACID, complex queries, relationships |
+| User-uploaded images | S3 | Object storage, cheap, scalable |
+| Application logs | S3 | Unstructured, high volume, retention |
+| Inventory management | RDS | Structured, transactions, consistency |
+| Database backups | S3 | Durable, versioned, cheap long-term storage |
+| Machine learning datasets | S3 | Large files, parallel access, integration with ML services |
+| Real-time metrics | RDS | Needs complex queries, time-series queries |
+| Static website assets | S3 | Fast distribution via CloudFront CDN |
+
+**In Microservices:**
+- **RDS:** Database per service (database-per-service pattern)
+- **S3:** Shared data lake, audit logs, backups across services
 
 ## Principles
 

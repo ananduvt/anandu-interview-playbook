@@ -246,8 +246,99 @@ Valid identifiers are in the set [A-Za-z0-9] and cannot be empty. **Pre-release 
 | :---: | :---: | :---: |
 | PROLOG | Haskell SML Clojure Scala Erlang Clean F# | SQL (only DQL) QML RDQL SPARQL |
 
-## SDLC Envs
+## SDLC Environments
+
+**Development** → **Testing/QA** → **Staging** → **Production**
 
 ![](../assets/sdlc-environments.png)
-?? Devops - tasks - dev task -
-?? Sass and others
+
+### Development (Dev)
+- **Purpose:** Developers write and test code locally
+- **Characteristics:** Unstable, frequent changes, minimal security
+- **Database:** Local copy or dev database (can reset/truncate)
+- **Users:** Developers only
+- **DevOps Tasks:**
+  - Setup development tools (IDE, Docker, databases)
+  - Code review process
+  - Automated testing on commit (pre-commit hooks)
+  - Dependency management
+
+### Testing/QA Environment
+- **Purpose:** Comprehensive testing before production
+- **Characteristics:** Mirrors production, stable builds
+- **Database:** Sanitized production-like data (PII removed)
+- **Users:** QA team, sometimes product owners
+- **DevOps Tasks:**
+  - Automated test execution (unit, integration, E2E tests)
+  - Performance testing under load
+  - Security scanning (vulnerability checks, OWASP)
+  - Test coverage reporting
+
+### Staging (Pre-Production)
+- **Purpose:** Final validation before production release
+- **Characteristics:** Identical to production, read-only
+- **Database:** Copy of production data (for realistic testing)
+- **Users:** QA team, stakeholders (read-only)
+- **DevOps Tasks:**
+  - Blue-green or canary deployment testing
+  - Load testing with production-like traffic
+  - Backup and disaster recovery drills
+  - Security penetration testing
+
+### Production (Prod)
+- **Purpose:** Live system serving real users
+- **Characteristics:** High availability, zero downtime deployments
+- **Database:** Real production data (critical!)
+- **Users:** All end users
+- **DevOps Tasks:**
+  - Health monitoring and alerting
+  - Log aggregation and debugging
+  - Rollback procedures
+  - Backup and recovery
+  - Performance optimization
+
+---
+
+## Deployment Models
+
+### On-Premise
+- **What:** Software runs on company servers
+- **Pros:** Full control, security, compliance
+- **Cons:** Expensive (hardware, staff), scalability limited, maintenance burden
+- **Use:** Regulated industries (finance, healthcare), large enterprises
+
+### Platform as a Service (PaaS)
+- **What:** Platform to deploy applications (Heroku, AWS Elastic Beanstalk, Google App Engine)
+- **Pros:** Managed infrastructure, auto-scaling, minimal DevOps needed
+- **Cons:** Less control, vendor lock-in, higher costs at scale
+- **Use:** Startups, rapid prototyping, small-medium teams
+
+### Infrastructure as a Service (IaaS)
+- **What:** Cloud compute/storage (AWS EC2, Google Compute, Azure VMs)
+- **Pros:** Flexible, pay-as-you-go, global availability
+- **Cons:** More DevOps responsibility, more configuration
+- **Use:** Production systems, teams with DevOps expertise
+
+### Software as a Service (SaaS)
+- **What:** Cloud-hosted applications (Salesforce, Google Workspace, Office 365)
+- **Pros:** Zero infrastructure, automatic updates, accessible anywhere
+- **Cons:** No customization, data in vendor's hands, subscription cost
+- **Use:** Business applications, non-core systems
+
+### Hybrid/Multi-Cloud
+- **What:** Combination of on-premise + multiple cloud providers
+- **Pros:** Flexibility, avoid lock-in, redundancy
+- **Cons:** Complex, expensive, difficult to manage
+- **Use:** Large enterprises, critical systems
+
+### Serverless
+- **What:** Managed functions without servers (AWS Lambda, Google Cloud Functions)
+- **Pros:** Ultra-scalable, pay-per-execution, no ops overhead
+- **Cons:** Cold starts, limited runtime, vendor lock-in
+- **Use:** Event-driven apps, APIs, microservices
+
+### Containerized (Kubernetes)
+- **What:** Container orchestration (Docker + Kubernetes)
+- **Pros:** Portable, scalable, modern DevOps
+- **Cons:** Steep learning curve, operational complexity
+- **Use:** Microservices, complex deployments

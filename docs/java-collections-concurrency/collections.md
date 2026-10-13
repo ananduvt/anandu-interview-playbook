@@ -31,19 +31,26 @@
     * SortedMap(I)
       * TreeMap(C)
 
-**Collections** - utility Class ??
+**Collections Utility Class**
 
-* addAll(\*)
-* sort()
-* shuffling()
-* search - binary
-* reverse
-* rotate
-* fill
-* copy
-* min and max
+The `java.util.Collections` class provides static utility methods for common operations on collections:
 
-**Collections.sort - algorithm ?**
+* **addAll(Collection<? super T> c, T... elements)** - Add all elements to collection
+* **sort(List<T> list)** - Sort list in ascending order (natural ordering)
+* **sort(List<T> list, Comparator<? super T> c)** - Sort with custom comparator
+* **shuffle(List<?> list)** - Randomize order of elements
+* **binarySearch(List<? extends Comparable<? super T>> list, T key)** - Search in sorted list
+* **reverse(List<?> list)** - Reverse order
+* **rotate(List<?> list, int distance)** - Rotate elements
+* **fill(List<? super T> list, T obj)** - Fill all positions with same value
+* **copy(List<? super T> dest, List<? extends T> src)** - Copy source to destination
+* **min(Collection<? extends T> coll)** - Find minimum element
+* **max(Collection<? extends T> coll)** - Find maximum element
+* **disjoint(Collection<?> c1, Collection<?> c2)** - Check if collections have no common elements
+* **frequency(Collection<?> c, Object o)** - Count occurrences of element
+* **replaceAll(List<T> list, T oldVal, T newVal)** - Replace all occurrences
+
+**Collections.sort() Algorithm:** Uses merge sort (stable, O(n log n) guaranteed)
 
 ## ArrayList
 
@@ -100,9 +107,39 @@ A lower load factor means that the hash table will be resized more frequently, l
 * Null element can store only once.
 * Implementations are HashSet, LinkedHashSet.
 
-hash Map ??
+**HashMap - Key Characteristics**
 
-List vs Set ??
+| Property | Detail |
+|----------|--------|
+| **Hashing** | Uses hash codes to map keys to bucket positions |
+| **Collisions** | Handled via chaining (linked list) or tree (since Java 8) |
+| **Bucket Conversion** | When chain length > 8, converts to Red-Black tree for O(log n) |
+| **Thread Safety** | Not synchronized (use ConcurrentHashMap or Collections.synchronizedMap) |
+| **Null Keys** | Allows one null key |
+| **Null Values** | Allows multiple null values |
+| **Iteration Order** | No guaranteed order (insertion order: LinkedHashMap; sorted: TreeMap) |
+| **Performance** | O(1) average case, O(n) worst case (hash collision) |
+
+**HashMap vs ConcurrentHashMap vs Hashtable:**
+- **HashMap:** Fast, not thread-safe, preferred for single-threaded
+- **ConcurrentHashMap:** Thread-safe with segment-level locking, best for multi-threaded
+- **Hashtable:** Legacy, fully synchronized (slow), avoid in modern code
+
+**List vs Set - Comparison**
+
+| Feature | List | Set |
+|---------|------|-----|
+| **Order** | ✅ Maintains insertion order | ❌ No order guarantee (except LinkedHashSet, TreeSet) |
+| **Duplicates** | ✅ Allows duplicates | ❌ No duplicates |
+| **Indexing** | ✅ Access by index (get, set) | ❌ No index-based access |
+| **Null** | ✅ Multiple nulls allowed | ⚠️ One null (only HashSet/LinkedHashSet) |
+| **Common Impls** | ArrayList, LinkedList, Vector | HashSet, LinkedHashSet, TreeSet |
+| **Use Case** | Maintaining sequence | Unique values, membership checking |
+| **Performance** | ArrayList: O(1) access, O(n) insert | HashSet: O(1) average, O(n) worst |
+
+**When to use:**
+- **List:** You need sequence order or indexed access (users in order, student records)
+- **Set:** You need uniqueness and fast lookup (unique emails, tags, categories)
 
 Stack and queue
 
