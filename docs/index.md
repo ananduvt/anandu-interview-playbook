@@ -118,6 +118,14 @@ A **living, shareable interview-prep playbook** — study notes across CS fundam
 
     [:octicons-arrow-right-24: Open](interview-prep/index.md)
 
+-   :material-help-box-multiple:{ .lg .middle } **Interview Questions**
+
+    ---
+
+    Coding problems, verbal questions across domains (DB, Java, Spring, System Design, etc.)
+
+    [:octicons-arrow-right-24: Open](interview-questions/index.md)
+
 -   :material-link-variant:{ .lg .middle } **Resources**
 
     ---

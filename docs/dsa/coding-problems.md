@@ -1,5 +1,9 @@
 # Coding Problems
 
+> **See also:** [Interview Questions - Coding Problems](../interview-questions/coding/coding-problems.md) for interview-focused coding problems and solutions.
+
+---
+
 ## Print 1..N without a loop (recursion)
 ```java
 static void printNos(int n) {
