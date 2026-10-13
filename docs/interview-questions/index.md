@@ -4,43 +4,6 @@ Curated interview questions across domains: coding problems, system design discu
 
 ---
 
-## 📚 How Questions Are Formatted
-
-Each question includes:
-
-1. **Collapsible Minimal Answer** (3-4 lines max)
-   - Click to expand and see the quick answer
-   - Covers the core concept concisely
-   
-2. **Link to Detailed Topic**
-   - Points to comprehensive documentation
-   - Use for deeper understanding and examples
-   - Perfect for pre-interview study
-
-**Format:**
-```html
-<details>
-<summary>Question Text Here?</summary>
-
-**Answer:** Minimal explanation (3-4 lines)
-
-📚 [Learn more: Topic Name](link-to-detailed-topic)
-</details>
-```
-
-**Example:**
-```html
-<details>
-<summary>What is a HashMap?</summary>
-
-A HashMap uses hash codes to map keys to values with O(1) average access time. It handles collisions via chaining (linked lists) or red-black trees (Java 8+). Not thread-safe; use ConcurrentHashMap for concurrent access.
-
-📚 [Learn more: Java Collections](../../java-collections-concurrency/collections.md)
-</details>
-```
-
----
-
 ## Categories
 
 ### **Coding Questions**
@@ -52,7 +15,7 @@ Programming problems: algorithm design, implementation, optimization, code quali
 - **Complexity Analysis**: Time/space trade-offs
 - **Follow-up Questions**: Edge cases, improvements, alternative approaches
 
-[Coding Questions](coding-questions.md)
+[Coding Questions](coding/index.md)
 
 ### **Verbal / Conceptual Questions**
 
@@ -60,35 +23,35 @@ Technical discussion and conceptual understanding across topic areas.
 
 #### **Databases & SQL**
 Understanding database design, queries, transactions, optimization.
-[DB Questions](verbal-db-questions.md)
+[DB Questions](verbal/verbal-db-questions.md)
 
 #### **Java Core**
 Fundamentals, OOP, memory, concurrency, language features.
-[Java Core Questions](verbal-java-core-questions.md)
+[Java Core Questions](verbal/verbal-java-core-questions.md)
 
 #### **Java Advanced**
 Advanced patterns, frameworks, performance, architecture.
-[Java Advanced Questions](verbal-java-advanced-questions.md)
+[Java Advanced Questions](verbal/verbal-java-advanced-questions.md)
 
 #### **Spring Boot & Web**
 Spring framework, dependency injection, REST APIs, web development.
-[Spring Boot Questions](verbal-spring-boot-questions.md)
+[Spring Boot Questions](verbal/verbal-spring-boot-questions.md)
 
 #### **Microservices & Distributed Systems**
 Architecture patterns, scalability, resilience, distributed computing.
-[Microservices Questions](verbal-microservices-questions.md)
+[Microservices Questions](verbal/verbal-microservices-questions.md)
 
 #### **System Design**
 Designing scalable systems, trade-offs, real-world scenarios.
-[System Design Questions](verbal-system-design-questions.md)
+[System Design Questions](verbal/verbal-system-design-questions.md)
 
 #### **DevOps & Cloud**
 Deployment, containerization, infrastructure, cloud platforms.
-[DevOps Questions](verbal-devops-questions.md)
+[DevOps Questions](verbal/verbal-devops-questions.md)
 
 #### **Machine Learning & AI**
 ML concepts, algorithms, deep learning, LLM applications.
-[ML/AI Questions](verbal-ml-ai-questions.md)
+[ML/AI Questions](verbal/verbal-ml-ai-questions.md)
 
 ---
 
