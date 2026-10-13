@@ -122,3 +122,285 @@ Example: Online retailers use Kafka to deploy machine learning models for produc
 | **Replication** | Topics are automatically replicated, but the user can manually configure topics to not be replicated. | Messages are not automatically replicated, but the user can manually configure them to be replicated. |
 | **Message ordering** | Each consumer receives information in order because of the partitioned log architecture. | Messages are delivered to consumers in the order of their arrival to the queue. If there are competing consumers, each consumer will process a subset of that message. |
 | **Protocols** | Kafka uses a binary protocol over TCP. | Advanced messaging queue protocol (AMQP) with support via plugins: MQTT, STOMP. |
+
+---
+
+## Kafka Deep-Dive
+
+### Offsets & Consumer Position
+
+An **offset** is a unique identifier for each message within a partition. It tracks consumer progress.
+
+```
+Partition 0:
+  Message offset=0: "Event A"
+  Message offset=1: "Event B"
+  Message offset=2: "Event C"
+  Message offset=3: "Event D"
+  ↑
+  Consumer at offset=2 (already read A, B; next read is C)
+```
+
+**Consumer Groups:** Multiple consumers can form a group to parallelize processing.
+
+```java
+// Spring Kafka Consumer
+@SpringBootApplication
+@EnableKafka
+public class KafkaConsumerApp {
+    
+    @KafkaListener(topics = "orders", groupId = "order-processing-group")
+    public void listenOrders(Order order) {
+        // Kafka automatically tracks offset
+        System.out.println("Processing order: " + order.getId());
+    }
+}
+
+// Behind the scenes:
+// 1. Consumer joins "order-processing-group"
+// 2. Broker assigns partitions to this consumer
+// 3. Consumer reads from offset where it left off
+// 4. After processing, offset is committed (committed offset stored in __consumer_offsets topic)
+// 5. On restart, consumer resumes from last committed offset
+```
+
+**Offset Management:**
+- **Auto-commit:** Automatically commit offset after processing (default)
+- **Manual commit:** Commit after successful processing (more control)
+
+```java
+@KafkaListener(topics = "orders", groupId = "group1")
+public void process(Order order, Acknowledgment ack) {
+    try {
+        processOrder(order);
+        ack.acknowledge();  // Manual commit after success
+    } catch (Exception e) {
+        // Don't acknowledge, retry on restart
+    }
+}
+```
+
+---
+
+### Consumer Groups & Partitions
+
+**Consumer Group Assignment:**
+
+```
+Topic "orders" with 4 partitions:
+  Partition 0: Consumer A reads
+  Partition 1: Consumer B reads
+  Partition 2: Consumer C reads
+  Partition 3: Consumer D reads
+
+If Consumer C dies:
+  Partition 2 → Rebalanced to Consumer A
+  (Automatic failover)
+
+If new Consumer E joins:
+  Rebalancing happens → Partitions redistributed
+  (Each consumer gets subset of partitions)
+```
+
+**Key Points:**
+- Each partition → One consumer in a group (no parallelism within partition)
+- Multiple partitions → Multiple consumers can process in parallel
+- More consumers than partitions = some idle
+- Fewer partitions than consumers = uneven load
+
+---
+
+### Replication & Durability
+
+**Replication Factor:** Number of copies of each partition.
+
+```
+Replication Factor = 3:
+
+  Broker 1: [Partition 0 - Leader]
+  Broker 2: [Partition 0 - Replica]
+  Broker 3: [Partition 0 - Replica]
+
+When Broker 1 fails:
+  Broker 2 or 3 becomes new leader
+  Data is NOT lost (replicas have the data)
+```
+
+**In-Sync Replicas (ISR):** Replicas that are caught up with leader.
+
+```yaml
+# Kafka configuration
+min.insync.replicas: 2  # Require 2 replicas in-sync before ack
+
+# Producer: acks=all means wait for min.insync.replicas
+# Guarantees: durability (no data loss) but slower throughput
+```
+
+---
+
+### Log Compaction & Retention
+
+**Retention Policy:** How long to keep messages.
+
+```yaml
+# By time (default)
+log.retention.hours: 168  # Keep 7 days
+
+# By size
+log.retention.bytes: 1073741824  # 1GB per partition
+
+# Combination: Whichever comes first
+```
+
+**Log Compaction:** Keep latest value per key (for stateful data).
+
+```
+Without Compaction (all messages kept):
+  Key=user-123: {name: "Alice"}
+  Key=user-456: {name: "Bob"}
+  Key=user-123: {name: "Alice Updated"}  ← Old duplicate kept
+  Key=user-456: {name: "Bob Updated"}
+
+With Compaction (cleanup.policy=compact):
+  Key=user-123: {name: "Alice Updated"}  ← Only latest
+  Key=user-456: {name: "Bob Updated"}
+
+Use case: User profile updates, config changes (state log)
+```
+
+---
+
+### Exactly-Once Semantics
+
+Guarantee: Each message processed exactly once (no duplicates, no loss).
+
+**Implementation:**
+
+```java
+@KafkaListener(topics = "payments", groupId = "payment-group")
+public void processPayment(PaymentEvent payment) {
+    // 1. Idempotent producer: same message → same ID
+    // 2. Idempotent consumer: process only if not already done
+    
+    if (paymentDatabase.exists(payment.getTransactionId())) {
+        return;  // Already processed
+    }
+    
+    chargeCard(payment);
+    paymentDatabase.save(payment.getTransactionId());
+    // Offset auto-committed after successful processing
+}
+```
+
+**Kafka Config for Exactly-Once:**
+```yaml
+# Producer
+enable.idempotence: true  # Prevent duplicate sends
+acks: all                 # Wait for all replicas
+
+# Consumer
+isolation.level: read_committed  # Only read confirmed messages
+```
+
+---
+
+### Spring Kafka Integration
+
+**Producer:**
+```java
+@Service
+public class OrderProducer {
+    
+    @Autowired
+    private KafkaTemplate<String, Order> kafkaTemplate;
+    
+    public void publishOrder(Order order) {
+        // Send to topic
+        kafkaTemplate.send("orders", order.getId(), order)
+            .addCallback(
+                success -> System.out.println("Sent: " + order.getId()),
+                failure -> System.out.println("Failed: " + failure)
+            );
+    }
+}
+
+// Config
+@Configuration
+public class KafkaProducerConfig {
+    
+    @Bean
+    public KafkaTemplate<String, Order> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+    
+    @Bean
+    public ProducerFactory<String, Order> producerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        config.put(ProducerConfig.ACKS_CONFIG, "all");  // Durability
+        config.put(ProducerConfig.RETRIES_CONFIG, 3);
+        return new DefaultProducerFactory<>(config);
+    }
+}
+```
+
+**Consumer:**
+```java
+@Service
+public class OrderConsumer {
+    
+    @KafkaListener(topics = "orders", groupId = "order-service")
+    public void consume(Order order) {
+        System.out.println("Processing: " + order.getId());
+        // Process order
+    }
+    
+    // Batch processing
+    @KafkaListener(topics = "orders", groupId = "batch-group")
+    public void batchConsume(List<Order> orders) {
+        System.out.println("Batch size: " + orders.size());
+        orders.forEach(this::processOrder);
+    }
+}
+
+// Config
+@Configuration
+public class KafkaConsumerConfig {
+    
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Order> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Order> factory = 
+            new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConcurrency(3);  // 3 threads per listener
+        factory.getContainerProperties().setAckMode(AckMode.MANUAL);  // Manual offset commit
+        return factory;
+    }
+}
+```
+
+---
+
+### Common Kafka Issues & Solutions
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| **Messages not appearing** | Consumer group offset ahead of latest | Use `--from-beginning` or reset offset with `kafka-consumer-groups` |
+| **Slow consumption** | Partition count < consumer count | Add partitions with `--alter --partitions` |
+| **Data loss** | `acks=1` (only leader ack) | Use `acks=all` + `min.insync.replicas=2` |
+| **Duplicates** | Producer retries + consumer restart | Enable idempotence + deduplication in consumer |
+| **OutOfMemory** | Large batch size | Reduce `fetch.max.bytes`, process in batches |
+| **Consumer lag** | Processing too slow | Add consumers to consumer group (rebalancing) |
+
+---
+
+### Interview Talking Points
+
+- **Offset tracking?** Kafka stores consumer offset in `__consumer_offsets` topic; consumer resumes from last committed offset
+- **Consumer groups?** Multiple consumers share partitions; each partition processed by one consumer (no duplicates within group)
+- **Replication?** Each partition replicated across brokers; if leader fails, replica becomes new leader (no data loss)
+- **Exactly-once?** Idempotent producer + idempotent consumer + manual commit = exactly-once semantics
+- **Retention policies?** By time (days), size (bytes), or log compaction (keep latest per key)
+- **When to use Kafka?** High-throughput event streaming, multiple consumers (replay), long retention
+- **When NOT to use?** Complex routing, low latency requirements, RabbitMQ/NATS might be simpler

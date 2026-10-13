@@ -22,6 +22,10 @@ Stream processing: creating streams, filter/map/flatMap/reduce, collect operatio
 **Thread Creation - Synchronization - Locks - Atomics - Volatile - Executors - Thread Pools - Future**  
 Concurrent programming: thread lifecycle, race conditions, synchronization mechanisms, ReentrantLock, ConcurrentHashMap, thread pools, async patterns with Future/CompletableFuture.
 
+### [Threading Deep-Dive & Virtual Threads](threading.md)
+**Thread Synchronization - Atomic Operations - Thread Pools - Virtual Threads (Java 21) - Structured Concurrency - Concurrency Patterns**  
+Advanced threading: synchronized vs. locks, atomics without locking, ExecutorService, virtual threads for millions of concurrent tasks, comparison with reactive frameworks, producer-consumer and barrier patterns.
+
 ### [Testing](testing.md)
 **Unit Testing - Mocking - Test Collections - Concurrency Testing - Thread Safety Verification**  
 Testing Java applications: JUnit, Mockito, testing collections, concurrent code testing, race condition detection, integration testing.

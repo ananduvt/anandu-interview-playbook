@@ -73,12 +73,14 @@ nav:
       - Strings & Primitives: java-core/strings-primitives.md
       - Exceptions: java-core/exceptions.md
       - Versions & Features: java-core/versions-features.md
+      - Interface vs Abstract Class: java-core/interface-vs-abstract-class.md
   - Java Collections & Concurrency:
       - Overview: java-collections-concurrency/index.md
       - Collections: java-collections-concurrency/collections.md
       - Functional Programming: java-collections-concurrency/functional-programming.md
       - Streams: java-collections-concurrency/streams.md
       - Concurrency & Threads: java-collections-concurrency/concurrency.md
+      - Threading & Virtual Threads: java-collections-concurrency/threading.md
       - Testing: java-collections-concurrency/testing.md
   - Java Patterns & Advanced:
       - Overview: java-patterns-advanced/index.md
@@ -90,6 +92,7 @@ nav:
       - Spring Boot: spring-web/spring-boot.md
       - Spring Boot Advanced: spring-web/spring-boot-advanced.md
       - Spring Boot Circuit Breaker: spring-web/spring-boot-circuit-breaker.md
+      - Spring Threading & Async: spring-web/spring-threading.md
       - Web Services: spring-web/web-services.md
       - API Styles & Protocols: spring-web/api-styles.md
       - Security: spring-web/security.md
@@ -102,6 +105,7 @@ nav:
       - Overview: microservices-distributed/index.md
       - Principles & Patterns: microservices-distributed/principles.md
       - Spring Cloud Implementation: microservices-distributed/spring-cloud.md
+      - Service Discovery: microservices-distributed/service-discovery.md
       - Messaging (Kafka): microservices-distributed/messaging.md
   - Cloud Services:
       - Overview: distributed-cloud/index.md

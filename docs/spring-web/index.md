@@ -18,6 +18,10 @@ Advanced Spring concepts: DI patterns (constructor/setter/field), bean lifecycle
 **Circuit Breaker - Resilience4j - Hystrix - Failsafe - Sentinel - Vavr - Fault Tolerance - Retry/Timeout/Bulkhead**  
 Fault tolerance patterns: circuit breaker states (CLOSED/OPEN/HALF_OPEN), Resilience4j implementation with examples, framework comparison (Hystrix, Vavr, Failsafe, Sentinel), combining patterns, migration guide.
 
+### [Spring Threading & Async](spring-threading.md)
+**@Async - CompletableFuture - TaskExecutor - Virtual Threads - Non-Blocking REST - Async Patterns**  
+Asynchronous processing: @Async annotation with TaskExecutor configuration, CompletableFuture composition and chaining, REST endpoints returning futures, Java 21 virtual threads integration, comparison with WebFlux, production patterns.
+
 ### [Web Services](web-services.md)
 **SOAP - WSDL - REST Principles - Web Services Standards - XML/JSON Serialization**  
 Web service architectures: SOAP vs. REST trade-offs, WSDL contracts, RESTful resource design, content negotiation, versioning strategies.

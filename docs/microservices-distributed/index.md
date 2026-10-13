@@ -14,6 +14,10 @@ Core patterns: Circuit Breaker, Retry, Timeout, Bulkhead for resilience; Saga ch
 **Spring Cloud - Eureka - Config Server - Ribbon - Hystrix - Zuul - Spring Cloud Gateway**  
 Spring Cloud ecosystem: service discovery with Eureka, centralized configuration, client-side load balancing, circuit breakers, API gateway routing, distributed tracing.
 
+### [Service Discovery](service-discovery.md)
+**Service Registration - Dynamic Discovery - Eureka - Consul - Health Checks - Load Balancing**  
+Dynamic service location: client-side vs. server-side discovery, Eureka registration/discovery, health checks and heartbeats, combining with circuit breakers, failure handling.
+
 ### [Messaging (Kafka)](messaging.md)
 **Event Streaming - Kafka - Topics - Partitions - Consumers - Producers - Event-Driven Architecture**  
 Message-driven systems: Kafka architecture (broker, topic, partition, consumer group), event sourcing, asynchronous communication, failure handling, exactly-once semantics.

@@ -44,6 +44,93 @@ Since Java 9, releases ship every 6 months; **LTS** releases (long-term support)
 
 ---
 
+## Quick Version Comparison (LTS Releases)
+
+Quick reference to understand differences between major LTS versions:
+
+| Aspect | Java 8 (2014) | Java 11 (2018) | Java 17 (2021) | Java 21 (2023) |
+|--------|--------|---------|---------|---------|
+| **Support Until** | Dec 2030 | Sept 2026 | Sept 2029 | Sept 2031 |
+| **Key Features** | Lambdas, Streams, functional interfaces, default methods, java.time, Optional, method references | HTTP/2 client, `var` type inference, clean JDK (Java EE removed), ZGC, single-file execution | Sealed classes, Records (standard), pattern matching for instanceof, Foreign Function & Memory API, strong encapsulation | Virtual threads (Loom), record patterns, pattern matching for switch (standard), sequenced collections, structured concurrency |
+| **Concurrency Model** | OS threads (heavy) | OS threads | OS threads | Virtual threads (lightweight) |
+| **Thread Scalability** | ~1,000 threads | ~1,000 threads | ~1,000 threads | Millions of threads |
+| **Type Safety** | Basic generics | Generics + var | Sealed classes, pattern matching | Advanced patterns, exhaustive matching |
+| **Functional Support** | Lambdas, streams, Optional | Mature API | Mature + pattern matching | Pattern matching for switch |
+| **Collections** | Basic (List, Set, Map) | Stable | Stable | Sequenced Collections (order guarantees) |
+| **Build Adoption** | ⭐⭐⭐ (ubiquitous) | ⭐⭐⭐ (very high) | ⭐⭐ (growing) | ⭐ (emerging) |
+| **Enterprise Use** | ✅ Standard | ✅ Very common | ✅ Growing adoption | ⭐ Early adoption |
+| **Best For** | Legacy systems, broad compatibility | Modern systems, standard choice | New greenfield projects, microservices | High-concurrency I/O-bound apps |
+| **When NOT to Use** | Performance-critical systems (no streams) | Very old frameworks | Complex inheritance hierarchies (sealed classes) | CPU-bound workloads (OS threads better) |
+
+### **Quick Decision Guide**
+
+- **Stuck on Java 8?** → Migration path: 8 → 11 (low cost) → 17 (moderate cost)
+- **Starting new project?** → Use **Java 21 LTS** (virtual threads + patterns)
+- **Legacy enterprise?** → Java 11 LTS (good balance of stability + modern features)
+- **High I/O workloads?** → Java 21 (virtual threads = game-changer)
+- **Need sealed classes + exhaustive pattern matching?** → Java 17 minimum
+- **Not using record patterns or virtual threads?** → Java 17 is sufficient
+
+---
+
+## LTS Version Comparison Table
+
+Feature matrix showing what each LTS version introduced:
+
+| Feature | Java 8 | Java 11 | Java 17 | Java 21 |
+|---------|--------|---------|---------|---------|
+| **Functional Programming** | ✅ Lambdas, Streams | | | |
+| Functional Interfaces | ✅ `@FunctionalInterface` | | | |
+| Default/Static Methods in Interfaces | ✅ New | | | |
+| `java.time` API | ✅ Immutable date/time | | | |
+| Optional<T> | ✅ Introduced | ✅ Mature | ✅ Mature | ✅ Mature |
+| Method References | ✅ `ClassName::method` | | | |
+| **Type Inference** | | ✅ `var` (from Java 10) | ✅ Enhanced | ✅ Enhanced |
+| **HTTP Support** | | ✅ Standard HTTP/2 client | ✅ Stable | ✅ Stable |
+| **Single-File Execution** | | ✅ `java HelloWorld.java` | ✅ Supported | ✅ Supported |
+| **Records** | | | ✅ Standard | ✅ Mature |
+| **Pattern Matching - instanceof** | | | ✅ Standard | ✅ Standard |
+| **Sealed Classes** | | | ✅ New | ✅ Mature |
+| **Pattern Matching - switch** | | | | ✅ Standard |
+| **Record Patterns** | | | | ✅ Standard |
+| **Virtual Threads** | | | | ✅ **Game-changer** |
+| **Sequenced Collections** | | | | ✅ Order guarantees |
+| **Structured Concurrency** | | | | ✅ Preview |
+| **Garbage Collection** | OS threads, G1GC | ZGC option | G1GC default, ZGC option | Virtual threads, ZGC |
+| **Module System** | | | ✅ Mature | ✅ Mature |
+| **Strong Encapsulation** | | | ✅ Enforced (illegal-access denied) | ✅ Enforced |
+| **JDK Removed Java EE** | | ✅ (CORBA, XML, RMI) | | |
+| **Support Until** | Dec 2030 | Sept 2026 | Sept 2029 | Sept 2031 |
+
+---
+
+### **Feature Categories by LTS**
+
+**Java 8 (2014):** Functional foundation
+- Lambdas, Streams, Functional interfaces
+- Default methods, java.time, Optional
+- Focus: Making Java code more concise and expressive
+
+**Java 11 (2018):** Modern essentials
+- HTTP/2 client (modern web support)
+- `var` for type inference (cleaner code)
+- JDK cleanup (removed Java EE baggage)
+- Focus: Production-ready, clean platform
+
+**Java 17 (2021):** Type safety
+- Records (immutable data classes)
+- Sealed classes (restrict inheritance)
+- Pattern matching for `instanceof` (exhaustive checking)
+- Focus: Safer, more maintainable code
+
+**Java 21 (2023):** Concurrency revolution
+- **Virtual threads** (millions of concurrent tasks)
+- Record patterns & switch pattern matching (advanced patterns)
+- Sequenced collections (guaranteed order)
+- Focus: Scalable, high-concurrency systems
+
+---
+
 ## LTS Feature Deep-Dive
 
 ### Java 8 (2014) — Functional Paradigm Shift

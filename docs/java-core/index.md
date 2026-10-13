@@ -39,6 +39,10 @@ Error handling: exception propagation, custom exceptions, try-with-resources (Au
 **Java 8 - 11 - 17 - 21 - LTS - Feature Timeline - Virtual Threads**  
 Version history: Java 1.0–24 timeline, LTS releases (8/11/17/21), marquee features (lambdas → HTTP/2 → sealed classes → virtual threads), support windows.
 
+### [Interface vs Abstract Class](interface-vs-abstract-class.md)  
+**Interfaces - Abstract Classes - Contracts - Hierarchy - Multiple Inheritance - State Management**  
+Design abstractions: when to use interfaces (capabilities, contracts) vs. abstract classes (hierarchies, shared state), multiple interface implementation, single inheritance constraints, Java 8+ default methods.
+
 ---
 
 ## Quick Interview Prep
