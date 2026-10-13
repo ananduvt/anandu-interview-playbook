@@ -43,6 +43,34 @@ Architecture patterns, scalability, resilience, messaging, and distributed compu
 
 ---
 
+## Interview Questions (With Answers)
+
+<details>
+<summary>What is an offset in Kafka?</summary>
+
+**Answer:** An offset is a unique sequential identifier (integer) for each message within a Kafka partition. Consumers track their offset to know which messages they've processed. Offsets enable exactly-once processing semantics and allow consumers to resume from where they left off after failures.
+
+📚 [Learn more: Messaging (Kafka)](../../microservices-distributed/messaging.md)
+</details>
+
+<details>
+<summary>How do multiple consumers read from a topic with only one producer?</summary>
+
+**Answer:** Multiple consumers can belong to the same consumer group, each reading different partitions. Kafka distributes partitions across consumers in a group. Each partition goes to one consumer, enabling parallel processing. Different consumer groups can read the same topic independently from their own offsets.
+
+📚 [Learn more: Messaging (Kafka)](../../microservices-distributed/messaging.md)
+</details>
+
+<details>
+<summary>How do you ensure that a message has been delivered successfully in Kafka?</summary>
+
+**Answer:** Use producer acknowledgments (`acks=all`), consumer commit modes (auto-commit vs manual), and idempotent producers. For exactly-once semantics: use transactions or idempotent producer + consumer with offset commits. Monitor lag, replication factor, and use dead-letter topics for failed messages.
+
+📚 [Learn more: Messaging (Kafka)](../../microservices-distributed/messaging.md)
+</details>
+
+---
+
 ## Sample Topics (Questions to be added)
 
 - When should you use microservices vs monolith?

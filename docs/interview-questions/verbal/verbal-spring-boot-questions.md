@@ -233,6 +233,26 @@ public ResponseEntity<?> checkStatus(@PathVariable String jobId) {
 
 ---
 
+## Interview Questions (With Answers)
+
+<details>
+<summary>What is the difference between @Component and @Bean?</summary>
+
+**Answer:** @Component is a class-level annotation for stereotype (auto-discovered by component scanning). @Bean is a method-level annotation in @Configuration classes for explicit bean creation. Use @Component for simple beans, @Bean for complex initialization logic or third-party classes.
+
+📚 [Learn more: Spring Annotations & Components](../../spring-web/spring-annotations-components.md)
+</details>
+
+<details>
+<summary>What are the key differences between SOAP and REST?</summary>
+
+**Answer:** SOAP uses XML over HTTP for standardized messaging with WS-* security specs. REST uses HTTP methods on resources with JSON/XML. SOAP is verbose, heavyweight, enterprise-focused. REST is lightweight, simple, modern (web/mobile). Choose SOAP for legacy/enterprise systems; REST for new APIs.
+
+📚 [Learn more: Web Fundamentals](../../foundations/web-fundamentals.md)
+</details>
+
+---
+
 ## Sample Topics (To expand)
 
 - Explain dependency injection and why it matters

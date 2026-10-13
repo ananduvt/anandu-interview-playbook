@@ -4,6 +4,43 @@ Curated interview questions across domains: coding problems, system design discu
 
 ---
 
+## 📚 How Questions Are Formatted
+
+Each question includes:
+
+1. **Collapsible Minimal Answer** (3-4 lines max)
+   - Click to expand and see the quick answer
+   - Covers the core concept concisely
+   
+2. **Link to Detailed Topic**
+   - Points to comprehensive documentation
+   - Use for deeper understanding and examples
+   - Perfect for pre-interview study
+
+**Format:**
+```html
+<details>
+<summary>Question Text Here?</summary>
+
+**Answer:** Minimal explanation (3-4 lines)
+
+📚 [Learn more: Topic Name](link-to-detailed-topic)
+</details>
+```
+
+**Example:**
+```html
+<details>
+<summary>What is a HashMap?</summary>
+
+A HashMap uses hash codes to map keys to values with O(1) average access time. It handles collisions via chaining (linked lists) or red-black trees (Java 8+). Not thread-safe; use ConcurrentHashMap for concurrent access.
+
+📚 [Learn more: Java Collections](../../java-collections-concurrency/collections.md)
+</details>
+```
+
+---
+
 ## Categories
 
 ### **Coding Questions**

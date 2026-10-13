@@ -176,6 +176,60 @@ Headers: Idempotent-Key: abc-123-def
 
 ---
 
+## Interview Questions (With Answers)
+
+<details>
+<summary>Write an example for a LEFT JOIN query.</summary>
+
+**Answer:** LEFT JOIN returns all rows from left table + matching rows from right table (NULLs for non-matches).
+
+```sql
+SELECT c.name, o.order_id
+FROM customers c
+LEFT JOIN orders o ON c.id = o.customer_id;
+-- Shows all customers, even those without orders (NULL in order_id)
+```
+
+📚 [Learn more: SQL & Relational Databases](../../databases/sql.md)
+</details>
+
+<details>
+<summary>Write a query for sorting.</summary>
+
+**Answer:** Use ORDER BY with ASC (ascending) or DESC (descending). Can sort by single or multiple columns.
+
+```sql
+SELECT * FROM users ORDER BY age DESC, name ASC;
+-- First sort by age descending, then by name ascending for ties
+```
+
+📚 [Learn more: SQL & Relational Databases](../../databases/sql.md)
+</details>
+
+<details>
+<summary>How to insert data using a SELECT query?</summary>
+
+**Answer:** Use INSERT INTO ... SELECT to copy data from one table to another or insert derived data.
+
+```sql
+INSERT INTO archive_users (id, name, email)
+SELECT id, name, email FROM users WHERE created_at < '2020-01-01';
+-- Inserts historical users into archive table
+```
+
+📚 [Learn more: SQL & Relational Databases](../../databases/sql.md)
+</details>
+
+<details>
+<summary>In which situations would you prefer using JPA over native queries?</summary>
+
+**Answer:** Use JPA when: working with simple CRUD, you want database independence, you need compile-time type safety, or you prefer an ORM abstraction. Use native queries when: complex reporting queries, database-specific optimization, stored procedures, or raw performance is critical.
+
+📚 [Learn more: JPA & ORM](../../spring-web/jpa-orm.md)
+</details>
+
+---
+
 ## Sample Topics (To expand)
 
 - Explain normalization and why it matters

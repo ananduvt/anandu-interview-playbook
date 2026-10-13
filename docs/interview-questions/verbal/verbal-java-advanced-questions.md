@@ -156,6 +156,71 @@ Without `volatile`, the constructor writes (field initialization) can be reorder
 
 ---
 
+## Interview Questions (With Answers)
+
+<details>
+<summary>What are the key features of Java 21?</summary>
+
+**Answer:** Java 21 introduces virtual threads (lightweight threads with minimal overhead), sequence collections for ordered data, and records for immutable data carriers. Pattern matching is enhanced with record patterns. Project Loom improves concurrency; Project Panama simplifies native code interoperability.
+
+📚 [Learn more: Java Versions & Features](../../java-core/versions-features.md)
+</details>
+
+<details>
+<summary>What are the key differences between Java 17 and Java 8?</summary>
+
+**Answer:** Java 17 added records (immutable data classes), sealed classes (restrict inheritance), pattern matching (simplify conditionals), and text blocks (multi-line strings). Java 8 introduced lambdas and streams. Java 17 also has better null safety and performance improvements via HotSpot enhancements.
+
+📚 [Learn more: Java Versions & Features](../../java-core/versions-features.md)
+</details>
+
+<details>
+<summary>What are the core multithreading concepts?</summary>
+
+**Answer:** Multithreading involves creating multiple threads within a process. Key concepts: Thread lifecycle (new→runnable→running→blocked→terminated), synchronization (mutual exclusion via locks), thread safety (volatile, synchronized, AtomicXX), and communication (wait/notify). Threads share heap memory but have separate stacks.
+
+📚 [Learn more: Threading & Virtual Threads](../../java-collections-concurrency/threading.md)
+</details>
+
+<details>
+<summary>How does ExecutorService work in Spring?</summary>
+
+**Answer:** ExecutorService manages a thread pool for async task execution. Spring's `@Async` annotation uses a TaskExecutor backed by ExecutorService. Submit tasks via `submit()` or `execute()`; get results with `Future.get()`. Provides better resource management than creating raw threads.
+
+📚 [Learn more: Spring Threading & Async](../../spring-web/spring-threading.md)
+</details>
+
+<details>
+<summary>What is an asynchronous transaction?</summary>
+
+**Answer:** An asynchronous transaction decouples task submission from completion. The caller doesn't wait for the transaction to finish; instead, it receives a callback or Future. Useful for long-running operations (file uploads, API calls) to prevent blocking. Requires careful error handling and state management.
+
+📚 [Learn more: Spring Boot Advanced](../../spring-web/spring-boot-advanced.md)
+</details>
+
+<details>
+<summary>What are transactions and their propagation levels in Spring?</summary>
+
+**Answer:** Transactions ensure ACID properties. Spring's @Transactional supports propagation levels: REQUIRED (join existing or create), REQUIRES_NEW (always create), NESTED (savepoint), NOT_SUPPORTED (run without), and others. Propagation determines how nested method calls share or isolate transactions.
+
+📚 [Learn more: Spring Boot Questions](../verbal-spring-boot-questions.md)
+</details>
+
+<details>
+<summary>Explain a design pattern with an example.</summary>
+
+**Answer:** Example - Singleton Pattern ensures only one instance of a class. Used for: thread-safe caches, database connections, logging. Best implemented via enum or double-checked locking with volatile. Drawbacks: testing difficulty, hidden dependencies.
+
+```java
+public enum Singleton { INSTANCE; }
+Singleton.INSTANCE.doSomething();
+```
+
+📚 [Learn more: Design Patterns](../../java-patterns-advanced/design-patterns.md)
+</details>
+
+---
+
 ## Sample Topics (To expand)
 
 - Explain common design patterns and when to use them

@@ -132,6 +132,50 @@ public static int maxSubArray(int[] nums) {
 
 ---
 
+## Additional Coding Problems
+
+<details>
+<summary>Remove duplicates from a list. How would you do it?</summary>
+
+**Approach:** Use a HashSet to track seen elements, iterate through the list, and keep only first occurrence. Time: O(n), Space: O(n).
+
+```java
+List<Integer> list = Arrays.asList(1, 2, 2, 3, 3, 3);
+Set<Integer> seen = new HashSet<>();
+List<Integer> result = list.stream().filter(seen::add).collect(Collectors.toList());
+// Result: [1, 2, 3]
+```
+
+📚 [Learn more: Collections Framework](../../java-collections-concurrency/collections.md)
+</details>
+
+<details>
+<summary>Find duplicate number from a linked list.</summary>
+
+**Approach:** Use Floyd's cycle detection (tortoise & hare) if duplicate implies cycle, or use HashSet to track visited values. Time: O(n), Space: O(1) for cycle detection or O(n) for HashSet.
+
+```java
+// HashSet approach
+Set<Integer> seen = new HashSet<>();
+while (head != null) {
+    if (!seen.add(head.val)) return head.val;
+    head = head.next;
+}
+```
+
+📚 [Learn more: Linked Lists](../../dsa/data-structures.md)
+</details>
+
+<details>
+<summary>What will be the output of the given Java program?</summary>
+
+**Approach:** Trace execution step-by-step: variable initialization, method calls, control flow, and side effects. Pay attention to scope, type coercion, and operator precedence. Test with actual compilation if unsure.
+
+📚 [Learn more: Java Basics](../../java-core/basics.md)
+</details>
+
+---
+
 ## Backlog
 
 See [DSA Backlog](../../dsa/coding-problems.md) for additional problems:

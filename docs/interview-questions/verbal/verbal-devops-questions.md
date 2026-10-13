@@ -78,6 +78,26 @@ Infrastructure, deployment, containerization, CI/CD, cloud platforms, and operat
 
 ---
 
+## Interview Questions (With Answers)
+
+<details>
+<summary>What is Kubernetes deployment?</summary>
+
+**Answer:** Kubernetes Deployment manages ReplicaSets to ensure desired pod replicas run. Provides rolling updates, rollback, and scaling. Declaratively define desired state (image, replicas, resources); Deployment controller reconciles actual state. Used for stateless applications with zero-downtime deployments.
+
+📚 [Learn more: Kubernetes](../../devops/kubernetes.md)
+</details>
+
+<details>
+<summary>Why is Maven pom.xml used? Explain the key tags.</summary>
+
+**Answer:** pom.xml defines project metadata, dependencies, and build configuration. Key tags: <groupId> (organization), <artifactId> (project name), <version>, <dependencies> (external libs), <plugins> (build tasks), <build> (output config). Maven manages transitive dependencies and standardizes builds.
+
+📚 [Learn more: Build Tools](../../devops/build-tools.md)
+</details>
+
+---
+
 [Content to be added progressively]
 
 **See also:** [Kubernetes](../../devops/kubernetes.md), [Deployment Strategies](../../devops/kubernetes-deployment-strategies.md), [CI/CD](../../devops/ci-cd.md), [Docker](../../devops/docker.md), [Interview Questions Overview](../index.md)
