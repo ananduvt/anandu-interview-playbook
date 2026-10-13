@@ -388,7 +388,9 @@
 
    **Visitor Pattern**
 
-?? [https://www.digitalocean.com/community/tutorials/java-singleton-design-pattern-best-practices-examples](https://www.digitalocean.com/community/tutorials/java-singleton-design-pattern-best-practices-examples)
+Separates algorithms from object structures. Allows adding new operations without modifying elements.
+
+[Java Singleton Best Practices Reference](https://www.digitalocean.com/community/tutorials/java-singleton-design-pattern-best-practices-examples)
 
 [https://medium.com/@minadev/solving-everyday-problems-essential-java-design-patterns-you-need-to-know-01dba2939b45](https://medium.com/@minadev/solving-everyday-problems-essential-java-design-patterns-you-need-to-know-01dba2939b45)
 

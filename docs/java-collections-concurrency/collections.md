@@ -1,7 +1,8 @@
 # Collections Framework
 
 
-**?? image**
+**Collections Hierarchy Diagram**
+(Note: Refer to Java documentation for visual collections hierarchy)
 
 * Iterable(I)
 * Collection(I)

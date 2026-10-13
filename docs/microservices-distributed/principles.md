@@ -62,8 +62,35 @@ Event driven systems
 
 ## MicroService
 
-12 factor ??
-Monolith vs microservice ??
+**12-Factor App**
+
+Methodology for building SaaS applications:
+1. Codebase - One codebase tracked in version control
+2. Dependencies - Explicitly declare and isolate dependencies
+3. Config - Store config in environment variables
+4. Backing services - Treat as attached resources (DB, cache)
+5. Build/Run/Release - Strict separation of stages
+6. Processes - Stateless and share-nothing
+7. Port binding - Services export HTTP via port binding
+8. Concurrency - Scale via process model
+9. Disposability - Fast startup and graceful shutdown
+10. Dev/Prod - Keep dev and prod identical
+11. Logs - Treat as event streams to stdout
+12. Admin processes - Run as one-off tasks
+
+**Monolith vs Microservices**
+
+| Aspect | Monolith | Microservices |
+|--------|----------|--------------|
+| **Structure** | Single codebase | Multiple independent services |
+| **Deployment** | Deploy entire app | Deploy services independently |
+| **Scaling** | Scale entire app | Scale specific services |
+| **Technology** | Single tech stack | Polyglot (different techs per service) |
+| **Complexity** | Simple initially | Complex distributed systems |
+| **Communication** | Function calls | HTTP/gRPC/messaging |
+| **Data** | Single database | Database per service |
+| **Failure** | One failure = whole app down | Isolated failures |
+| **Best For** | Small teams, MVPs | Large teams, complex systems |
 Blue Green Deployment
 Deployment strategies
 Patterns

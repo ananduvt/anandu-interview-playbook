@@ -207,7 +207,8 @@ interface Y {
 }
 public class Z implements X, Y {
    public void methodX() {
-       // what to do here???
+       // Either calls X.super.methodX() or Y.super.methodX()
+       X.super.methodX();  // Call X's implementation
    }
    public static void main(String args[]) {
       Z z = new Z();

@@ -325,14 +325,14 @@ Limits and restrictions to the use of var in Java include the following:
 
    [https://www.geeksforgeeks.org/var-keyword-in-java/](https://www.geeksforgeeks.org/var-keyword-in-java/)
 
-Static  ??
+**Static**
 
 **Interface**
 
 * methods are by default abstract and public
 * attributes are by default public, static and final
 * no concrete implementations
-* Can have default concrete implementations ?? eg
+* Can have default concrete implementations (e.g., default methods in Java 8+)
 
 **Abstract**
 
@@ -348,9 +348,9 @@ objects have the same attributes, and thus are compatible with serialization.
 
 * Custom serialization can be particularly useful when trying to serialize an object that has some unserializable attributes(Transient)
 
-**Serialisation & De-serialisation ??**
+**Serialization & Deserialization**
 
-**Optional ?? eg**
+**Optional**
 
 * container object which may or may not contain a non-null value
 * *isPresent()* and *isEmpty()*
@@ -361,10 +361,10 @@ objects have the same attributes, and thus are compatible with serialization.
 * *orElse()*
 * *get()*
 
-**Generics ??**
+**Generics**
 
 * Code reuse - handle multiple param type
-* Type Safety - compile time check of the type ?? eg
+* Type Safety - compile time check of the type (e.g., List<String> only accepts String)
 * Generic Class - **items or functions** in that class can be generalized
 * Generic Method - diamond operator enclosing the type
 * T – Type
@@ -380,7 +380,12 @@ objects have the same attributes, and thus are compatible with serialization.
 
 **hashCode() -**  unique value for each object**,** hash-based implementations use Hashcode - hashSet , hashMap
 
-Java constructor patterns ???
+**Java Constructor Patterns**
+
+* Default constructor (no parameters)
+* Parametrized constructor (with parameters)
+* Copy constructor (initialize from another object)
+* Builder pattern (fluent construction)
 
 Annotations, custom annotations
 
@@ -398,7 +403,14 @@ Java Casting
 Wrapper class
 [https://www.baeldung.com/java-wrapper-classes](https://www.baeldung.com/java-wrapper-classes)
 
-Passing class name as input param , why ??
+**Passing Class Name as Input Parameter**
+
+Useful for reflection and dynamic object creation:
+```java
+public <T> T createInstance(Class<T> clazz) {
+    return clazz.getDeclaredConstructor().newInstance();
+}
+```
 
 **‘==‘**
 
@@ -427,14 +439,14 @@ Example
 obj1 == obj2, int1 == int2
 obj1.equals(obj2), "hello".equals(str)
 
-**Comparable(I) ?? eg**
+**Comparable Interface**
 
 * single sorting sequence - defined inside the class
 * affects the original class
 * Uses compareTo()
 * Collections.sort(List)
 
-**Comparator(I) ?? eg**
+**Comparator Interface**
 
 * multiple sorting sequences - defined outside the class
 * doesn't affect the original class
