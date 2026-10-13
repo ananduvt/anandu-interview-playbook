@@ -53,8 +53,10 @@ nav:
       - SDLC & Methodologies: foundations/sdlc.md
       - Design Principles: foundations/design-principles.md
       - Networking: foundations/networking.md
-      - RegEx: foundations/regex.md
+      - Web Fundamentals: foundations/web-fundamentals.md
       - Testing / QA: foundations/testing.md
+  - Tools & References:
+      - RegEx: foundations/regex.md
   - Data Structures & Algorithms:
       - Overview: dsa/index.md
       - Data Structures: dsa/data-structures.md
@@ -86,13 +88,11 @@ nav:
       - Design Patterns: java-patterns-advanced/design-patterns.md
       - Logging & Performance: java-patterns-advanced/logging-performance.md
       - Advanced Topics: java-patterns-advanced/advanced.md
-  - Spring Core & Web:
+  - Spring Core:
       - Overview: spring-web/index.md
       - Spring Boot: spring-web/spring-boot.md
       - Spring Annotations & Components: spring-web/spring-annotations-components.md
       - Spring Boot Advanced: spring-web/spring-boot-advanced.md
-      - Web Services: spring-web/web-services.md
-      - API Styles & Protocols: spring-web/api-styles.md
       - Exception Handling: spring-web/spring-exceptions.md
   - Spring Security & Data:
       - Security & RBAC: spring-web/security.md
