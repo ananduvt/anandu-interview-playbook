@@ -195,6 +195,131 @@ public class UserService {
 }
 ```
 
+### Session Lifecycle: persist() vs save() vs merge() vs update()
+
+**Entity State Transitions:**
+
+```
+Transient → [persist/save] → Persistent → [detach] → Detached → [merge] → Persistent
+```
+
+| Method | Input State | Output State | DB Effect | Use Case |
+|--------|------------|--------------|-----------|----------|
+| **persist()** | Transient | Persistent | INSERT scheduled (flush) | New entity, guaranteed unique ID handling |
+| **save()** | Transient or Detached | Persistent | INSERT or UPDATE (auto-detect) | General save (JPA/Spring Data shorthand) |
+| **merge()** | Detached | Persistent (new instance) | UPDATE (or INSERT if new) | Re-attach modified detached entity |
+| **update()** | Detached | Unchanged | UPDATE only | Explicit update (rare; use merge instead) |
+
+**Detailed Comparison:**
+
+```java
+@Transactional
+@Service
+public class UserService {
+    private EntityManager em;
+    private UserRepository userRepo;  // Spring Data
+    
+    // ✅ persist() — new entity, guaranteed INSERT
+    public void persistNewUser() {
+        User user = new User("John", "john@example.com");  // Transient
+        em.persist(user);  // Now Persistent; INSERT queued
+        
+        // At transaction commit:
+        // 1. Hibernate generates ID
+        // 2. INSERT executes
+        // 3. ID is set on user object
+        
+        System.out.println(user.getId());  // ✅ ID available after flush/commit
+    }
+    
+    // ✅ save() — auto-detect persist vs update
+    public void saveUser() {
+        User user = new User("Jane", "jane@example.com");  // Transient
+        User saved = userRepo.save(user);  // Returns managed instance
+        
+        // Spring Data's save():
+        // - If ID is null → persist() → INSERT
+        // - If ID exists → merge() → UPDATE
+        
+        System.out.println(saved.getId());  // ✅ ID available immediately
+    }
+    
+    // ⚠️ merge() — re-attach detached entity (creates new managed copy)
+    public void mergeDetachedUser(Long userId) {
+        // Get and detach
+        User user = em.find(User.class, userId);  // Persistent
+        em.detach(user);  // Now Detached
+        
+        user.setName("Updated Name");  // ❌ Changes NOT tracked!
+        
+        // Re-attach
+        User managed = em.merge(user);  // Returns NEW managed instance
+        managed.setEmail("new@example.com");  // ✅ Changes tracked
+        
+        // user != managed (different objects)
+        // UPDATE executes at commit with managed's state
+    }
+    
+    // ❌ update() — raw update, requires existing entity
+    public void updateExistingUser(User detachedUser) {
+        // Rarely used; merge() is preferred
+        em.getTransaction().begin();
+        em.update(detachedUser);  // UPDATE only (assumes entity exists)
+        em.getTransaction().commit();
+    }
+}
+```
+
+**Key Insight: Dirty Checking vs Explicit Operations**
+
+```java
+@Transactional  // Critical: provides persistence context
+public void demonstrateDirtychecking() {
+    User user = userRepo.findById(1L).get();  // Persistent
+    
+    user.setName("New Name");
+    
+    // ❌ Don't need to call save()!
+    // ✅ Dirty checking happens automatically:
+    // 1. At transaction commit, Hibernate snapshots entity state
+    // 2. Detects differences from original
+    // 3. Generates UPDATE SQL
+    // 4. Executes and commits
+    
+    // userRepo.save(user);  // ← Not needed for managed entities
+}
+
+// Without @Transactional: Changes are NOT tracked!
+public void noTransactionNoUpdate() {
+    User user = userRepo.findById(1L).get();
+    user.setName("This won't persist");
+    // No @Transactional = no transaction = no dirty check
+    // Changes silently lost!
+}
+```
+
+**Best Practices:**
+
+```java
+// ✅ DO: Use Spring Data save() for simplicity
+User saved = userRepository.save(newUser);
+
+// ✅ DO: Use @Transactional for automatic updates
+@Transactional
+public void updateUser(Long id, String newName) {
+    User user = userRepository.findById(id).orElseThrow();
+    user.setName(newName);  // Dirty check handles update
+}
+
+// ✅ DO: Always use merge() to re-attach detached entities
+User managed = entityManager.merge(detachedUser);
+managed.setEmail("new@example.com");
+
+// ❌ DON'T: Use em.update() directly
+// ❌ DON'T: Forget @Transactional (changes won't persist)
+// ❌ DON'T: Assume detached entities are still managed
+```
+
 ### Lazy Loading & N+1 Problem
 
 ```java

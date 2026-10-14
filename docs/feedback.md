@@ -2,7 +2,7 @@
 
 ## About This Playbook
 
-**Anandu Interview Playbook** — A comprehensive Java interview preparation guide covering core Java, Spring, microservices, system design, and DevOps concepts.
+A comprehensive Java interview preparation guide covering core Java, Spring, microservices, system design, and DevOps concepts.
 
 - **Creator & Maintainer:** Anandu Thulaseedharan
 - **Contact:** anandu.vt73@gmail.com
@@ -11,11 +11,11 @@
 
 ### Mission
 
-This playbook aims to:
-- Provide practical, interview-focused explanations of Java and software engineering concepts
-- Go beyond "what"—explain the "why" and "when" to use each pattern
-- Include real-world code examples and production best practices
-- Support engineers preparing for technical interviews at companies like UST Global, FAANG, and other tier-1 tech companies
+This playbook aims to:  
+- Provide practical, interview-focused explanations of Java and software engineering concepts  
+- Go beyond "what"—explain the "why" and "when" to use each pattern  
+- Include real-world code examples and production best practices  
+- Support engineers preparing for technical interviews
 
 ### Contributing
 

@@ -112,39 +112,106 @@ When documenting performance, GC, caching, or profiling:
 
 **Example**: See `docs/java-patterns-advanced/advanced.md` (GC section) and `docs/java-patterns-advanced/logging-performance.md` (performance tuning)
 
-### Interview Questions (Verbal Q&A)
-Interview questions use a specific collapsible format for interview prep readability:
+### Interview Questions
 
-```html
+#### Coding Problems (`docs/interview-questions/coding/coding-problems.md`)
+
+**Structure:**
+```markdown
+## N. Question Title
+
 <details>
-<summary>What is a design pattern?</summary>
+<summary>View Solution</summary>
 
-**Answer:** A reusable solution to a common design problem...
+<h3>Problem</h3>
+<p>Problem statement.</p>
 
-📚 [Learn more: Design Patterns](../../path/to/topic.md)
+<h3>Approach 1: Method Name</h3>
+```java
+code example
+```
+<p>Explanation.</p>
+
+<h3>Approach 2: Alternative Method</h3>
+(Include 2-3 approaches minimum)
+
+<h4>Complexity Comparison</h4>
+(Table: Time, Space, Pros, Cons)
+
+<h4>Key Insight: Topic</h4>
+<ul>
+<li>Insight 1</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/path/to/topic/">Learn more: Topic</a></p>
+
 </details>
 ```
 
-**Structure requirements:**
-1. **Summary tag**: Concise question (no colon, no "Answer:" prefix)
-2. **Answer block**: 3–4 lines maximum for the minimal answer
-   - Bold the opening statement
-   - Use bullet points for key points if needed
-3. **Topic link**: Emoji + link to detailed topic (e.g., `📚 [Learn more: Design Patterns](../../java-core/design-patterns.md)`)
+**Requirements:**
+- ✅ 2-3+ approaches per problem
+- ✅ Complexity comparison table
+- ✅ Complete runnable code
+- ✅ HTML tags (not markdown) inside `<details>`
+- ✅ Absolute links: `/anandu-interview-playbook/section/file/` (no `.md`)
+- ✅ Key insights or patterns
 
-**Why this format:**
-- Minimal, scannable view (collapsed by default)
-- Readers expand only questions they need
-- Clean structure for interview prep
-- Keeps page readable without overwhelming content
+#### Verbal Questions (by domain)
 
-**When writing Q&A pages:**
-- Organize questions by category with brief headers
-- Include 3–5 collapsible Q&A per category (or more if grouped well)
-- Use "See also:" at the end to link to detailed topic pages
-- Do NOT include format instructions on published pages (this belongs in CONTRIBUTING.md)
+Files: `docs/interview-questions/verbal/verbal-{domain}-questions.md`
+- `verbal-java-core-questions.md`
+- `verbal-spring-boot-questions.md`
+- `verbal-db-questions.md`
+- `verbal-microservices-questions.md`
+- `verbal-java-advanced-questions.md`
+- `verbal-system-design-questions.md`
+- `verbal-devops-questions.md`
+- `verbal-ml-ai-questions.md`
 
-**File naming:** `{topic}-questions.md` (e.g., `verbal-java-core-questions.md`, `verbal-spring-boot-questions.md`)
+**Structure:**
+```markdown
+## N. Question Title
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Clear, concise answer.</p>
+
+<h3>Why / Context</h3>
+<p>Detailed reasoning.</p>
+
+<h3>Comparison Table</h3>
+(When applicable: Property | Option A | Option B)
+
+<h3>Example / Real-World Use</h3>
+<p>Practical scenario or code.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Use case 1</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/path/to/topic/">Learn more: Topic</a></p>
+
+</details>
+```
+
+**Requirements:**
+- ✅ HTML tags (not markdown) inside `<details>`
+- ✅ Comparison tables when contrasting options
+- ✅ Real-world examples or code
+- ✅ Absolute links: `/anandu-interview-playbook/section/file/` (no `.md`)
+- ✅ Clear structure: Direct answer → Why → Table → Example → When to use
+
+**Formatting rules for both:**
+- ✅ No "All Questions" list upfront
+- ✅ Questions numbered sequentially: ## 1. Title, ## 2. Title, etc.
+- ✅ Separator `---` between questions
+- ✅ Use `<details><summary>View Solution</summary>` (consistent summary text)
+- ✅ Code blocks with language: ` ```java `, ` ```yaml `, etc.
+- ✅ Tables in HTML format inside collapsibles
+- ✅ Reference similar files in same section for style consistency
 
 ### Section Index Pages
 When creating or updating a section index (e.g., `docs/spring-web/index.md`):
