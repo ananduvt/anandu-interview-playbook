@@ -864,6 +864,116 @@ public void updateUser(Long id, String name) {
 
 ---
 
+## 11. When should you choose Hibernate/JPA over MyBatis and vice versa?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Quick Comparison</h3>
+
+<table>
+<tr><th>Aspect</th><th>JPA/Hibernate</th><th>MyBatis</th></tr>
+<tr><td><strong>Paradigm</strong></td><td>ORM (Object-Relational Mapping)</td><td>SQL Mapper</td></tr>
+<tr><td><strong>SQL Writing</strong></td><td>Automatic (from objects)</td><td>Manual (full SQL control)</td></tr>
+<tr><td><strong>Relationships</strong></td><td>Built-in (@OneToMany, @ManyToMany)</td><td>Manual (complex joins)</td></tr>
+<tr><td><strong>Boilerplate</strong></td><td>Less (auto CRUD)</td><td>More (write mappings)</td></tr>
+<tr><td><strong>Performance</strong></td><td>Good (caching, lazy loading)</td><td>Very fast (pure SQL, no overhead)</td></tr>
+<tr><td><strong>Flexibility</strong></td><td>Less (constrained by ORM)</td><td>High (full SQL control)</td></tr>
+<tr><td><strong>Learning Curve</strong></td><td>Moderate (lazy, cascade, context)</td><td>Low (just SQL + mappings)</td></tr>
+<tr><td><strong>Database Agnostic</strong></td><td>Yes (works across DBs)</td><td>Requires dialect-specific SQL</td></tr>
+</table>
+
+<h3>Use Hibernate/JPA When...</h3>
+
+<ul>
+<li><strong>✅ Domain-model-driven design:</strong> Building OOP-heavy applications with entities</li>
+<li><strong>✅ Standard CRUD:</strong> Simple insert/update/delete operations</li>
+<li><strong>✅ Relationships matter:</strong> Complex entity relationships (1-to-many, many-to-many)</li>
+<li><strong>✅ Rapid development:</strong> Less boilerplate, faster to prototype</li>
+<li><strong>✅ Database portability:</strong> Need to support multiple databases</li>
+<li><strong>✅ Automatic caching:</strong> Leverage first and second-level caches</li>
+<li><strong>✅ Inheritance hierarchies:</strong> Need polymorphic queries</li>
+</ul>
+
+```java
+// JPA: Minimal boilerplate, automatic relationships
+@Entity
+public class User {
+    @Id @GeneratedValue
+    private Long id;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders;  // Automatic handling
+}
+
+User user = userRepository.findById(1L).get();
+List<Order> orders = user.getOrders();  // Lazy-loaded automatically
+```
+
+<h3>Use MyBatis When...</h3>
+
+<ul>
+<li><strong>✅ Complex/optimized queries:</strong> Need fine-tuned SQL for performance</li>
+<li><strong>✅ Legacy databases:</strong> Odd schemas that don't map well to entities</li>
+<li><strong>✅ Bulk operations:</strong> Mass inserts/updates where ORM overhead matters</li>
+<li><strong>✅ Stored procedures:</strong> Heavy reliance on DB-specific features</li>
+<li><strong>✅ Team SQL expertise:</strong> Team comfortable writing/optimizing SQL</li>
+<li><strong>✅ Predictable performance:</strong> Need exact control over DB access</li>
+<li><strong>✅ Multiple data sources:</strong> Querying multiple databases with dialect-specific SQL</li>
+</ul>
+
+```java
+// MyBatis: Full SQL control, explicit mappings
+@Mapper
+public interface OrderMapper {
+    @Select("SELECT o.* FROM orders o " +
+            "JOIN users u ON o.user_id = u.id " +
+            "WHERE u.id = #{userId} AND o.amount > #{minAmount}")
+    List<Order> findHighValueOrdersByUser(@Param("userId") Long userId, 
+                                          @Param("minAmount") BigDecimal amount);
+}
+
+List<Order> orders = orderMapper.findHighValueOrdersByUser(1L, new BigDecimal("100.00"));
+```
+
+<h3>Real-World Scenarios</h3>
+
+| Scenario | Choose |
+|----------|--------|
+| Building microservice with standard CRUD endpoints | Hibernate |
+| E-commerce app with complex product filtering & reporting | MyBatis |
+| Data warehouse or analytics pipeline with bulk loads | MyBatis |
+| SaaS application with multi-tenant design | Hibernate |
+| High-frequency trading system with performance-critical queries | MyBatis |
+| Traditional 3-tier app with OOP domain model | Hibernate |
+
+<h3>Hybrid Approach</h3>
+
+```java
+// Use both: Hibernate for standard operations, MyBatis for complex queries
+@Service
+public class OrderService {
+    private OrderRepository orderRepository;  // Hibernate
+    private OrderQueryMapper orderQueryMapper;  // MyBatis
+    
+    public Order getSimpleOrder(Long id) {
+        // Simple: Use Hibernate
+        return orderRepository.findById(id).orElse(null);
+    }
+    
+    public List<OrderAnalytics> getComplexAnalytics() {
+        // Complex: Use MyBatis for optimized SQL
+        return orderQueryMapper.analyzeOrderTrends();
+    }
+}
+```
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/jpa-orm/">Learn more: JPA & ORM vs MyBatis</a></p>
+
+</details>
+
+---
+
 ## Additional Topics
 
 See [Sample Topics](../index.md) for more areas to explore:
