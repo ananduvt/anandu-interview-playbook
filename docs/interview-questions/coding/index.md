@@ -183,6 +183,14 @@ Real interview problems with explanations:
 - Maximum subarray sum (Kadane's algorithm)
 - [More to be added]
 
+### [Stream API Problems](coding-stream-api-problems.md)
+Modern functional Java with Stream API:
+- Convert to uppercase and sort
+- Filter and collect with conditions
+- Count occurrences (groupingBy)
+- Reduce operations (sum, product, concatenation)
+- Combined operations (filter, map, collect)
+
 ---
 
 [Additional questions to be added progressively]

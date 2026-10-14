@@ -1,0 +1,222 @@
+code review guidelines 
+If String global / instance variable make it as final
+If common variable used like ‘Y”, these variable are declared in 
+CommonImsApiConstants in base xml provider.
+public static final String Y = "Y";
+public static final String N = "N";
+Statement number 50-70 in a method.
+Input number of args are maximum 6 0 r 7.
+If a string is used in multiple places then declare a variable
+Remove unnecessary logs
+Remove unused imports
+Remove more nested blocks in a method
+If more || in a same statement ,go for .matches(“abc”),
+For table name and column names re use
+TableAndColNameType from base xmlm provider.
+Don’t suppress unchecked exceptions in class level.
+Don’t throw all exceptions to logs, use like e.get Message() or string [LOGGER.error(exception.getMessage,exception);
+] , instead of e.
+Open { should be at the end of line and put a new line after that (new line should not start with braces.
+Close } should be the first entry in a line ( } or } else { )
+Even if there is single statement in a if condition , should use { } for more readability
+Catch block need to throw base or relevant exceptions
+For set status message use message status type should taken from enum like informational, passed, fail, error, warning
+Instead of using “********-**** ” , declare a global variable , re use it .
+If we are using sh10.getCardSeq().getCurrValue () .equals(), this expression can be null but if the card sequence number is PK of sh10, no need to do the null check here.
+No need to use GBL 121 in the service and data helper and need to handle it in processor by overriding validateSchemaForResponse
+Replace String buffers with String Builders
+If there is a common variable used in either processor , service or helper component, create a constant class and its based on whether the constants are used in ims or db2 call, same for ims or db2 exceptions
+For all request and response src.test.virtualizer.meta-inf.resource.json.segment.xmlm.2220.accXRefLookUp.request and responses, we are expecting 11 length file name after _ . json.
+In the PR need to check, they are altering any test case json file that are not relevant for the current packet.
+String rewAwardedYtd = "getRewAwardedYtd_" + idx used as String rewAwardedYtd = StringUtils.join("getRewAwardedYtd_", idx);
+If && operand , the object part should come second operation
+Wsdl should start with I and packet Id in base xmlm provider entry starting with i.
+Springs’s CollectionUtils. Is Empty instead of obj. = null and obj = is Empty. collection utils. is Not Empty is it negative scenario like != null && !obj = empty. This has to be used in String variable also.
+Variable naming convention
+For boolean methods, use expressions instead of using if else conditions
+//not recommended public boolean isBigger() { // return if a is bigger than b
+if (a > b) return true; 
+else return false; } 
+//Recommended public boolean isBigger () { // return if a is bigger than b 
+return (a > b); }
+@Deprecated should not used in the code.
+For enum types, in order to avoid the malicious code, ideally make the fields in enum are private and set inside the constructor, if its not possible reduce their visibility as much as possible.
+Http Servlet Request. Get Request Session Id () should not be used .
+Public static fields should be final
+Avoid unnecessary variable declarations
+In the Packet’s Service class, creating the segment map must be as below :
+
+private Map<Segment, Set<SegmentField>> ieaCustSegs;
+
+@PostConstruct
+private void initSegmentRetrievalInfo() {
+
+ieaCustSegs = Map.of(NACHCustomerDBMetadata.Segments.CUCCM00.getValue(), Set.of(
+NACHCustomerDBMetadata.getSegmentFieldsMap()
+.get(CM00Fields.CM00_CUS_BASE_INFO_CM00_CUS_BASE_INFO_KEY_CM00_CUSTOMER_ID),
+NACHCustomerDBMetadata.getSegmentFieldsMap()
+.get(CM00Fields.CM00_CUS_BASE_INFO_CM00_CUS_BASE_INFO_KEY_CM00_CLIENT_NUM), NACHCustomerDBMetadata.getSegmentFieldsMap().get(CM00Fields.CM00_CUS_BASE_INFO_CM00_CUS_BASE_INFO_KEY))
+Don’t use instance variable in helper class, reduce the visibility by declaring the variables inside the method. If there is any instance variable it should declare as final.
+Don’t commit the files from the bin folder.
+All the json and xmlm file should be formatted properly for more readability and
+All the self created json and xml files should be formatted.
+Need to make sure wsdls are already checked in along with the Api.
+Need to make sure the packet provider from Grotto page just before the implementation.
+If there are parent and multiple children for a segment then need to load all the parent and children of a segment with a single variable by using Map<Segment, Set<Segment Field> from the init() from the service layer.
+If there is a collection and if we want to use isNull and is Empty , instead use Spring class Collection.isEmpty() .
+Lets say the collection object is obj and instead of 
+If ( (obj != null) && (!obj.isEmpty()) ) { }, instead need to use as below.
+If (!CollectionUtils.isEmpty() ) { … } 
+If we need to validate an object as (not) null by using if (Object.nonNull(obj)) {…}
+Use if (obj !=null) { … }.
+Avoid unnecessary else block
+If ‘if and else block’ , try to accommodate the smaller logic inside the if block.
+Before the usage of trim or strip methods, we have to check we are performing this operation on not null object. if object is string type use String Utils. is Not blank (string values) and for Object type use Object . non Null(Obj)
+For Switch case:
+in the default case use LOGGER.error to log the default value
+https://git.tsys.aws/projects/EMF/repos/nachclientconfigxmlmprovider/pull-requests/224/diff#src/main/java/com/tsys/enterprise/mainframe/helper/NCVDataHelper.java
+Avoid Multiple return statements in a method.
+The naming conventions for the methods.The get methods must always be returning value.
+For the methods from CommonUtil which already have null checks,we need not do null checks at the packet level.
+Whenever data filtering is possible with SSA qualifications,refrain from using java code based filters at the packet level and leverage the SSA qualifications.
+Whenever there is a version update please ensure that the POJOs as well as the WSDL is also moved to QA and also to the higher environments.
+When using filters ,if the condition is complicated use predicates for better readability.
+Eg, instead of below used condition
+cr31DataList = cr31DataList.stream()
+.filter(x -> x.getCorrespFormType().getCurValue() != null
+&& x.getCorrespFormType().getCurValue().equals(irlRequest.getCorrestype())
+&& x.getCorrespId().getCurValue() != null
+&& x.getCorrespId().getCurValue().equals(irlRequest.getCorresId())
+&& x.getPriority().getCurValue() != null
+&& x.getPriority().getCurValue().equals(irlRequest.getPriority())
+&& x.getCdateRequest().getCurValue() != null
+&& x.getCdateRequest().getCurValue().equals(irlRequest.getcDateCompliment())
+&& x.getCtimeRequest().getCurValue() != null
+&& x.getCtimeRequest().getCurValue().equals(irlRequest.getcTimeCompliment()))
+.collect(Collectors.toList());
+we ll use this:
+cr31DataList = cr31DataList.stream()
+.filter(cr31 -> irlBiPredicate.test(cr31, irlRequest))
+.collect(Collectors.toList());
+For different relational operators, try to use brackets for separation for better readability.
+if (StringUtils.isNotBlank(transTime) && DecisionEventType.EVENT_TYPE_975.getValue().equals(typeEvent)
+|| DecisionEventType.EVENT_TYPE_976.getValue().equals(typeEvent)) {
+Instead of doing this ll do like 
+if (StringUtils.isNotBlank(transTime) && (DecisionEventType.EVENT_TYPE_975.getValue().equals(typeEvent)
+|| DecisionEventType.EVENT_TYPE_976.getValue().equals(typeEvent))) {
+If using throws in method signature, we do not have to catch the exception in the catch block.
+Multiple null pointer checks should be avoided for the same variable. For example, NumberUtils.isParsable(textLen) covers null checks as well so we do not need to do this null != textLen
+We can avoid extra methods by putting @PostConstruct on initSegmentRetrievalInfo in Service class.
+Avoid multiple nested if by checking condition notPresent instead of isPresent().
+While handling the exception in a method we have to give method name like throwappNumReadException() instead of private void appNumReadException() throws BaseException {
+Instead of for loop use java 8 features like stream() as possible
+Method should do only one purpose
+Proper use of api signature 
+this is the classic example -- Left side use List<String> and after = no need new ArrayList<> List.of, itself sufficient to create unmodify list.
+Instead if creating/casting object after instance check like below ,
+
+if (responseObject instanceof IFF) {
+IFF iff = (IFF) responseObject;
+
+You can easily create object using the instance check operation. 
+if (responseObject instanceof IDC idc) {
+Replace Switch with ENUM
+keep heavy object as last paremeter in method.
+https://git.tsys.aws/projects/EMF/repos/nachaccthistoryxmlmprovider/pull-requests/321/diff?commentId=1017904#src/main/java/com/tsys/enterprise/mainframe/service/ILRService.java?t=439
+segregate the logic from return statement
+https://git.tsys.aws/projects/EMF/repos/nachaccountxmlmprovider/pull-requests/1242/diff?commentId=1021085#src/main/java/com/tsys/enterprise/mainframe/service/NOPService.java?f=235
+https://git.tsys.aws/projects/EMF/repos/nachaccountxmlmprovider/pull-requests/1242/overview
+This is not gud practice to provider whole line as variable name, reduce this
+it can be `FAILED_TO_CONVERT_SPEED_PAY_MAINT_DATE
+https://git.tsys.aws/projects/EMF/repos/nachaccountxmlmprovider/pull-requests/1242/overview
+Move these constants into SSARefKeyConstant
+https://git.tsys.aws/projects/EMF/repos/nachbasexmlmprovider/pull-requests/1480/overview
+Kindly reduce the number of OR operator its too much in single condition.
+https://git.tsys.aws/projects/EMF/repos/nachaccthistoryxmlmprovider/pull-requests/324/overview 
+private EbcidicComparator comparator = new EbcidicComparator();
+make it as Component bean in basexmlmprovider and use it as DI where this object need to be used.
+refer - https://git.tsys.aws/projects/EMF/repos/nachclientconfigxmlmprovider/pull-requests/509/overview
+https://git.tsys.aws/projects/EMF/repos/nachbasexmlmprovider/pull-requests/1558/overview
+Leave a line after a logical group of statements
+Sample PR:
+https://git.tsys.aws/projects/EMF/repos/nachaccountxmlmprovider/pull-requests/1305/overview 
+please ensure we follow this 
+No need to do packetRequest.setPacketID in packetprocessor class as createBasePacketRequest method already does that
+Datahelper class should be annotated with @component 
+Limit the number of CICS calls as much as possible.Utilize the multi-ref feature.
+Avoid conditions like below:
+if (!StringUtils.isNotBlank(iurCodeInfo.getUpnarRDate()))
+if (!CollectionUtils.isNotEmpty(tsysfaultTypes))
+Instead use 
+if (StringUtils.isBlank(iurCodeInfo.getUpnarRDate()))
+if (CollectionUtils.isEmpty(tsysfaultTypes))
+Avoid committing files with no changes 
+Dont add CommonImsApiConstants.REDIS_KEY_DEL inbetween keys , when we are creating tablekey using CommonUtil.keystoPrimeKey method.
+
+redisKey = CommonUtil.keystoPrimeKey.apply(Arrays.asList(TableAndColNameType.TCH_CORR_DEF_QUAL.getValue(),
+clientId, CommonImsApiConstants.REDIS_KEY_DEL, correspFormType, CommonImsApiConstants.REDIS_KEY_DEL,
+correspId));
+While calling CommonUtil.keystoPrimeKey.apply Please do like this
+
+redisKey = CommonUtil.keystoPrimeKey.apply(Arrays.asList(
+TableAndColNameType.TCH_CORR_DEF_QUAL.getValue(), clientId,
+correspFormType, correspId));
+Makesure whenever MultiDbResult multiDbResult = executeMultiDbRequest get invoked, its enclosing method should always throws BaseException. And not surround with try-catch
+No need of assignments and type casting while using CurrencyUtil.formatCurrency as below. 
+
+var amtAtCalculationreponse = new AmtAtCalculation();
+amtAtCalculationreponse = (AmtAtCalculation) CurrencyUtil.formatCurrency(amtAtCalculationreponse, amtAtCalculation, StringUtil.toUpperCase(maxRebateforSegmentCurCode));
+
+Use this instead  
+CurrencyUtil.formatCurrency``(amtAtCalculationreponse,``amtAtCalculation, StringUtil.toUpperCase(maxRebateforSegmentCurCode));
+Please use the common method in commonutil to set the restart key
+. While performing logics like below, ie adding 
+
+CommonImsApiConstants.SINGLE_PIPE_SEPERATOR after every parameter in the restart key
+private String getRestartToken(String... params) {
+StringBuilder restartKey = new StringBuilder();
+for (String param : params) {
+restartKey.append(param);
+restartKey.append(CommonImsApiConstants.SINGLE_PIPE_SEPERATOR);
+}
+return restartKey.toString();
+}
+
+
+String key = StringUtils.join(cro1Data.getCorrespFormType().getCurValue(),
+CommonImsApiConstants.SINGLE_PIPE_SEPERATOR, cro1Data.getCdateRequest().getCurValue(),
+CommonImsApiConstants.SINGLE_PIPE_SEPERATOR, cro1Data.getPriority().getCurValue(), CommonImsApiConstants.SINGLE_PIPE_SEPERATOR, cro1Data.getCtimeRequest().getCurValue(), CommonImsApiConstants.SINGLE_PIPE_SEPERATOR, cro1Data.getCorrespId().getCurValue(),
+CommonImsApiConstants.SINGLE_PIPE_SEPERATOR); 
+existing : Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+Comment from rajesh : range can be used here instead Arrays.asList
+Proposed change:
+int[] monthList = IntStream.range(1, 13).boxed().collect(Collectors.toList());
+Instead of multiple StringUtils.isEmpty use StringUtils.isAllEmpty in the case of multiple checks
+(StringUtils.isEmpty(basePacketRequest.getStateProv())
+&& StringUtils.isEmpty(basePacketRequest.getStateProvAbbrev())
+&& StringUtils.isEmpty(basePacketRequest.getStateProvCode())))
+StringUtils.isAllEmpty(basePacketRequest.getStateProv(), basePacketRequest.getStateProvAbbrev(),
+basePacketRequest.getStateProvCode()))
+No need to use template xml in PacketProcessor.
+Refer this commit - https://git.tools.tsys.aws/projects/EMF/repos/intchaccountxmlmprovider/commits/3d2986a98b9e8ae9bb50f947efaba7a9c23571ac#src/main/java/com/tsys/enterprise/mainframe/processor/IT9PacketProcessor.java
+
+Note: For some packets, testcases might fail after removing this. In such cases, we might also need to set the missing object as done below.
+https://git.tools.tsys.aws/projects/EMF/repos/intchaccountxmlmprovider/browse/src/main/java/com/tsys/enterprise/mainframe/helper/IT9DataHelper.java?at=refs%2Fheads%2Ftranche1bcicspkts_INTCH#74-76
+The SOR DB queries are moved to provider
+We do not use the CommonUtils.retainIMSFieldLengthwithLeadingZeros
+if your packet query (XXX_SorDb.xml) have date field in the where condition
+like to_date(#{columnsKeyValue.dateStmtBegin}, 'yyyy-mm-dd')
+
+this should be change like 
+${toDateFunc}(#{columnsKeyValue.dateStmtBegin}, 'yyyy-mm-dd')
+also if you refer other formats ( julian or another calender format or some other format) , it should be changed as 'yyyy-mm-dd' format with above approach and update the required code changes in the service class
+
+
+Refer the below for more clarification:
+
+Query change:
+https://git.tools.tsys.aws/projects/EMF/repos/intchaccthistsorprovider/browse/src/main/resources/sql-mappings/sordb/IPT_SorDb.xml?at=refs%2Fheads%2Fquartz_stage_cloudsor_preint_commondb
+
+Service class changes : 
+https://git.tools.tsys.aws/projects/EMF/repos/intchaccthistsorprovider/browse/src/main/java/com/tsys/enterprise/mainframe/service/IPTService.java?at=refs%2Fheads%2Fquartz_stage_cloudsor_preint_commondb
+Should not use any oracle functionalities in customised query 

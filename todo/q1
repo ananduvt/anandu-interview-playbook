@@ -1,0 +1,89 @@
+JAVA Interview Questions
+Sql table creation dml and ddl commands
+How to control concurrent updates in rest api
+Java program to find an index in array where left side elements sum is equal to right side sum
+Spring boot annotations 
+Handling exceptions in spring boot applications
+ ----------------------------------------------------------------------------------------------------------------------------------
+Coding Questions
+Plain Text
+/*Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+Example 1:
+Input: n = 3
+Output: ["((()))","(()())","(())()","()(())","()()()"]
+Input: n = 2
+Output: ["(())","()()"]
+Input: n = 1
+Output: ["()"]*/
+Example 1:
+Input: s = "anagram", t = "nagaram"
+Output: true
+Example 2:
+Input: s = "rat", t = "car"
+Output: false
+
+Security implementations in project
+How maintain logs in the project
+How kafka is being used in the project
+if kafka topic is missed then how will you handle it
+Exception handling
+How multithreading is being implemented in spring boot?
+async and sync types, Executor Service
+------------------------------------------------------------------------------------------------------------------------------------
+How to increase memory and cpu in spring boot application
+What is transitive dependency
+Why maven is used in application
+What is a secret manager
+How to read data from a secret manager
+What is indexing
+Composite indexing
+What is rate limiting
+How to restrict api access
+What will happen if we change the configuration at running application
+Junit test cases
+-------------------------------------------------------------------------------------------------------------------------------
+Backtrack sum
+1 - 1
+2 - 2    1,1
+3 - 1,2    2,1        1,1,1
+4 - 1,2,1      2,1,1     1,1,1,1     2,2    1,1,2
+Given integer like 4, we have to to print all combinations of 1 and 2, when adding should give the integer 4
+Collection in java
+Volatile 
+Why microservices
+Partition and consumer in kafka
+How avoid failure in kafka 
+Design patterns in Java 
+Microservices pattern
+Use case for nosql db 
+Microservices communication types
+Service discovery 
+Maintain unique identifier across pods.
+------------------------------------------------------------------------------------------------------------------------
+
+
+1.Introduce about yourself.
+2.Explain the kafka architecture and how kafka works internally?
+3.For a kafka topic we have multiple consumers. How to know how many consumers are consuming a particular kafka topic?
+4.How do you reprocess messages in kafka?
+5.How to ensure all the messages are processed correctly?
+6.How do you manage all the secrets in java application and how do you fetch it in your application?
+7.What is CCM and how your java code and ccm integrates each other?
+8.What is @Value and @Configuration annotation?
+9.Explain the spring boot flow like what happens after the application boots?
+10.When maven dependencies get downloaded and list some of the spring boot annotations.
+11.Spring bean scope/dependency injection scenario question(full Spring DI flow when multiple service depend on the same bean).
+12. what do you know about multithreading. There are multiple threads running and how do I ensure that a particular thread is completed and how will you collect a value from a particular thread and return to the main thread?
+13.what is Callable?
+14.Program to find most frequent number in an array. Input:[3,2,3] Output:3
+15.Program to check is two strings are anagram are not. Input: "RAT","CAR Output : False
+
+Java Spark senior qn
+Design a system to build an application like Jira
+Defina all the different components of the application
+Discuss about functional and non functional requirements of the design
+Suggest performance improvements to handle the load upto 2m+ users
+Discuss about the different microservices that a jira like system has
+How would you carry out testing for these kind of microservices
+What would the API contracts between you and your client
+

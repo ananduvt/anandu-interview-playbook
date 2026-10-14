@@ -53,6 +53,10 @@ Deployment, containerization, infrastructure, cloud platforms.
 ML concepts, algorithms, deep learning, LLM applications.
 [ML/AI Questions](verbal/verbal-ml-ai-questions.md)
 
+#### **Design Patterns**
+Gang of Four patterns, creational/structural/behavioral, real-world applications.
+[Design Patterns Questions](verbal/verbal-design-patterns-questions.md)
+
 ---
 
 ## Interview Tips
