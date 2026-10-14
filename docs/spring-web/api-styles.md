@@ -308,3 +308,314 @@ public EntityModel<User> getUser(@PathVariable Long id) {
     );
 }
 ```
+
+---
+
+## Swagger / OpenAPI
+
+**OpenAPI** (formerly Swagger) is the standard for documenting REST APIs. Automatic documentation, testing, and code generation from annotations.
+
+### Setup: Springdoc OpenAPI
+
+Maven dependency:
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.0.4</version>
+</dependency>
+```
+
+Automatic endpoints:
+- `/swagger-ui.html` — Interactive UI (test endpoints live)
+- `/v3/api-docs` — OpenAPI JSON spec
+- `/v3/api-docs.yaml` — OpenAPI YAML spec
+
+### Basic Annotations
+
+```java
+@RestController
+@RequestMapping("/api/users")
+@Tag(name = "User Management", description = "Operations for managing users")
+public class UserController {
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "Get user by ID", description = "Fetch a specific user")
+    @ApiResponse(responseCode = "200", description = "User found")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    public ResponseEntity<User> getUser(
+            @Parameter(description = "User ID") @PathVariable Long id) {
+        return ResponseEntity.ok(new User(id, "John"));
+    }
+    
+    @PostMapping
+    @Operation(summary = "Create new user")
+    @ApiResponse(responseCode = "201", description = "User created")
+    @ApiResponse(responseCode = "400", description = "Invalid input")
+    public ResponseEntity<User> createUser(
+            @RequestBody 
+            @io.swagger.v3.oas.annotations.media.Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(value = "{\"name\":\"John\",\"email\":\"john@example.com\"}"))
+            CreateUserRequest req) {
+        User user = new User(1L, req.getName());
+        return ResponseEntity.status(201).body(user);
+    }
+    
+    @PutMapping("/{id}")
+    @Operation(summary = "Update user")
+    public ResponseEntity<User> updateUser(
+            @PathVariable Long id,
+            @RequestBody UpdateUserRequest req) {
+        return ResponseEntity.ok(new User(id, req.getName()));
+    }
+    
+    @PatchMapping("/{id}")
+    @Operation(summary = "Partially update user")
+    public ResponseEntity<User> patchUser(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> updates) {
+        // Update only provided fields
+        return ResponseEntity.ok(new User(id, "Updated"));
+    }
+    
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user")
+    @ApiResponse(responseCode = "204", description = "User deleted")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        return ResponseEntity.noContent().build();
+    }
+}
+```
+
+### Key Annotations
+
+| Annotation | Purpose |
+|-----------|---------|
+| `@Tag` | Group endpoints (shown in UI tabs) |
+| `@Operation` | Describe endpoint (summary, description) |
+| `@Parameter` | Describe path/query/header parameters |
+| `@RequestBody` | Document request body |
+| `@ApiResponse` | Document HTTP responses (status codes, description) |
+| `@Schema` | Document data model fields |
+| `@Deprecated` | Mark endpoint as deprecated |
+
+### Document Model/DTO
+
+```java
+@Data
+@Schema(description = "User model")
+public class User {
+    
+    @Schema(description = "Unique user ID", example = "123")
+    private Long id;
+    
+    @Schema(description = "User's full name", example = "John Doe", minLength = 1, maxLength = 100)
+    private String name;
+    
+    @Schema(description = "User email", example = "john@example.com")
+    @Email(message = "Invalid email format")
+    private String email;
+    
+    @Schema(description = "User role", allowableValues = {"USER", "ADMIN", "MODERATOR"})
+    private String role;
+    
+    @Schema(description = "Account creation date", example = "2024-01-15T10:30:00Z")
+    private LocalDateTime createdAt;
+}
+
+@Schema(description = "Request to create a new user")
+public class CreateUserRequest {
+    
+    @Schema(required = true, example = "John Doe")
+    private String name;
+    
+    @Schema(required = true, example = "john@example.com")
+    private String email;
+}
+```
+
+### Configuration
+
+```yaml
+# application.yml
+springdoc:
+  api-docs:
+    path: /v3/api-docs  # Custom path for OpenAPI JSON
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    show-common-extensions: true
+    display-request-duration: true
+    filter: true  # Enable search filter
+  
+  # Hide endpoints matching pattern
+  ignored-url-patterns: /internal/**
+
+# Optionally, expose only specific endpoints
+springdoc:
+  paths-to-match: /api/**
+  paths-to-exclude: /admin/**
+```
+
+### Advanced: Custom OpenAPI Configuration
+
+```java
+@Configuration
+public class OpenApiConfig {
+    
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+            .info(new Info()
+                .title("User Management API")
+                .version("1.0.0")
+                .description("REST API for user management")
+                .contact(new Contact()
+                    .name("API Support")
+                    .email("support@example.com")
+                    .url("https://example.com"))
+                .license(new License()
+                    .name("Apache 2.0")
+                    .url("https://www.apache.org/licenses/LICENSE-2.0")))
+            .servers(Arrays.asList(
+                new Server()
+                    .url("https://api.example.com")
+                    .description("Production"),
+                new Server()
+                    .url("http://localhost:8080")
+                    .description("Development")))
+            .components(new Components()
+                .addSecuritySchemes("bearer-jwt",
+                    new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                        .description("Enter JWT token")));
+    }
+}
+```
+
+### Security Documentation
+
+```java
+@Configuration
+public class SecurityOpenApiConfig {
+    
+    @Bean
+    public OpenAPI securedOpenAPI() {
+        return new OpenAPI()
+            .info(new Info().title("Secured API").version("1.0"))
+            .components(new Components()
+                .addSecuritySchemes("bearer-jwt",
+                    new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")))
+            .security(Arrays.asList(
+                new SecurityRequirement().addList("bearer-jwt")));
+    }
+}
+
+@RestController
+public class ProtectedController {
+    
+    @GetMapping("/protected")
+    @Operation(summary = "Protected endpoint")
+    @SecurityRequirement(name = "bearer-jwt")
+    public ResponseEntity<String> protectedEndpoint() {
+        return ResponseEntity.ok("Access granted");
+    }
+}
+```
+
+### Example Responses
+
+Full example with nested models:
+
+```java
+@RestController
+@RequestMapping("/api/orders")
+public class OrderController {
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "Get order with items", description = "Fetch complete order including all line items")
+    @ApiResponse(responseCode = "200", description = "Order found",
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = OrderResponse.class),
+            examples = @ExampleObject(
+                value = "{\"id\":1,\"userId\":10,\"total\":299.99,\"items\":[{\"productId\":5,\"quantity\":2,\"price\":149.99}]}")))
+    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(new OrderResponse(1L, 10L, 299.99, 
+            List.of(new OrderItem(5L, 2, 149.99))));
+    }
+}
+
+@Data
+@Schema(description = "Complete order with items")
+public class OrderResponse {
+    
+    @Schema(example = "1")
+    private Long id;
+    
+    @Schema(example = "10")
+    private Long userId;
+    
+    @Schema(example = "299.99")
+    private Double total;
+    
+    @Schema(description = "Line items in this order")
+    private List<OrderItem> items;
+}
+
+@Data
+@Schema(description = "Individual order item")
+public class OrderItem {
+    
+    @Schema(example = "5")
+    private Long productId;
+    
+    @Schema(example = "2", minimum = "1")
+    private Integer quantity;
+    
+    @Schema(example = "149.99", minimum = "0")
+    private Double price;
+}
+```
+
+### Generate Code from OpenAPI
+
+Use OpenAPI Generator to create client/server code:
+
+```bash
+# Generate Java client from OpenAPI spec
+mvn org.openapitools:openapi-generator-maven-plugin:generate \
+  -Dopenapi.generator.maven.plugin.inputSpec=http://localhost:8080/v3/api-docs \
+  -Dopenapi.generator.maven.plugin.generatorName=java \
+  -Dopenapi.generator.maven.plugin.output=generated
+
+# Generate TypeScript client
+openapi-generator-cli generate \
+  -i http://localhost:8080/v3/api-docs \
+  -g typescript-axios \
+  -o generated/client
+```
+
+### Best Practices
+
+✅ **Do's**
+- Document all endpoints and response codes
+- Include examples in schemas
+- Use meaningful descriptions (helps frontend developers)
+- Document authentication requirements
+- Keep OpenAPI spec updated with code
+- Use tags to group related endpoints
+- Document error responses
+
+❌ **Don'ts**
+- Don't expose sensitive endpoints in public API docs
+- Don't include secrets/passwords in examples
+- Don't over-document (brief and clear > verbose)
+- Don't ignore deprecated endpoints (mark with @Deprecated)
+- Don't generate docs manually (use annotations)

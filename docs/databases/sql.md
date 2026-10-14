@@ -92,6 +92,142 @@ SELECT LAST_INSERT_ID();  -- Returns: 1
 
 ---
 
+## UPSERT (INSERT or UPDATE)
+
+**UPSERT** — Insert if not exists, update if already exists. Use case: sync data from external sources.
+
+### MySQL: INSERT ... ON DUPLICATE KEY UPDATE
+
+```sql
+-- If unique key/primary key exists, update; otherwise insert
+INSERT INTO users (id, name, email, age)
+VALUES (1, 'John', 'john@example.com', 30)
+ON DUPLICATE KEY UPDATE
+    name = VALUES(name),
+    email = VALUES(email),
+    age = VALUES(age);
+
+-- Update only specific columns
+INSERT INTO users (email, name)
+VALUES ('alice@example.com', 'Alice')
+ON DUPLICATE KEY UPDATE
+    name = 'Alice',
+    updated_at = NOW();
+
+-- MySQL 8.0.20+: Use NEW keyword
+INSERT INTO users (id, name, email)
+VALUES (1, 'John', 'john@example.com')
+ON DUPLICATE KEY UPDATE
+    name = NEW.name,
+    email = NEW.email;
+
+-- Bulk upsert multiple rows
+INSERT INTO users (id, name, email, age)
+VALUES 
+    (1, 'John', 'john@example.com', 30),
+    (2, 'Jane', 'jane@example.com', 25),
+    (3, 'Bob', 'bob@example.com', 35)
+ON DUPLICATE KEY UPDATE
+    name = VALUES(name),
+    email = VALUES(email),
+    age = VALUES(age);
+```
+
+### PostgreSQL: INSERT ... ON CONFLICT DO UPDATE
+
+```sql
+-- Insert, or update on conflict with unique/primary key
+INSERT INTO users (id, name, email, age)
+VALUES (1, 'John', 'john@example.com', 30)
+ON CONFLICT (id) DO UPDATE SET
+    name = EXCLUDED.name,
+    email = EXCLUDED.email,
+    age = EXCLUDED.age;
+
+-- Conflict on composite unique key
+INSERT INTO user_settings (user_id, setting_key, setting_value)
+VALUES (1, 'theme', 'dark')
+ON CONFLICT (user_id, setting_key) DO UPDATE SET
+    setting_value = EXCLUDED.setting_value,
+    updated_at = NOW();
+
+-- Don't update, just ignore conflict
+INSERT INTO users (id, name, email)
+VALUES (1, 'John', 'john@example.com')
+ON CONFLICT (id) DO NOTHING;
+```
+
+### SQL Server: MERGE Statement
+
+```sql
+-- Most flexible: can INSERT, UPDATE, DELETE in one statement
+MERGE INTO users AS target
+USING (SELECT 1 AS id, 'John' AS name, 'john@example.com' AS email, 30 AS age) AS source
+ON target.id = source.id
+WHEN MATCHED THEN
+    UPDATE SET 
+        target.name = source.name,
+        target.email = source.email,
+        target.age = source.age
+WHEN NOT MATCHED THEN
+    INSERT (id, name, email, age)
+    VALUES (source.id, source.name, source.email, source.age);
+
+-- Bulk merge
+MERGE INTO users AS target
+USING (VALUES 
+    (1, 'John', 'john@example.com', 30),
+    (2, 'Jane', 'jane@example.com', 25)
+) AS source(id, name, email, age)
+ON target.id = source.id
+WHEN MATCHED THEN
+    UPDATE SET name = source.name, email = source.email, age = source.age
+WHEN NOT MATCHED THEN
+    INSERT (id, name, email, age) VALUES (source.id, source.name, source.email, source.age);
+
+-- Also allow DELETE
+MERGE INTO users AS target
+USING source_data AS source
+ON target.id = source.id
+WHEN MATCHED THEN UPDATE SET ...
+WHEN NOT MATCHED THEN INSERT ...
+WHEN NOT MATCHED BY SOURCE AND created_before = '2020-01-01' THEN DELETE;
+```
+
+### Alternative: Check & Do-If Pattern
+
+For databases without native UPSERT:
+
+```sql
+-- Check if exists, then decide
+SET @id = 1;
+SET @name = 'John';
+SET @email = 'john@example.com';
+
+IF EXISTS(SELECT 1 FROM users WHERE id = @id)
+    UPDATE users SET name = @name, email = @email WHERE id = @id;
+ELSE
+    INSERT INTO users (id, name, email) VALUES (@id, @name, @email);
+```
+
+### Performance Considerations
+
+- **Single UPSERT** — Atomic, no race conditions
+- **Bulk UPSERT** — Much faster than row-by-row inserts/updates
+- **Indexes** — Ensure unique key is indexed for UPSERT performance
+
+```sql
+-- Create unique index for UPSERT to work efficiently
+CREATE UNIQUE INDEX idx_users_email ON users(email);
+
+-- Now upsert by email
+INSERT INTO users (email, name)
+VALUES ('john@example.com', 'John')
+ON DUPLICATE KEY UPDATE name = VALUES(name);
+```
+
+---
+
 ## SELECT (DML)
 
 Query and retrieve data.

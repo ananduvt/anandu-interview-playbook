@@ -107,3 +107,404 @@ A failover mechanism is a system that automatically switches to a backup system 
 ## Resilience patterns (quick reference)
 - **Timeout · Retry** (idempotent + backoff+jitter) **· Circuit breaker · Bulkhead · Fallback/graceful degradation.**
 - **Resilience4j** (successor to Hystrix) provides these as composable decorators/annotations in Spring.
+
+---
+
+## Java Scalability Patterns
+
+Building scalable Java applications requires attention to concurrency, resource management, and architecture.
+
+### Vertical Scaling (Single Server)
+
+**Increase resources** on existing server: CPU, memory, disk.
+
+#### Thread Management
+
+```java
+// ❌ Bad: Unbounded thread creation
+@RestController
+public class UserController {
+    @PostMapping("/process")
+    public void processData() {
+        new Thread(() -> {
+            expensiveOperation();  // Unbounded threads → OutOfMemoryError
+        }).start();
+    }
+}
+
+// ✅ Good: Thread pool (bounded, reusable)
+@Configuration
+public class ThreadPoolConfig {
+    @Bean
+    public ExecutorService executorService() {
+        return Executors.newFixedThreadPool(10);  // Max 10 threads
+    }
+}
+
+@RestController
+public class UserController {
+    @Autowired
+    private ExecutorService executorService;
+    
+    @PostMapping("/process")
+    public ResponseEntity<String> processData() {
+        executorService.submit(() -> expensiveOperation());
+        return ResponseEntity.accepted().build();
+    }
+}
+
+// Spring way: @Async with thread pool
+@Configuration
+@EnableAsync
+public class AsyncConfig implements AsyncConfigurer {
+    @Override
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("async-");
+        executor.initialize();
+        return executor;
+    }
+}
+
+@Service
+public class UserService {
+    @Async  // Runs in thread pool
+    public void processUserAsync(Long userId) {
+        expensiveOperation();
+    }
+}
+```
+
+#### Connection Pooling
+
+```yaml
+# Limit DB connections (don't exhaust pool)
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 20  # Max 20 concurrent connections
+      minimum-idle: 5        # Keep 5 idle connections
+      maximum-lifetime: 1800000  # 30 min
+      idle-timeout: 600000       # 10 min before closing
+      connection-timeout: 30000  # 30 sec wait for connection
+```
+
+```java
+// Don't hold connections long
+@Service
+public class UserService {
+    
+    // ❌ Bad: Holds connection during sleep
+    @Transactional
+    public void slowOperation() {
+        User user = userRepo.findById(1L).orElse(null);
+        Thread.sleep(10000);  // Blocks connection for 10 sec
+        userRepo.save(user);
+    }
+    
+    // ✅ Good: Release connection early
+    @Transactional
+    public void quickOperation() {
+        User user = userRepo.findById(1L).orElse(null);
+        // Connection released here
+    }
+    
+    // Separate async work
+    @Async
+    public void doBackgroundWork(User user) {
+        Thread.sleep(10000);  // Not blocking connection
+    }
+}
+```
+
+#### Memory Management & GC
+
+```java
+// ❌ Bad: Large objects, memory leaks
+public class DataCache {
+    private Map<Integer, byte[]> largeDataCache = new HashMap<>();  // Unbounded growth
+    
+    public void addData(int id, byte[] data) {
+        largeDataCache.put(id, data);  // Never removed → heap fills up
+    }
+}
+
+// ✅ Good: Bounded cache with eviction
+@Configuration
+public class CacheConfig {
+    @Bean
+    public CacheManager cacheManager() {
+        CaffeineCacheManager manager = new CaffeineCacheManager("data");
+        manager.setCaffeine(
+            Caffeine.newBuilder()
+                .maximumSize(10000)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+        );
+        return manager;
+    }
+}
+
+// Monitor GC
+@Component
+public class GcMonitor {
+    @Scheduled(fixedRate = 60000)
+    public void logGcInfo() {
+        long maxMemory = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        long totalMemory = Runtime.getRuntime().totalMemory() / (1024 * 1024);
+        long freeMemory = Runtime.getRuntime().freeMemory() / (1024 * 1024);
+        
+        System.out.println("Max: " + maxMemory + "MB, Used: " + (totalMemory - freeMemory) + "MB");
+    }
+}
+```
+
+### Horizontal Scaling (Multiple Servers)
+
+**Add more servers** behind a load balancer.
+
+#### Stateless Design
+
+```java
+// ❌ Bad: Server-side state not scalable
+@RestController
+public class CartController {
+    private Map<String, Cart> sessionCarts = new HashMap<>();  // Server-specific state
+    
+    @PostMapping("/cart/add")
+    public ResponseEntity<Cart> addToCart(String sessionId, Product product) {
+        sessionCarts.get(sessionId).add(product);  // Lost when switching servers
+        return ResponseEntity.ok(sessionCarts.get(sessionId));
+    }
+}
+
+// ✅ Good: Stateless, session in external store (Redis)
+@Configuration
+@EnableSpringHttpSession
+public class HttpSessionConfig {
+    @Bean
+    public LettuceConnectionFactory connectionFactory() {
+        return new LettuceConnectionFactory();
+    }
+}
+
+@RestController
+public class CartController {
+    @PostMapping("/cart/add")
+    public ResponseEntity<Cart> addToCart(HttpSession session, Product product) {
+        Cart cart = (Cart) session.getAttribute("cart");  // From Redis, not local
+        cart.add(product);
+        session.setAttribute("cart", cart);  // Persisted to Redis
+        return ResponseEntity.ok(cart);
+    }
+}
+```
+
+#### Database Read Replicas
+
+```java
+// Separate read & write databases
+@Configuration
+public class RoutingDataSourceConfig {
+    
+    @Bean
+    public DataSource readDataSource() {
+        return DataSourceBuilder.create()
+            .url("jdbc:mysql://read-replica:3306/db")
+            .build();
+    }
+    
+    @Bean
+    public DataSource writeDataSource() {
+        return DataSourceBuilder.create()
+            .url("jdbc:mysql://primary-db:3306/db")
+            .build();
+    }
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    
+    // Reads go to replica (non-modifying)
+    @Transactional(readOnly = true)
+    @Query("SELECT u FROM User u WHERE u.email = ?1")
+    Optional<User> findByEmail(String email);
+    
+    // Writes go to primary (modifying)
+    @Transactional(readOnly = false)
+    User save(User user);
+}
+```
+
+#### Caching Layer
+
+```java
+// Reduce database load with distributed cache
+@Service
+public class UserService {
+    
+    // Cache miss → DB query; cache hit → immediate return
+    @Cacheable(value = "users", key = "#id")
+    public User getUser(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+}
+
+// All servers share same Redis cache
+```
+
+#### Async Processing & Queues
+
+```java
+// Don't block on slow operations
+@RestController
+public class OrderController {
+    
+    // ❌ Slow: Wait for email, payment, shipment (10+ seconds)
+    @PostMapping("/order/slow")
+    public ResponseEntity<Order> createOrderSync(Order order) {
+        Order saved = orderRepo.save(order);
+        emailService.sendConfirmation(saved);  // Blocking
+        paymentService.charge(saved);          // Blocking
+        shipmentService.schedule(saved);       // Blocking
+        return ResponseEntity.ok(saved);
+    }
+    
+    // ✅ Fast: Queue async work, return immediately
+    @PostMapping("/order/async")
+    public ResponseEntity<Order> createOrderAsync(Order order) {
+        Order saved = orderRepo.save(order);
+        
+        // Publish events (async)
+        eventPublisher.publishEvent(new OrderCreatedEvent(saved));
+        
+        return ResponseEntity.accepted().body(saved);  // Return 202, job queued
+    }
+    
+    // Event listeners process in background
+    @Component
+    public class OrderEventListeners {
+        @EventListener
+        public void onOrderCreated(OrderCreatedEvent event) {
+            Order order = event.getOrder();
+            emailService.sendConfirmation(order);
+            paymentService.charge(order);
+            shipmentService.schedule(order);
+        }
+    }
+}
+
+// Or use message queue (RabbitMQ, Kafka)
+@Service
+public class OrderService {
+    
+    public void createOrder(Order order) {
+        orderRepo.save(order);
+        // Publish to message broker
+        messageTemplate.convertAndSend("orders.created", order);
+    }
+}
+
+@Service
+public class OrderEventListener {
+    
+    @RabbitListener(queues = "orders.created")
+    public void processOrderCreated(Order order) {
+        emailService.sendConfirmation(order);
+        paymentService.charge(order);
+        shipmentService.schedule(order);
+    }
+}
+```
+
+#### Load Balancing
+
+```yaml
+# Kubernetes: Distribute traffic across pod replicas
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+
+# Replicas handled by deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 3  # 3 instances behind load balancer
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: user-service:1.0
+          ports:
+            - containerPort: 8080
+```
+
+### Performance Metrics to Monitor
+
+```java
+// CPU: Keep <70% for headroom
+// Memory: Keep <80% heap usage
+// Threads: Monitor thread count, queue size
+// DB Connections: Track active/idle connections
+// Request Latency: P50, P95, P99 percentiles
+// Throughput: Requests per second
+
+@Component
+public class PerformanceMonitor {
+    private final MeterRegistry meterRegistry;
+    
+    public PerformanceMonitor(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        setupMetrics();
+    }
+    
+    private void setupMetrics() {
+        // Thread count gauge
+        Gauge.builder("jvm.threads.active", () -> Thread.activeCount())
+            .register(meterRegistry);
+        
+        // Memory gauge
+        Gauge.builder("jvm.memory.heap", () -> 
+            Runtime.getRuntime().totalMemory() / (1024 * 1024))
+            .description("Heap memory in MB")
+            .register(meterRegistry);
+    }
+}
+```
+
+### Scaling Decision Tree
+
+```
+Is your app slow?
+├─ YES: CPU-bound?
+│  ├─ YES: Vertical scale (faster CPU, more cores)
+│  └─ NO: I/O-bound?
+│     ├─ YES: Use async/non-blocking I/O
+│     └─ Optimize: Cache, index DB, lazy load
+│
+└─ NO: Running out of resources?
+   ├─ Memory: Reduce cache size, fix memory leaks
+   ├─ Connections: Use connection pooling, read replicas
+   ├─ Disk: Purge old data, archive logs
+   └─ Need high availability?
+      ├─ YES: Horizontal scale + load balancer
+      └─ NO: Vertical scale sufficient
+```

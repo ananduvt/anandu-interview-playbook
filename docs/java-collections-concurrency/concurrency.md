@@ -321,6 +321,185 @@ class FutureTaskExample {
 | **Usage** | Simple tasks, no return needed | Tasks requiring a return value or exception handling |
 | **Execution** | Can be run by Thread or ExecutorService | Can only be executed by ExecutorService |
 
+---
+
+## CompletableFuture (Java 8+)
+
+**CompletableFuture** improves on Future with chainable async operations, callbacks, and combinations.
+
+### Basic Usage
+
+```java
+// Create completed future
+CompletableFuture<String> completed = CompletableFuture.completedFuture("Hello");
+
+// Create incomplete future
+CompletableFuture<String> incomplete = new CompletableFuture<>();
+incomplete.complete("Done");  // Complete manually
+
+// Async execution
+CompletableFuture<String> async = CompletableFuture.supplyAsync(() -> {
+    return "Async result";
+});
+
+String result = async.get();  // Block for result
+```
+
+### Chaining Operations
+
+```java
+// thenApply: Transform result
+CompletableFuture<Integer> future = CompletableFuture
+    .supplyAsync(() -> "Hello")
+    .thenApply(String::length)     // String → int
+    .thenApply(len -> len * 2);    // int → int
+
+System.out.println(future.get());  // 10
+
+// thenAccept: Consume result (no return)
+CompletableFuture<Void> task = CompletableFuture
+    .supplyAsync(() -> "Hello")
+    .thenAccept(System.out::println);  // Print, return nothing
+
+task.get();  // Wait for completion
+
+// thenRun: Run after completion (ignore result)
+CompletableFuture<Void> task2 = CompletableFuture
+    .supplyAsync(() -> "Hello")
+    .thenRun(() -> System.out.println("Finished"));  // No result param
+```
+
+### Error Handling
+
+```java
+// exceptionally: Handle errors
+CompletableFuture<Integer> future = CompletableFuture
+    .supplyAsync(() -> {
+        throw new RuntimeException("Error!");
+    })
+    .exceptionally(ex -> {
+        System.err.println("Caught: " + ex.getMessage());
+        return -1;  // Default value on error
+    });
+
+System.out.println(future.get());  // -1
+
+// whenComplete: Run after success or error
+CompletableFuture.supplyAsync(() -> "Result")
+    .whenComplete((result, ex) -> {
+        if (ex == null) {
+            System.out.println("Success: " + result);
+        } else {
+            System.err.println("Error: " + ex);
+        }
+    });
+
+// handle: Transform result or error
+CompletableFuture<String> handled = CompletableFuture
+    .supplyAsync(() -> {
+        throw new RuntimeException("Oops");
+    })
+    .handle((result, ex) -> {
+        if (ex != null) {
+            return "Error: " + ex.getMessage();
+        }
+        return result;
+    });
+
+System.out.println(handled.get());  // "Error: Oops"
+```
+
+### Combining Multiple Futures
+
+```java
+// thenCombine: Combine two futures' results
+CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Hello");
+CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "World");
+
+CompletableFuture<String> combined = future1
+    .thenCombine(future2, (a, b) -> a + " " + b);
+
+System.out.println(combined.get());  // "Hello World"
+
+// allOf: Wait for all futures
+CompletableFuture<Integer> f1 = CompletableFuture.supplyAsync(() -> 1);
+CompletableFuture<Integer> f2 = CompletableFuture.supplyAsync(() -> 2);
+CompletableFuture<Integer> f3 = CompletableFuture.supplyAsync(() -> 3);
+
+CompletableFuture<Void> allDone = CompletableFuture.allOf(f1, f2, f3);
+allDone.get();  // Wait for all
+
+// Collect results
+List<Integer> results = List.of(f1.get(), f2.get(), f3.get());
+System.out.println(results);  // [1, 2, 3]
+
+// anyOf: Return first to complete
+CompletableFuture<String> f4 = CompletableFuture.supplyAsync(() -> "First", 
+    Executors.newFixedThreadPool(1));
+CompletableFuture<String> f5 = CompletableFuture.supplyAsync(() -> "Second",
+    Executors.newFixedThreadPool(1));
+
+CompletableFuture<Object> first = CompletableFuture.anyOf(f4, f5);
+System.out.println(first.get());  // Whichever completes first
+```
+
+### Real-World: API Call Pipeline
+
+```java
+@Service
+public class UserService {
+    
+    private RestTemplate restTemplate;
+    private ExecutorService executor;
+    
+    // Fetch user asynchronously
+    public CompletableFuture<User> getUser(Long userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            return restTemplate.getForObject("/users/" + userId, User.class);
+        }, executor);
+    }
+    
+    // Fetch orders asynchronously
+    public CompletableFuture<List<Order>> getOrders(Long userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<Order> orders = restTemplate.getForObject(
+                "/orders?userId=" + userId, 
+                new ParameterizedTypeReference<List<Order>>() {});
+            return orders;
+        }, executor);
+    }
+    
+    // Combine user + orders (runs in parallel, then combines)
+    public CompletableFuture<UserProfile> getUserProfile(Long userId) {
+        return getUser(userId)
+            .thenCombine(getOrders(userId), (user, orders) -> {
+                UserProfile profile = new UserProfile();
+                profile.setUser(user);
+                profile.setOrders(orders);
+                return profile;
+            })
+            .exceptionally(ex -> {
+                log.error("Error fetching profile", ex);
+                return new UserProfile();  // Empty profile on error
+            });
+    }
+}
+
+// Usage
+UserProfile profile = userService.getUserProfile(123).get();
+```
+
+### CompletableFuture vs Future
+
+| Aspect | Future | CompletableFuture |
+|--------|--------|-------------------|
+| **Chaining** | Not supported | Chainable with `thenApply`, etc. |
+| **Composition** | Manual | `allOf`, `anyOf` combinator methods |
+| **Error Handling** | Try-catch | `exceptionally`, `handle` |
+| **Callbacks** | Block or poll | `thenAccept`, `whenComplete` |
+| **Cancellation** | `cancel()` | `cancel()` + `join()` |
+| **Flexibility** | Limited | Highly flexible, composable |
+
 ### Thread Pool
 
 [https://jenkov.com/tutorials/java-util-concurrent/executorservice.html](https://jenkov.com/tutorials/java-util-concurrent/executorservice.html)

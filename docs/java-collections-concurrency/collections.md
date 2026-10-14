@@ -126,6 +126,193 @@ A lower load factor means that the hash table will be resized more frequently, l
 - **ConcurrentHashMap:** Thread-safe with segment-level locking, best for multi-threaded
 - **Hashtable:** Legacy, fully synchronized (slow), avoid in modern code
 
+## ConcurrentHashMap: Thread-Safe HashMap
+
+**ConcurrentHashMap** provides thread-safe operations without locking the entire map. Uses segment-level locking (or bucket-level in Java 8+).
+
+### Internal Structure (Java 8+)
+
+```
+ConcurrentHashMap segments the map into buckets:
+
+HashMap (single lock - blocks entire map):
+[===LOCK===]
+[Bucket 0] [Bucket 1] [Bucket 2] [Bucket 3] [Bucket 4]
+
+ConcurrentHashMap (locks per bucket - allows concurrent access):
+[LOCK A] [LOCK B] [LOCK C] [LOCK D] [LOCK E]
+Bucket 0  Bucket 1  Bucket 2  Bucket 3  Bucket 4
+
+Multiple threads can read/write different buckets simultaneously!
+```
+
+### Basic Usage
+
+```java
+// Create ConcurrentHashMap
+Map<String, Integer> map = new ConcurrentHashMap<>(16, 0.75f, 4);
+// Capacity: 16, Load Factor: 0.75, Concurrency Level: 4
+
+map.put("key1", 100);
+map.put("key2", 200);
+
+Integer value = map.get("key1");  // 100
+
+map.remove("key2");
+map.replace("key1", 150);
+
+// Iteration is safe (doesn't require external synchronization)
+for (String key : map.keySet()) {
+    System.out.println(key + " = " + map.get(key));
+}
+```
+
+### Atomic Operations
+
+```java
+// putIfAbsent: Set only if key doesn't exist
+map.putIfAbsent("counter", 0);  // Returns 0
+
+// replace: Update if value matches
+map.replace("key1", 100, 200);  // Update 100 to 200 if key1 == 100
+
+// getOrDefault: Get with fallback
+Integer count = map.getOrDefault("missing", -1);  // Returns -1
+
+// computeIfPresent: Conditional update
+map.computeIfPresent("key1", (k, v) -> v + 10);  // Add 10 to existing
+
+// computeIfAbsent: Conditional insert
+map.computeIfAbsent("key2", k -> 999);  // Set to 999 if absent
+```
+
+### Practical: Thread-Safe Counter
+
+```java
+// ❌ Bad: Not thread-safe
+Map<String, Integer> badCounter = new HashMap<>();
+badCounter.put("count", 0);
+
+// Multiple threads increment (race condition!)
+for (int i = 0; i < 1000; i++) {
+    new Thread(() -> {
+        Integer val = badCounter.get("count");
+        badCounter.put("count", val + 1);  // NOT atomic!
+    }).start();
+}
+
+// Final value may be < 1000 due to race condition
+
+// ✅ Good: ConcurrentHashMap
+Map<String, Integer> safeCounter = new ConcurrentHashMap<>();
+safeCounter.put("count", 0);
+
+for (int i = 0; i < 1000; i++) {
+    new Thread(() -> {
+        safeCounter.compute("count", (k, v) -> (v == null ? 0 : v) + 1);
+    }).start();
+}
+
+// Final value will be exactly 1000 (atomic operation)
+```
+
+### Performance Comparison
+
+```java
+// Benchmark: 4 threads, 10k operations each
+
+// HashMap + synchronized (serialize all access)
+Map<String, Integer> syncMap = Collections.synchronizedMap(new HashMap<>());
+// Time: ~500ms (bottleneck: single lock)
+
+// ConcurrentHashMap (parallel access)
+Map<String, Integer> concMap = new ConcurrentHashMap<>();
+// Time: ~100ms (4× faster - less contention)
+
+// Under high contention:
+// - HashMap: All threads wait for same lock (serial)
+// - ConcurrentHashMap: Threads access different buckets (parallel)
+```
+
+### ConcurrentHashMap vs Synchronized HashMap
+
+| Aspect | SynchronizedMap | ConcurrentHashMap |
+|--------|-----------------|-------------------|
+| **Locking** | Single lock on entire map | Segment/bucket-level locks |
+| **Concurrency** | Only 1 thread at a time | Multiple threads in parallel |
+| **Performance** | Slower under contention | Fast under contention |
+| **Iteration** | Requires external sync | Safe (weakly consistent) |
+| **null keys/values** | Allows | ❌ Rejects |
+| **Best for** | Rare writes, frequent reads (low contention) | Frequent concurrent access |
+
+### Iteration (Weakly Consistent)
+
+```java
+ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+
+// Safe to iterate while others modify
+// (May see partial updates, but won't throw ConcurrentModificationException)
+new Thread(() -> {
+    map.put("key1", 1);
+    map.put("key2", 2);
+    map.put("key3", 3);
+}).start();
+
+Thread.sleep(100);
+
+for (String key : map.keySet()) {
+    System.out.println(key);  // May see 1, 2, or 3 keys (not synchronized)
+}
+```
+
+### Example: Cache with ConcurrentHashMap
+
+```java
+public class Cache<K, V> {
+    private final Map<K, V> data = new ConcurrentHashMap<>();
+    private final Map<K, Long> timestamps = new ConcurrentHashMap<>();
+    private final long ttlMillis;
+    
+    public Cache(long ttlMillis) {
+        this.ttlMillis = ttlMillis;
+    }
+    
+    public void put(K key, V value) {
+        data.put(key, value);
+        timestamps.put(key, System.currentTimeMillis());
+    }
+    
+    public V get(K key) {
+        Long timestamp = timestamps.get(key);
+        if (timestamp == null) return null;
+        
+        // Check if expired
+        if (System.currentTimeMillis() - timestamp > ttlMillis) {
+            data.remove(key);
+            timestamps.remove(key);
+            return null;
+        }
+        
+        return data.get(key);
+    }
+    
+    public int size() {
+        return data.size();
+    }
+}
+
+// Usage: Multiple threads can safely access concurrently
+Cache<String, User> userCache = new Cache<>(3600000);  // 1 hour TTL
+
+for (int i = 0; i < 100; i++) {
+    final int userId = i;
+    new Thread(() -> {
+        userCache.put("user:" + userId, new User(userId, "User" + userId));
+        User user = userCache.get("user:" + userId);
+    }).start();
+}
+```
+
 **List vs Set - Comparison**
 
 | Feature | List | Set |

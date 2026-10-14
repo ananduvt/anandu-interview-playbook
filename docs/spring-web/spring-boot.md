@@ -28,7 +28,79 @@
 - **Externalized config**: Properties from `application.yml`, env vars, command-line args (in precedence order)
 - **Actuator**: `/actuator/health`, `/metrics`, `/loggers` for monitoring
 
-For advanced topics (DI patterns, bean lifecycle, application lifecycle, profiles), see [Spring Boot Advanced](spring-boot-advanced.md).
+For advanced topics (DI patterns, bean lifecycle, application lifecycle, profiles, multi-db, circular dependency), see [Spring Boot Advanced](spring-boot-advanced.md).
+
+### Spring Boot Starters
+
+**Spring Boot Starters** are pre-configured dependency descriptors that simplify Maven/Gradle configuration. They bundle compatible versions and eliminate version conflicts.
+
+#### Common Starters
+
+| Starter | Purpose | Includes |
+|---------|---------|----------|
+| `spring-boot-starter-web` | REST APIs, MVC | Spring Web, Tomcat, JSON serialization |
+| `spring-boot-starter-data-jpa` | Database access with ORM | Spring Data JPA, Hibernate, connection pooling |
+| `spring-boot-starter-security` | Authentication & authorization | Spring Security, password encoding |
+| `spring-boot-starter-actuator` | Monitoring & metrics | Health endpoints, metrics, audit events |
+| `spring-boot-starter-validation` | Bean validation | JSR-380 validators |
+| `spring-boot-starter-logging` | Structured logging | SLF4J, Logback |
+| `spring-boot-starter-cache` | Caching support | Cache abstraction, no default implementation |
+| `spring-boot-starter-aop` | Aspect-oriented programming | Spring AOP, AspectJ |
+| `spring-boot-starter-batch` | Batch processing | Spring Batch framework |
+| `spring-boot-starter-amqp` | Message broker (RabbitMQ) | Spring AMQP, RabbitMQ client |
+| `spring-boot-starter-data-redis` | Redis cache/session | Spring Data Redis, Jedis/Lettuce |
+| `spring-boot-starter-webflux` | Reactive (non-blocking) | Reactor, Netty, Spring WebFlux |
+
+#### Example: pom.xml
+```xml
+<dependencies>
+    <!-- Starter automatically includes spring-web, tomcat, jackson -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+    <!-- Starter includes spring-data-jpa, hibernate, h2 (test) -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    
+    <!-- MySQL driver (not included in starter) -->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
+    </dependency>
+</dependencies>
+```
+
+#### Bill of Materials (BOM)
+Spring Boot manages versions automatically; no need to specify version for starter POMs:
+```xml
+<!-- ❌ Don't do this -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <version>3.1.0</version>  <!-- Wrong: Spring manages this -->
+</dependency>
+
+<!-- ✅ Do this -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <!-- Version inherited from parent POM -->
+</dependency>
+```
+
+**Parent POM** (usually in pom.xml):
+```xml
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.1.0</version>
+</parent>
+```
 
 ## Common Annotations
 
@@ -84,6 +156,36 @@ public class ReportService {
 @Autowired
 @Qualifier("primaryDB")
 private DataSource dataSource;
+
+// Primary - default bean when multiple of same type (preferred over @Qualifier)
+@Component
+public class PrimaryDataSourceConfig {
+    @Bean
+    @Primary  // Used by default
+    public DataSource primaryDataSource() {
+        return new HikariDataSource();
+    }
+    
+    @Bean("secondaryDB")
+    public DataSource secondaryDataSource() {
+        return new HikariDataSource();
+    }
+}
+
+// Usage: no qualifier needed; @Primary is injected
+@Service
+public class UserService {
+    @Autowired
+    private DataSource dataSource;  // Gets primaryDataSource (marked @Primary)
+}
+
+// Override primary if needed
+@Service
+public class ReportService {
+    @Autowired
+    @Qualifier("secondaryDB")
+    private DataSource dataSource;  // Explicitly uses secondaryDB
+}
 
 // Optional dependency
 @Autowired(required = false)

@@ -4,6 +4,179 @@ Advanced threading concepts: thread synchronization, thread pools, and Java 21's
 
 ---
 
+## Thread vs Runnable
+
+### Thread Class Approach
+
+```java
+// Extend Thread class
+class MyThread extends Thread {
+    @Override
+    public void run() {
+        System.out.println("Running in thread: " + Thread.currentThread().getName());
+    }
+}
+
+// Create and start
+MyThread thread = new MyThread();
+thread.start();  // Starts new thread, calls run() asynchronously
+```
+
+**Pros:**
+- Direct access to Thread methods (setName, setPriority, setDaemon)
+- Simple for single purpose classes
+
+**Cons:**
+- ❌ **Can only extend one class** (Java doesn't support multiple inheritance)
+- Locks you into Thread class; can't extend another class
+- Less flexible
+
+### Runnable Interface Approach
+
+```java
+// Implement Runnable interface
+class MyRunnable implements Runnable {
+    @Override
+    public void run() {
+        System.out.println("Running in thread: " + Thread.currentThread().getName());
+    }
+}
+
+// Create thread with runnable
+Thread thread = new Thread(new MyRunnable());
+thread.start();  // Starts new thread, calls run() asynchronously
+
+// Lambda syntax (modern)
+new Thread(() -> {
+    System.out.println("Running in thread");
+}).start();
+
+// Using ExecutorService (recommended)
+ExecutorService executor = Executors.newFixedThreadPool(5);
+executor.submit(new MyRunnable());  // Runnable submitted to pool
+```
+
+**Pros:**
+- ✅ **Implement alongside other interfaces** (can extend another class)
+- Better for object composition
+- Reusable runnable object
+- Works with thread pools/executors naturally
+
+**Cons:**
+- Need to wrap in Thread object manually (without executor)
+
+### Comparison Table
+
+| Aspect | Thread | Runnable |
+|--------|--------|----------|
+| **Type** | Class | Interface |
+| **Inheritance** | Extends Thread; only one per class | Implements; can implement others too |
+| **Flexibility** | Low; tied to Thread | High; composable |
+| **Thread Management** | Manual `new Thread(...)` | Use ExecutorService (cleaner) |
+| **Reusability** | Single-use object | Reusable across threads |
+| **Best For** | Simple one-off threads | Thread pools, enterprise apps |
+
+### Best Practice: Runnable + ExecutorService
+
+```java
+@Service
+public class TaskProcessor {
+    private ExecutorService executor = Executors.newFixedThreadPool(10);
+    
+    // Define reusable task
+    private class DataProcessor implements Runnable {
+        private final Long userId;
+        
+        public DataProcessor(Long userId) {
+            this.userId = userId;
+        }
+        
+        @Override
+        public void run() {
+            User user = userService.findById(userId);
+            processUser(user);
+        }
+    }
+    
+    // Submit many runnables to executor
+    public void processAllUsers(List<Long> userIds) {
+        for (Long userId : userIds) {
+            executor.submit(new DataProcessor(userId));
+        }
+    }
+}
+```
+
+---
+
+## Runnable vs Callable
+
+### Runnable (No Return Value)
+
+```java
+class PrintTask implements Runnable {
+    @Override
+    public void run() {
+        // No return value
+        System.out.println("Task executing...");
+    }
+}
+
+Thread thread = new Thread(new PrintTask());
+thread.start();  // Fire and forget
+```
+
+### Callable (Returns Result)
+
+```java
+class ComputeTask implements Callable<Integer> {
+    @Override
+    public Integer call() throws Exception {
+        // Can return value, throw checked exceptions
+        return 42;
+    }
+}
+
+ExecutorService executor = Executors.newFixedThreadPool(5);
+Future<Integer> future = executor.submit(new ComputeTask());
+
+Integer result = future.get();  // Waits for task completion, gets result
+```
+
+### Comparison
+
+| Aspect | Runnable | Callable |
+|--------|----------|----------|
+| **Return Type** | void | Generic `<V>` |
+| **Exception Handling** | Can't throw checked exceptions | Can throw checked exceptions |
+| **Usage** | Fire-and-forget tasks | Tasks needing result/status |
+| **With Executor** | `executor.submit(runnable)` → Future | `executor.submit(callable)` → Future<Result> |
+
+### Practical Example: Runnable vs Callable
+
+```java
+// Runnable: Logging (side effect only)
+Runnable logTask = () -> {
+    System.out.println("Logging event");
+};
+
+// Callable: Computation (returns value)
+Callable<String> fetchTask = () -> {
+    Thread.sleep(1000);
+    return "Data fetched";
+};
+
+ExecutorService executor = Executors.newFixedThreadPool(2);
+
+// Submit both
+executor.submit(logTask);           // Returns Future<Void>
+Future<String> result = executor.submit(fetchTask);  // Returns Future<String>
+
+System.out.println(result.get());   // "Data fetched"
+```
+
+---
+
 ## Thread Synchronization
 
 ### 1. **Synchronized Keyword**

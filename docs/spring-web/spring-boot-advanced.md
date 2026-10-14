@@ -337,3 +337,398 @@ public class MailService {
 ```
 
 For circuit breaker implementation, patterns, and framework comparison, see [Spring Boot Circuit Breaker](spring-boot-circuit-breaker.md).
+
+---
+
+## Multiple Database Connections
+
+Use case: Read from one database, write to another; connect to multiple databases simultaneously.
+
+### Setup: Multiple DataSources
+
+```java
+@Configuration
+public class MultiDataSourceConfig {
+    
+    // Primary DataSource (marked @Primary for default injection)
+    @Bean
+    @Primary
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource primaryDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+    
+    // Secondary DataSource (explicitly named)
+    @Bean(name = "secondaryDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.secondary")
+    public DataSource secondaryDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+    
+    // Primary JPA/Hibernate (uses primaryDataSource)
+    @Bean
+    @Primary
+    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(
+            @Qualifier("primaryDataSource") DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        em.setPackagesToScan("com.example.primary");  // Scan primary entities
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        return em;
+    }
+    
+    // Secondary JPA/Hibernate (uses secondaryDataSource)
+    @Bean(name = "secondaryEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean secondaryEntityManagerFactory(
+            @Qualifier("secondaryDataSource") DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        em.setPackagesToScan("com.example.secondary");  // Scan secondary entities
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        return em;
+    }
+    
+    // Primary TransactionManager
+    @Bean
+    @Primary
+    public PlatformTransactionManager primaryTransactionManager(
+            @Qualifier("primaryEntityManagerFactory") EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+    
+    // Secondary TransactionManager
+    @Bean(name = "secondaryTransactionManager")
+    public PlatformTransactionManager secondaryTransactionManager(
+            @Qualifier("secondaryEntityManagerFactory") EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+}
+```
+
+### Configuration
+
+```yaml
+# Primary database (default)
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/primary_db
+    username: user
+    password: pass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+# Secondary database
+spring:
+  datasource:
+    secondary:
+      url: jdbc:mysql://localhost:3306/secondary_db
+      username: user
+      password: pass
+      driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+### Entities & Repositories
+
+```java
+// Primary entities
+@Entity
+@Table(name = "users")
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+}
+
+// Secondary entities (different package)
+@Entity
+@Table(name = "audit_logs")
+public class AuditLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String action;
+}
+
+@Repository
+public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
+}
+```
+
+### Usage with Transaction Control
+
+```java
+@Service
+public class UserService {
+    private final UserRepository userRepo;
+    private final AuditLogRepository auditRepo;
+    
+    public UserService(UserRepository userRepo, AuditLogRepository auditRepo) {
+        this.userRepo = userRepo;
+        this.auditRepo = auditRepo;
+    }
+    
+    // Write to primary, log to secondary (separate transactions)
+    @Transactional
+    public User createUser(User user) {
+        return userRepo.save(user);
+    }
+    
+    @Transactional(transactionManager = "secondaryTransactionManager")
+    public void logAudit(String action) {
+        auditRepo.save(new AuditLog(action));
+    }
+    
+    // Atomic: both succeed or both fail
+    public void createUserWithAudit(User user) {
+        createUser(user);
+        logAudit("USER_CREATED");
+    }
+}
+```
+
+### Read-Write Split Pattern
+
+```java
+@Configuration
+public class ReadWriteDataSourceConfig {
+    
+    @Bean
+    @Primary
+    public DataSource writeDataSource() {
+        // Primary (write operations)
+        return DataSourceBuilder.create()
+            .url("jdbc:mysql://primary:3306/db")
+            .build();
+    }
+    
+    @Bean("readDataSource")
+    public DataSource readDataSource() {
+        // Replica (read operations)
+        return DataSourceBuilder.create()
+            .url("jdbc:mysql://replica:3306/db")
+            .build();
+    }
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    
+    @Transactional(readOnly = true)
+    @Query("SELECT u FROM User u WHERE u.id = ?1")
+    Optional<User> findById(Long id);  // Uses read replica
+    
+    @Override
+    @Transactional  // Default transactionManager (write)
+    User save(User user);  // Uses primary
+}
+```
+
+---
+
+## Circular Dependency Issues
+
+**Circular dependency**: Bean A requires Bean B, Bean B requires Bean A → Spring cannot resolve.
+
+### Problem Example
+
+```java
+// ❌ Circular dependency
+@Service
+public class UserService {
+    private final OrderService orderService;
+    
+    public UserService(OrderService orderService) {  // Requires OrderService
+        this.orderService = orderService;
+    }
+}
+
+@Service
+public class OrderService {
+    private final UserService userService;
+    
+    public OrderService(UserService userService) {  // Requires UserService
+        this.userService = userService;
+    }
+}
+
+// Error: The dependencies of some of the beans in the application context form a cycle
+```
+
+### Solution 1: Refactor into Third Service (Recommended)
+
+Extract shared functionality:
+
+```java
+// New shared service
+@Service
+public class UserOrderService {
+    public void processUserOrder(User user, Order order) {
+        // Combined logic
+    }
+}
+
+// Refactored without circular dependency
+@Service
+public class UserService {
+    private final UserOrderService userOrderService;
+    
+    public UserService(UserOrderService userOrderService) {
+        this.userOrderService = userOrderService;
+    }
+}
+
+@Service
+public class OrderService {
+    private final UserOrderService userOrderService;
+    
+    public OrderService(UserOrderService userOrderService) {
+        this.userOrderService = userOrderService;
+    }
+}
+```
+
+### Solution 2: Use Setter Injection (Not Recommended)
+
+Breaks immutability and hides dependencies:
+
+```java
+@Service
+public class UserService {
+    private OrderService orderService;  // Mutable
+    
+    @Autowired
+    public void setOrderService(OrderService orderService) {
+        this.orderService = orderService;
+    }
+}
+
+@Service
+public class OrderService {
+    private UserService userService;  // Mutable
+    
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+}
+```
+
+### Solution 3: Use `ObjectProvider` (Lazy Injection)
+
+Delays resolution until needed:
+
+```java
+@Service
+public class UserService {
+    private final ObjectProvider<OrderService> orderServiceProvider;
+    
+    public UserService(ObjectProvider<OrderService> orderServiceProvider) {
+        this.orderServiceProvider = orderServiceProvider;  // Not injected yet
+    }
+    
+    public void doWork() {
+        OrderService orderService = orderServiceProvider.getIfAvailable();
+        if (orderService != null) {
+            orderService.process();
+        }
+    }
+}
+
+@Service
+public class OrderService {
+    private final UserService userService;
+    
+    public OrderService(UserService userService) {
+        this.userService = userService;  // Normal injection
+    }
+}
+```
+
+### Solution 4: Use `@Lazy` Annotation
+
+```java
+@Service
+public class UserService {
+    private final OrderService orderService;
+    
+    public UserService(@Lazy OrderService orderService) {
+        this.orderService = orderService;  // Proxy created; bean not instantiated
+    }
+    
+    public void doWork() {
+        orderService.process();  // Bean instantiated on first use
+    }
+}
+
+@Service
+public class OrderService {
+    private final UserService userService;
+    
+    public OrderService(UserService userService) {
+        this.userService = userService;
+    }
+}
+```
+
+### Solution 5: Event-Driven Decoupling (Best Practice)
+
+Use Spring events to avoid direct dependencies:
+
+```java
+// Event
+public class OrderCreatedEvent extends ApplicationEvent {
+    private final Order order;
+    
+    public OrderCreatedEvent(Object source, Order order) {
+        super(source);
+        this.order = order;
+    }
+    
+    public Order getOrder() { return order; }
+}
+
+// Publisher (no dependency on listener)
+@Service
+public class OrderService {
+    private final ApplicationEventPublisher eventPublisher;
+    
+    public OrderService(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+    
+    public void createOrder(Order order) {
+        // Save order
+        eventPublisher.publishEvent(new OrderCreatedEvent(this, order));
+    }
+}
+
+// Listener (no dependency on publisher)
+@Service
+public class UserService {
+    @EventListener
+    public void onOrderCreated(OrderCreatedEvent event) {
+        Order order = event.getOrder();
+        // Update user stats based on order
+    }
+}
+```
+
+### Best Practices
+
+✅ **Do's**
+- Refactor into smaller, focused services
+- Use event-driven architecture for loose coupling
+- Apply dependency injection at the service layer, not across layers
+- Use `@Lazy` or `ObjectProvider` for optional dependencies
+
+❌ **Don'ts**
+- Don't use setter injection to mask circular dependencies
+- Don't create tightly coupled services
+- Don't ignore Spring's circular dependency warnings
