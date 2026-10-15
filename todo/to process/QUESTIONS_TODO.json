@@ -1,0 +1,1556 @@
+{
+  "metadata": {
+    "version": "1.1",
+    "created_date": "2026-10-14",
+    "last_updated": "2026-10-15",
+    "total_questions": 375,
+    "source_files": 17,
+    "status": "PROCESSING",
+    "instructions": "Merged q1 and q2. Review for duplicates, then add to repo batch by batch"
+  },
+  "categories": {
+    "spring_boot_advanced": {
+      "count": 90,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "SB_001",
+          "question": "What happens when run() method is called in Spring Boot?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Application lifecycle - IOC container setup"
+        },
+        {
+          "id": "SB_002",
+          "question": "What is the purpose of @Scheduled annotation in Spring Boot?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Task scheduling and cron jobs"
+        },
+        {
+          "id": "SB_003",
+          "question": "What is the purpose of @ModelAttribute annotation in Spring Boot?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Request binding and form data"
+        },
+        {
+          "id": "SB_004",
+          "question": "Describe the purpose and usage of @EntityScan annotation in Spring Boot",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "JPA entity scanning configuration"
+        },
+        {
+          "id": "SB_005",
+          "question": "What is a Feign client?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Declarative REST client"
+        },
+        {
+          "id": "SB_006",
+          "question": "What is caching and how does it improve performance?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Cache abstraction and mechanisms"
+        },
+        {
+          "id": "SB_007",
+          "question": "Can you explain the caching mechanism available in Spring Boot?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "DUPLICATE",
+          "added_to_repo": false,
+          "notes": "Similar to SB_006"
+        },
+        {
+          "id": "SB_008",
+          "question": "What are the 4 types of caching: CDN, Database, In-Memory, Web server?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Caching strategies and implementations"
+        },
+        {
+          "id": "SB_009",
+          "question": "How to implement Redis caching with Spring Boot?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "In-memory cache implementation"
+        },
+        {
+          "id": "SB_010",
+          "question": "What are the best practices for exception handling in Spring Boot REST APIs?",
+          "source": "Spring Boot - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Error handling and @ExceptionHandler"
+        },
+        {
+          "id": "SB_011",
+          "question": "What is the purpose of @Value and @Configuration annotations in Spring Boot?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Configuration management and property injection"
+        },
+        {
+          "id": "SB_012",
+          "question": "Explain the Spring Boot application lifecycle and what happens after the application boots",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Application startup process and initialization"
+        },
+        {
+          "id": "SB_013",
+          "question": "What are the commonly used Spring Boot annotations and their purposes?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "@SpringBootApplication, @RestController, @Service, @Repository, @Component"
+        },
+        {
+          "id": "SB_014",
+          "question": "Explain Spring Bean scope and dependency injection scenarios when multiple services depend on the same bean",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Bean lifecycle, singleton, prototype, request, session scopes"
+        },
+        {
+          "id": "SB_015",
+          "question": "How does Dependency Injection (DI) enhance modularity and testing in a large-scale Spring system?",
+          "source": "q2 structured (Q8)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Loose coupling, testability, easy mocking of dependencies"
+        },
+        {
+          "id": "SB_016",
+          "question": "What are the differences between constructor injection and setter injection in Spring?",
+          "source": "q2 structured (Q8 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Constructor vs setter advantages and disadvantages"
+        },
+        {
+          "id": "SB_017",
+          "question": "Explain the concept of Aspect-Oriented Programming (AOP) in Spring and provide a practical example",
+          "source": "q2 structured (Q9)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Cross-cutting concerns, aspects, advice, pointcuts, logging/security/transactions"
+        },
+        {
+          "id": "SB_018",
+          "question": "What are the performance implications of using AOP in Spring?",
+          "source": "q2 structured (Q9 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "AOP overhead and best practices"
+        },
+        {
+          "id": "SB_019",
+          "question": "How would you use Spring Boot to create and deploy microservices?",
+          "source": "q2 structured (Q21)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Auto-configuration, embedded servers, microservice support"
+        },
+        {
+          "id": "SB_020",
+          "question": "How to design and implement a caching solution using in-memory databases like Redis or Hazelcast?",
+          "source": "q2 structured (Q13)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Cache patterns: read-through, write-back, cache-aside, invalidation strategies"
+        },
+        {
+          "id": "SB_021",
+          "question": "What are the potential pitfalls of caching in financial applications?",
+          "source": "q2 structured (Q13 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Cache invalidation in distributed environments, consistency issues"
+        },
+        {
+          "id": "SB_022",
+          "question": "How to handle multithreading in Spring Boot applications?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Async methods, ExecutorService, Thread pools, virtual threads"
+        },
+        {
+          "id": "SB_023",
+          "question": "What is the difference between async and sync execution types in Spring?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "@Async annotation, CompletableFuture, Future patterns"
+        },
+        {
+          "id": "SB_024",
+          "question": "How to handle exception handling in Spring Boot applications?",
+          "source": "q1 raw",
+          "status": "DUPLICATE",
+          "added_to_repo": false,
+          "notes": "Covered by SB_010"
+        },
+        {
+          "id": "SB_025",
+          "question": "How to increase memory and CPU resources for a Spring Boot application?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "JVM tuning, heap configuration, thread pool sizing"
+        }
+      ]
+    },
+    "core_java_advanced": {
+      "count": 85,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "CJ_001",
+          "question": "How to solve out of memory error?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "JVM tuning and heap size configuration"
+        },
+        {
+          "id": "CJ_002",
+          "question": "Why Comparable interface is not a functional interface even though it contains only one abstract method?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Functional interface requirements"
+        },
+        {
+          "id": "CJ_003",
+          "question": "What is the difference between StringBuilder and StringBuffer and where to prefer StringBuilder?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Already in repo - verify coverage"
+        },
+        {
+          "id": "CJ_004",
+          "question": "What is the difference between Collection and Collections?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Interface vs utility class"
+        },
+        {
+          "id": "CJ_005",
+          "question": "Explain deadlock in Java threads with example",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Concurrency issue - how it occurs and prevention"
+        },
+        {
+          "id": "CJ_006",
+          "question": "How HashMap works and what happens when two keys have the same hashcode?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Hash collision handling - linked list/tree structure"
+        },
+        {
+          "id": "CJ_007",
+          "question": "Provide an example where you use the reduce operation in Stream?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Stream API coverage - verify"
+        },
+        {
+          "id": "CJ_008",
+          "question": "How do String and StringBuffer handle memory differently?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Memory allocation and reuse"
+        },
+        {
+          "id": "CJ_009",
+          "question": "What's the difference between class lock and object lock?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Synchronized method vs static synchronized"
+        },
+        {
+          "id": "CJ_010",
+          "question": "What's the difference between User thread and Daemon thread?",
+          "source": "CoreJava-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Thread types and lifecycle"
+        },
+        {
+          "id": "CJ_011",
+          "question": "Explain the principles of Object-Oriented Programming in Java (encapsulation, inheritance, polymorphism, abstraction)",
+          "source": "q2 structured (Q1)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "OOP concepts and application to scalable design"
+        },
+        {
+          "id": "CJ_012",
+          "question": "Discuss Java's memory management model, including heap, stack, garbage collection, and optimization techniques",
+          "source": "q2 structured (Q2)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Memory areas, GC algorithms, object pooling, JVM tuning"
+        },
+        {
+          "id": "CJ_013",
+          "question": "How do you implement multithreading and concurrency control in Java? Discuss thread safety, synchronization, and pitfalls",
+          "source": "q2 structured (Q3)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Synchronized blocks, locks, concurrent collections, deadlocks, race conditions"
+        },
+        {
+          "id": "CJ_014",
+          "question": "Describe the exception handling mechanism in Java and differentiate between checked and unchecked exceptions",
+          "source": "q2 structured (Q4)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Try-catch-finally, custom exceptions, exception propagation, best practices"
+        },
+        {
+          "id": "CJ_015",
+          "question": "Explain how Java Generics work and discuss potential pitfalls",
+          "source": "q2 structured (Q6)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Type parameterization, type erasure, unchecked warnings, compatibility"
+        },
+        {
+          "id": "CJ_016",
+          "question": "Describe the differences between various Java Collections (List, Set, Map) including time/space complexities",
+          "source": "q2 structured (Q7)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "ArrayList vs LinkedList, HashSet vs TreeSet, HashMap vs TreeMap, performance"
+        },
+        {
+          "id": "CJ_017",
+          "question": "When would you choose LinkedList over ArrayList?",
+          "source": "q2 structured (Q7 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Performance considerations for insert/delete operations"
+        },
+        {
+          "id": "CJ_018",
+          "question": "How do you decide between HashMap and TreeMap in a high-performance scenario?",
+          "source": "q2 structured (Q7 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Ordered vs unordered, time complexity trade-offs"
+        },
+        {
+          "id": "CJ_019",
+          "question": "What is the Volatile keyword and when should it be used?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Memory visibility in multithreading, happens-before relationship"
+        },
+        {
+          "id": "CJ_020",
+          "question": "What do you know about multithreading? How to ensure that a particular thread is completed and collect values?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Thread coordination, join(), Future, CompletableFuture"
+        },
+        {
+          "id": "CJ_021",
+          "question": "What is Callable in Java and how does it differ from Runnable?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Return values, exception handling, ExecutorService"
+        },
+        {
+          "id": "CJ_022",
+          "question": "Explain how you would leverage Java's concurrent data structures like ConcurrentHashMap",
+          "source": "q2 structured (Q18)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Thread-safe operations, performance, ConcurrentHashMap vs Hashtable"
+        },
+        {
+          "id": "CJ_023",
+          "question": "What are the differences between ConcurrentHashMap and synchronized Hashtable?",
+          "source": "q2 structured (Q18 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Segment-level locking, performance advantages"
+        }
+      ]
+    },
+    "design_patterns": {
+      "count": 30,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "DP_001",
+          "question": "What is Factory Design Pattern and when to use it?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q1"
+        },
+        {
+          "id": "DP_002",
+          "question": "What's the difference between Factory and Abstract Factory?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q2"
+        },
+        {
+          "id": "DP_003",
+          "question": "Explain the Builder Design Pattern with real example",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q3"
+        },
+        {
+          "id": "DP_004",
+          "question": "What is Singleton Pattern and when is it problematic?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q4"
+        },
+        {
+          "id": "DP_005",
+          "question": "Explain the Strategy Pattern and provide use case",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q5"
+        },
+        {
+          "id": "DP_006",
+          "question": "What is Observer Pattern and when to use it?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q6"
+        },
+        {
+          "id": "DP_007",
+          "question": "Explain Decorator Pattern with example",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": true,
+          "notes": "Already added - verbal-design-patterns-questions.md Q7"
+        },
+        {
+          "id": "DP_008",
+          "question": "What is Prototype Design Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Object cloning and copying"
+        },
+        {
+          "id": "DP_009",
+          "question": "Explain Adapter Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Making incompatible interfaces work"
+        },
+        {
+          "id": "DP_010",
+          "question": "What is Facade Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Simplifying complex subsystems"
+        },
+        {
+          "id": "DP_011",
+          "question": "Explain Bridge Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Decoupling abstraction from implementation"
+        },
+        {
+          "id": "DP_012",
+          "question": "What is Composite Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Tree structures and hierarchies"
+        },
+        {
+          "id": "DP_013",
+          "question": "Explain Chain of Responsibility Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Passing requests along chain"
+        },
+        {
+          "id": "DP_014",
+          "question": "What is Command Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Encapsulating requests as objects"
+        },
+        {
+          "id": "DP_015",
+          "question": "Explain Iterator Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Sequential access to collections"
+        },
+        {
+          "id": "DP_016",
+          "question": "What is Mediator Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Reducing coupling between objects"
+        },
+        {
+          "id": "DP_017",
+          "question": "Explain Memento Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Capturing and restoring state"
+        },
+        {
+          "id": "DP_018",
+          "question": "What is State Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Behavior changes based on state"
+        },
+        {
+          "id": "DP_019",
+          "question": "Explain Template Method Pattern",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Defining algorithm skeleton"
+        },
+        {
+          "id": "DP_020",
+          "question": "What is Proxy Pattern?",
+          "source": "Java Design Patterns - Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Controlling access to objects"
+        },
+        {
+          "id": "DP_021",
+          "question": "Discuss commonly used design patterns in Java and how they apply to financial systems like derivatives clearing",
+          "source": "q2 structured (Q5)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Design patterns for code reusability and flexibility in high-stakes systems"
+        },
+        {
+          "id": "DP_022",
+          "question": "Which design pattern do you find most relevant in clearing systems and why?",
+          "source": "q2 structured (Q5 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Domain-specific pattern application"
+        }
+      ]
+    },
+    "kafka_messaging": {
+      "count": 20,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "KFK_001",
+          "question": "How is Kafka being used in the project? Explain Kafka architecture and how it works internally",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Broker, topic, partition, consumer group concepts"
+        },
+        {
+          "id": "KFK_002",
+          "question": "For a Kafka topic with multiple consumers, how do you know how many consumers are consuming that topic?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Consumer group monitoring, offset tracking"
+        },
+        {
+          "id": "KFK_003",
+          "question": "What are Kafka partitions and consumers? How do they relate to each other?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Partition assignment, consumer group rebalancing"
+        },
+        {
+          "id": "KFK_004",
+          "question": "How do you reprocess messages in Kafka?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Offset management, consumer lag, replay strategies"
+        },
+        {
+          "id": "KFK_005",
+          "question": "How to ensure all messages are processed correctly in Kafka?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Message ordering, exactly-once semantics, idempotency"
+        },
+        {
+          "id": "KFK_006",
+          "question": "What happens if a Kafka topic is missed? How do you handle it?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Dead letter queues, error handling, topic recovery"
+        },
+        {
+          "id": "KFK_007",
+          "question": "How do you avoid failures in Kafka?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Replication, retention policy, error handling patterns"
+        },
+        {
+          "id": "KFK_008",
+          "question": "Have you had any experience integrating messaging systems like Kafka or MQ? How to implement asynchronous processing?",
+          "source": "q2 structured (Q14)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Message brokers, pub-sub, request-reply patterns, asynchronous communication"
+        },
+        {
+          "id": "KFK_009",
+          "question": "How do you ensure message ordering and delivery reliability in distributed messaging systems?",
+          "source": "q2 structured (Q14 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "At-least-once, exactly-once semantics, ordering guarantees"
+        },
+        {
+          "id": "KFK_010",
+          "question": "How do you handle error handling in distributed messaging systems?",
+          "source": "q2 structured (Q14 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Retry mechanisms, circuit breakers, dead letter handling"
+        }
+      ]
+    },
+    "database_sql": {
+      "count": 25,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "DB_001",
+          "question": "What is a primary key and what is its significance?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Uniqueness, indexing, referential integrity"
+        },
+        {
+          "id": "DB_002",
+          "question": "What are the distinctions between stored procedures and functions?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Return types, usage context, transaction support"
+        },
+        {
+          "id": "DB_003",
+          "question": "How to optimize database queries for high throughput APIs?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Connection pooling, N+1 detection, indexing"
+        },
+        {
+          "id": "DB_004",
+          "question": "What are database schema evolution patterns?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Flyway, Liquibase, backward compatibility"
+        },
+        {
+          "id": "DB_005",
+          "question": "How to implement multi-tenant database design?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Schema-per-tenant vs row-level isolation"
+        },
+        {
+          "id": "DB_006",
+          "question": "What are database partitioning strategies?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Range, hash, list partitioning"
+        },
+        {
+          "id": "DB_007",
+          "question": "How to implement replication and high availability in databases?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Master-slave, master-master, read replicas"
+        },
+        {
+          "id": "DB_008",
+          "question": "What are connection pooling best practices?",
+          "source": "Database Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "HikariCP, sizing, monitoring"
+        },
+        {
+          "id": "DB_009",
+          "question": "What are SQL DML and DDL commands? What is the difference?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "DDL: CREATE, ALTER, DROP; DML: INSERT, UPDATE, DELETE, SELECT"
+        },
+        {
+          "id": "DB_010",
+          "question": "What is indexing and composite indexing in databases?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Index types, composite keys, query optimization"
+        },
+        {
+          "id": "DB_011",
+          "question": "How do you optimize SQL queries for performance in a high-volume financial transaction system like DB2?",
+          "source": "q2 structured (Q10)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Query optimization plans, indexing, reducing joins, stored procedures"
+        },
+        {
+          "id": "DB_012",
+          "question": "Can you describe a scenario where query optimization significantly improved performance?",
+          "source": "q2 structured (Q10 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Real-world optimization example"
+        },
+        {
+          "id": "DB_013",
+          "question": "How do you monitor and diagnose slow queries in DB2?",
+          "source": "q2 structured (Q10 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Query performance tools, explain plans, monitoring"
+        },
+        {
+          "id": "DB_014",
+          "question": "Discuss the importance of transactions and isolation levels in DB2",
+          "source": "q2 structured (Q11)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "ACID properties, isolation levels (READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE)"
+        },
+        {
+          "id": "DB_015",
+          "question": "How do you decide which isolation level to use in a derivatives clearing application?",
+          "source": "q2 structured (Q11 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Trade-offs between concurrent access and data integrity"
+        },
+        {
+          "id": "DB_016",
+          "question": "How do you handle lock contention in a high concurrency system?",
+          "source": "q2 structured (Q11 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Lock escalation, deadlock detection"
+        }
+      ]
+    },
+    "microservices_advanced": {
+      "count": 55,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "MS_001",
+          "question": "What is event-driven microservice architecture?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Check if already in verbal-microservices-questions.md Q3"
+        },
+        {
+          "id": "MS_002",
+          "question": "What are Resilience Patterns and why are they needed?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Timeout, retry, circuit breaker, bulkhead"
+        },
+        {
+          "id": "MS_003",
+          "question": "How do you handle distributed transactions in microservices?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Saga pattern - check existing coverage"
+        },
+        {
+          "id": "MS_004",
+          "question": "What challenges arise in microservices testing?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Service dependencies, E2E tests, contract testing"
+        },
+        {
+          "id": "MS_005",
+          "question": "What is bounded context in microservices?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Domain-driven design concept"
+        },
+        {
+          "id": "MS_006",
+          "question": "How do you handle versioning in REST APIs?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "URI vs header vs query parameter versioning"
+        },
+        {
+          "id": "MS_007",
+          "question": "How do you handle configuration in microservices?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Externalized config, Spring Cloud Config"
+        },
+        {
+          "id": "MS_008",
+          "question": "What is eventual consistency?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Check if already covered"
+        },
+        {
+          "id": "MS_009",
+          "question": "How to implement circuit breaker pattern with Resilience4j?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Fault tolerance implementation"
+        },
+        {
+          "id": "MS_010",
+          "question": "What is the difference between Saga Orchestration and Choreography?",
+          "source": "MicroserviceInterviewQuestions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Distributed transaction coordination"
+        },
+        {
+          "id": "MS_011",
+          "question": "Why use microservices architecture over monolithic architecture?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Scalability, independent deployment, technology diversity"
+        },
+        {
+          "id": "MS_012",
+          "question": "What are microservices communication types and patterns?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Synchronous (REST, gRPC), asynchronous (Kafka, RabbitMQ)"
+        },
+        {
+          "id": "MS_013",
+          "question": "What is service discovery in microservices?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Eureka, Consul, Kubernetes service discovery"
+        },
+        {
+          "id": "MS_014",
+          "question": "How do you use microservices patterns in system design?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "API gateway, service mesh, event sourcing"
+        },
+        {
+          "id": "MS_015",
+          "question": "How do you maintain unique identifiers across pods in microservices?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Distributed ID generation (UUID, Snowflake)"
+        }
+      ]
+    },
+    "architecture_patterns": {
+      "count": 55,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "ARCH_001",
+          "question": "How do you structure a large Spring Boot monorepo vs multi-repo microservices?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Repository organization strategies"
+        },
+        {
+          "id": "ARCH_002",
+          "question": "What are the key differences between layered, hexagonal, and clean architecture?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Architecture patterns comparison"
+        },
+        {
+          "id": "ARCH_003",
+          "question": "How to manage cross-cutting concerns (logging, tracing, auth) across services?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Distributed concerns handling"
+        },
+        {
+          "id": "ARCH_004",
+          "question": "When would you choose Spring MVC over Spring WebFlux?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Synchronous vs reactive trade-offs"
+        },
+        {
+          "id": "ARCH_005",
+          "question": "How do you design backward/forward compatible APIs?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "API versioning and evolution"
+        },
+        {
+          "id": "ARCH_006",
+          "question": "How to implement circuit breaking and bulkheading?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Resilience patterns implementation"
+        },
+        {
+          "id": "ARCH_007",
+          "question": "What is idempotency and why is it important in write APIs?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Exactly-once semantics"
+        },
+        {
+          "id": "ARCH_008",
+          "question": "What are eventual consistency patterns you've used?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Sagas, choreography, orchestration"
+        },
+        {
+          "id": "ARCH_009",
+          "question": "How to handle partial failures in distributed transactions?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Compensating transactions, DLQs"
+        },
+        {
+          "id": "ARCH_010",
+          "question": "What is CQRS and when to apply it?",
+          "source": "Architect-Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Separate read and write models"
+        },
+        {
+          "id": "ARCH_011",
+          "question": "How do you ensure that your code is both scalable and maintainable in high-performance Java applications?",
+          "source": "q2 structured (Q15)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Modular design, design patterns, documentation, testing, performance profiling"
+        },
+        {
+          "id": "ARCH_012",
+          "question": "Can you give an example where refactoring improved maintainability?",
+          "source": "q2 structured (Q15 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Real-world refactoring example"
+        },
+        {
+          "id": "ARCH_013",
+          "question": "How do you balance between performance enhancement and code clarity?",
+          "source": "q2 structured (Q15 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Trade-offs in optimization"
+        },
+        {
+          "id": "ARCH_014",
+          "question": "Design a system to build an application like Jira (system design case study)",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Full system design with all components"
+        },
+        {
+          "id": "ARCH_015",
+          "question": "Define the functional and non-functional requirements of a Jira-like system",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Requirements gathering and analysis"
+        },
+        {
+          "id": "ARCH_016",
+          "question": "How would you design a module to handle real-time derivatives data processing?",
+          "source": "q2 structured (Q20)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Architecture, components, reliability, scalability in financial context"
+        },
+        {
+          "id": "ARCH_017",
+          "question": "How would you handle data consistency and recovery in case of failure in real-time systems?",
+          "source": "q2 structured (Q20 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Disaster recovery, backup strategies"
+        },
+        {
+          "id": "ARCH_018",
+          "question": "What trade-offs would you consider in your system design for derivatives processing?",
+          "source": "q2 structured (Q20 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Performance vs consistency, latency vs throughput"
+        }
+      ]
+    },
+    "coding_problems": {
+      "count": 20,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "CP_001",
+          "question": "Java program to find an index in array where left side elements sum equals right side sum",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Array manipulation, prefix sum technique"
+        },
+        {
+          "id": "CP_002",
+          "question": "Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Backtracking, recursion, O(n!)"
+        },
+        {
+          "id": "CP_003",
+          "question": "Check if two strings are anagrams",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "String comparison, character frequency"
+        },
+        {
+          "id": "CP_004",
+          "question": "Program to find the most frequent number in an array. Input: [3,2,3] Output: 3",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Hash map, frequency counting"
+        },
+        {
+          "id": "CP_005",
+          "question": "Backtracking problem: Given integer n, print all combinations of 1 and 2 that sum to n",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Backtracking approach, dynamic programming alternative"
+        },
+        {
+          "id": "CP_006",
+          "question": "Consider a scenario where you need to optimize an algorithm's performance. How would you assess and improve time complexity for search operations?",
+          "source": "q2 structured (Q16)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Big-O analysis, data structure selection, benchmarking"
+        },
+        {
+          "id": "CP_007",
+          "question": "What profiling tools do you use to identify algorithmic bottlenecks?",
+          "source": "q2 structured (Q16 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "JProfiler, YourKit, Java Flight Recorder"
+        }
+      ]
+    },
+    "system_design": {
+      "count": 30,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "SD_001",
+          "question": "How would you suggest performance improvements to handle load up to 2M+ users in a Jira-like system?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Scalability, caching, load balancing, database optimization"
+        },
+        {
+          "id": "SD_002",
+          "question": "Discuss the different microservices that a Jira-like system would have",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Issue service, project service, workflow service, auth service, notification service"
+        },
+        {
+          "id": "SD_003",
+          "question": "How would you carry out testing for microservices in a Jira-like system?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Unit tests, integration tests, contract testing, E2E tests"
+        },
+        {
+          "id": "SD_004",
+          "question": "What would be the API contracts between your Jira-like system and clients?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "REST API design, versioning, documentation, backward compatibility"
+        },
+        {
+          "id": "SD_005",
+          "question": "How would you approach diagnosing intermittent latency spikes in a production clearing system?",
+          "source": "q2 structured (Q19)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Systematic troubleshooting: logs, monitoring, profiling, database analysis"
+        },
+        {
+          "id": "SD_006",
+          "question": "How would you prioritize investigative steps in production issue diagnosis?",
+          "source": "q2 structured (Q19 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Impact assessment, probability, ease of investigation"
+        },
+        {
+          "id": "SD_007",
+          "question": "What tools would you use to pinpoint performance issues in a Java clearing system?",
+          "source": "q2 structured (Q19 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Monitoring tools, profilers, database query analyzers, network tools"
+        }
+      ]
+    },
+    "kubernetes_devops": {
+      "count": 30,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "K8S_001",
+          "question": "What is Kubernetes and its purpose?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "REVIEW",
+          "added_to_repo": false,
+          "notes": "Basic concept - may already be covered"
+        },
+        {
+          "id": "K8S_002",
+          "question": "What is orchestration in software and DevOps?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Container orchestration concepts"
+        },
+        {
+          "id": "K8S_003",
+          "question": "How are Kubernetes and Docker related?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Relationship between container and orchestration"
+        },
+        {
+          "id": "K8S_004",
+          "question": "What is Role-Based Access Control (RBAC) in Kubernetes?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Security and permissions management"
+        },
+        {
+          "id": "K8S_005",
+          "question": "How does Kubernetes autoscaling work?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "HPA, VPA, Cluster autoscaler"
+        },
+        {
+          "id": "K8S_006",
+          "question": "What is the difference between StatefulSets and Deployments?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Kubernetes resource types"
+        },
+        {
+          "id": "K8S_007",
+          "question": "How to manage ConfigMaps and Secrets in Kubernetes?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Configuration management"
+        },
+        {
+          "id": "K8S_008",
+          "question": "What are Kubernetes Network Policies and how to implement them?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Network security and segmentation"
+        },
+        {
+          "id": "K8S_009",
+          "question": "How to implement service mesh (Istio) in Kubernetes?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Advanced networking and observability"
+        },
+        {
+          "id": "K8S_010",
+          "question": "What are Custom Resource Definitions (CRDs) in Kubernetes?",
+          "source": "Kubernetes Interview Questions.txt",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Extending Kubernetes API"
+        },
+        {
+          "id": "K8S_011",
+          "question": "What are commonly used Linux commands and scripting techniques for deploying and maintaining Java applications?",
+          "source": "q2 structured (Q12)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "grep, awk, sed, systemctl, cron jobs, shell scripting for deployments"
+        },
+        {
+          "id": "K8S_012",
+          "question": "How would you automate log rotation or backups on a Linux server?",
+          "source": "q2 structured (Q12 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Logrotate, cron scheduling, backup scripts"
+        },
+        {
+          "id": "K8S_013",
+          "question": "What scripting challenges have you encountered in production?",
+          "source": "q2 structured (Q12 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Real-world scripting examples"
+        }
+      ]
+    },
+    "testing": {
+      "count": 20,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "TST_001",
+          "question": "What are commonly used JUnit test cases and best practices?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "@Test, @Before, @After, assertions, test organization"
+        },
+        {
+          "id": "TST_002",
+          "question": "How do you approach writing unit tests and integration tests for Java applications?",
+          "source": "q2 structured (Q22)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "JUnit, Mockito, TDD principles, continuous integration"
+        },
+        {
+          "id": "TST_003",
+          "question": "How do you ensure that tests cover edge cases in critical financial systems?",
+          "source": "q2 structured (Q22 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Financial calculation accuracy, boundary testing"
+        },
+        {
+          "id": "TST_004",
+          "question": "How do you ensure that tests remain efficient and relevant as the system grows?",
+          "source": "q2 structured (Q22 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Test maintenance, refactoring, performance monitoring"
+        },
+        {
+          "id": "TST_005",
+          "question": "What strategies do you use for mocking external dependencies?",
+          "source": "q2 structured (Q22 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Mockito, test doubles, when/thenReturn"
+        }
+      ]
+    },
+    "security_compliance": {
+      "count": 20,
+      "priority": "HIGH",
+      "questions": [
+        {
+          "id": "SEC_001",
+          "question": "How do you implement security in your Java projects?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Authentication, authorization, encryption, OWASP"
+        },
+        {
+          "id": "SEC_002",
+          "question": "How do you maintain logs in your Java projects?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Logging frameworks, log levels, log management"
+        },
+        {
+          "id": "SEC_003",
+          "question": "What is a secret manager and how to read data from a secret manager?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "HashiCorp Vault, AWS Secrets Manager, Azure Key Vault"
+        },
+        {
+          "id": "SEC_004",
+          "question": "How do you manage all the secrets in a Java application?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Environment variables, property files, vault integration"
+        },
+        {
+          "id": "SEC_005",
+          "question": "What is rate limiting and how to restrict API access?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Token bucket, sliding window, API gateway patterns"
+        },
+        {
+          "id": "SEC_006",
+          "question": "How do you control concurrent updates in REST APIs?",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Optimistic locking, pessimistic locking, version control"
+        },
+        {
+          "id": "SEC_007",
+          "question": "How do you ensure secure data handling and compliance with financial regulations?",
+          "source": "q2 structured (Q23)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Encryption, secure coding, RBAC, compliance standards, audit trails"
+        },
+        {
+          "id": "SEC_008",
+          "question": "Can you give examples of security measures you implemented in a past project?",
+          "source": "q2 structured (Q23 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Real-world security implementation example"
+        },
+        {
+          "id": "SEC_009",
+          "question": "How do you stay updated with evolving financial regulations?",
+          "source": "q2 structured (Q23 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Compliance monitoring, regulatory updates, training"
+        }
+      ]
+    },
+    "soft_skills": {
+      "count": 15,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "SK_001",
+          "question": "Introduce about yourself (behavioral interview)",
+          "source": "q1 raw",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Self-introduction, experience summary, career journey"
+        },
+        {
+          "id": "SK_002",
+          "question": "How do you handle cross-team communication and requirement gathering?",
+          "source": "q2 structured (Q24)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Collaboration with business analysts, stakeholder management"
+        },
+        {
+          "id": "SK_003",
+          "question": "How do you ensure that technical implementations align with business objectives?",
+          "source": "q2 structured (Q24 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Business awareness, continuous feedback"
+        },
+        {
+          "id": "SK_004",
+          "question": "Can you describe a challenging communication scenario and how you resolved it?",
+          "source": "q2 structured (Q24 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Communication skills example"
+        },
+        {
+          "id": "SK_005",
+          "question": "How do you ensure technical decisions support business priorities?",
+          "source": "q2 structured (Q24 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Strategic thinking, business alignment"
+        }
+      ]
+    },
+    "professional_development": {
+      "count": 10,
+      "priority": "MEDIUM",
+      "questions": [
+        {
+          "id": "PD_001",
+          "question": "How do you stay updated with emerging technologies and incorporate modern techniques?",
+          "source": "q2 structured (Q25)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Online courses, community involvement, continuous learning"
+        },
+        {
+          "id": "PD_002",
+          "question": "Can you share an example of how a new tool or technology improved your system?",
+          "source": "q2 structured (Q25 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Technology adoption success story"
+        },
+        {
+          "id": "PD_003",
+          "question": "What resources do you rely on for technology updates?",
+          "source": "q2 structured (Q25 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Learning resources, blogs, communities"
+        },
+        {
+          "id": "PD_004",
+          "question": "How do you decide whether to integrate a new technology into your stack?",
+          "source": "q2 structured (Q25 follow-up)",
+          "status": "NEW",
+          "added_to_repo": false,
+          "notes": "Technology evaluation criteria"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_new": 320,
+    "total_review": 25,
+    "total_duplicate": 5,
+    "status_breakdown": {
+      "NEW": 320,
+      "REVIEW": 25,
+      "DUPLICATE": 5,
+      "REVIEW_ADDED": 25
+    },
+    "categories_added": [
+      "kafka_messaging",
+      "coding_problems",
+      "system_design",
+      "testing",
+      "security_compliance",
+      "soft_skills",
+      "professional_development"
+    ]
+  },
+  "workflow": {
+    "step_1": "Review all questions in this file for duplicates and accuracy",
+    "step_2": "Mark status as REVIEW_COMPLETE after validation",
+    "step_3": "Extract only NEW questions to interview-questions repo in batches",
+    "step_4": "Create batch files (30-40 questions per batch) for answer writing",
+    "step_5": "Add learning content placeholders for each question"
+  }
+}
