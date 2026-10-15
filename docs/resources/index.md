@@ -1,5 +1,27 @@
 # Resources
 
+Curated reference materials, learning guides, best practices, and external resources.
+
+---
+
+## 📚 Core Learning Resources
+
+### ⭐ [Java Roadmap](java-roadmap/java-developer-roadmap.md)
+**6-8 month structured blueprint for backend engineering interviews**
+- 9 phases across 23 topics
+- 500+ concepts with time estimates
+- Mermaid diagrams and progress tracking
+- Project recommendations and resources
+
+### ✅ [Code Review Guidelines](code-review-guidelines/java-code-review-guidelines.md)
+**130+ enterprise-grade code review standards**
+- 10 categories (variables, methods, exceptions, collections, performance, etc.)
+- ✅/❌ code examples
+- Comprehensive review checklist
+- TSYS EMF production standards
+
+---
+
 ## Cheat sheets
 - [Devhints](https://devhints.io/)
 - [OverAPI](https://overapi.com/)

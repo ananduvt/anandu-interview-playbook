@@ -153,5 +153,8 @@ nav:
           - Overview: interview-prep/index.md
           - Behavioral / STAR: interview-prep/behavioral.md
           - Quick Reference: interview-prep/quick-reference.md
-  - Resources: resources/index.md
+  - Resources:
+      - Overview: resources/index.md
+      - Java Roadmap: resources/java-roadmap/java-developer-roadmap.md
+      - Code Review Guidelines: resources/code-review-guidelines/java-code-review-guidelines.md
   - Feedback: feedback.md

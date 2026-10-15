@@ -28,7 +28,7 @@ A **living, shareable interview-prep playbook** — comprehensive study guide ac
 
     ---
 
-    Curated cheat sheets, blogs, and reference materials.
+    Curated cheat sheets, blogs, reference materials, and internal best practices.
 
     [:octicons-arrow-right-24: Open](resources/index.md)
 
