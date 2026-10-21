@@ -20,7 +20,7 @@ A **living, shareable interview-prep playbook** — comprehensive study guide ac
 
     ---
 
-    Practice questions with minimal answers: Coding problems, Verbal Q&A across all domains, Interview Prep, Behavioral / STAR, Quick Reference.
+    Interview preparation (technical and behavioral / STAR rounds), coding problems, and verbal Q&A across all domains.
 
     [:octicons-arrow-right-24: Open](interview-questions/index.md)
 
@@ -48,5 +48,5 @@ A **living, shareable interview-prep playbook** — comprehensive study guide ac
 
 - **Learn**: Browse comprehensive technical topics organized by category (use the sidebar navigation)
 - **Interview Questions**: Practice coding problems and verbal Q&A with detailed topic links
-- **Quick Prep**: Visit [Quick Reference](interview-questions/../interview-prep/quick-reference.md) for last-minute revision
+- **Prepare**: Read [Interview Preparation](interview-questions/index.md) for round-by-round tips and behavioral (STAR) answers
 - **Search**: Use the search bar at the top to find specific topics instantly

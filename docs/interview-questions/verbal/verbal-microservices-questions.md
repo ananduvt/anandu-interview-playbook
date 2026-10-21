@@ -770,7 +770,6 @@ Read:   Update materialized views
 
 ## Additional Topics
 
-See [Sample Topics](../index.md) for more areas to explore:
 - How do you define service boundaries?
 - What's service discovery and why do you need it?
 - How do you monitor and trace requests across services?
@@ -780,4 +779,4 @@ See [Sample Topics](../index.md) for more areas to explore:
 
 ---
 
-**See also:** [Microservices Principles](../../microservices-distributed/principles.md), [Messaging & Kafka](../../microservices-distributed/messaging.md), [Service Discovery](../../microservices-distributed/service-discovery.md), [Interview Questions Overview](../index.md)
+**See also:** [Microservices Principles](../../microservices-distributed/principles.md), [Messaging & Kafka](../../microservices-distributed/messaging.md), [Service Discovery](../../microservices-distributed/service-discovery.md), [Interview Preparation](../index.md)

@@ -140,7 +140,7 @@ nav:
           - Observability: devops/observability.md
       - Security & Vulnerabilities: security/index.md
   - Interview Questions:
-      - Overview: interview-questions/index.md
+      - Preparation: interview-questions/index.md
       - Coding Questions:
           - Overview: interview-questions/coding/index.md
           - Coding Problems: interview-questions/coding/coding-problems.md
@@ -156,10 +156,6 @@ nav:
           - System Design: interview-questions/verbal/verbal-system-design-questions.md
           - DevOps: interview-questions/verbal/verbal-devops-questions.md
           - ML/AI: interview-questions/verbal/verbal-ml-ai-questions.md
-      - Interview Prep:
-          - Overview: interview-prep/index.md
-          - Behavioral / STAR: interview-prep/behavioral.md
-          - Quick Reference: interview-prep/quick-reference.md
   - Resources:
       - Overview: resources/index.md
       - Java Roadmap: resources/java-roadmap/java-developer-roadmap.md

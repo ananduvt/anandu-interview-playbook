@@ -694,7 +694,6 @@ List<Employee> result = employees.parallelStream()
 
 ## Additional Topics
 
-See [Sample Topics](../index.md) for more areas to explore:
 - Explain the difference between class and object
 - What are the 4 pillars of OOP?
 - What's the difference between ArrayList and LinkedList?
@@ -706,4 +705,4 @@ See [Sample Topics](../index.md) for more areas to explore:
 
 ---
 
-**See also:** [Java Core Basics](../../java-core/basics.md), [OOP](../../java-core/oop.md), [Interview Questions Overview](../index.md)
+**See also:** [Java Core Basics](../../java-core/basics.md), [OOP](../../java-core/oop.md), [Interview Preparation](../index.md)

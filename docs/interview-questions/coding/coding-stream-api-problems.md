@@ -456,4 +456,4 @@ System.out.println("Low: " + lowEarners.size());    // 2
 
 ---
 
-**See also:** [Collections Framework](../../java-collections-concurrency/collections.md), [Interview Questions Overview](../index.md)
+**See also:** [Collections Framework](../../java-collections-concurrency/collections.md), [Interview Preparation](../index.md)

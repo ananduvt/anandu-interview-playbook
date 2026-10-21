@@ -1,102 +1,95 @@
-# Interview Questions
+# Interview Preparation
 
-Curated interview questions across domains: coding problems, system design discussions, and domain-specific technical conversations.
+How to prepare for and handle technical and behavioral interview rounds. For practice questions, go to:
 
----
-
-## Categories
-
-### **Coding Questions**
-
-Programming problems: algorithm design, implementation, optimization, code quality.
-
-- **Data Structures & Algorithms**: Array/String/Tree/Graph/DP problems
-- **Problem-Solving Approach**: Understand → Plan → Code → Test → Optimize
-- **Complexity Analysis**: Time/space trade-offs
-- **Follow-up Questions**: Edge cases, improvements, alternative approaches
-
-[Coding Questions](coding/index.md)
-
-### **Verbal / Conceptual Questions**
-
-Technical discussion and conceptual understanding across topic areas.
-
-#### **Databases & SQL**
-Understanding database design, queries, transactions, optimization.
-[DB Questions](verbal/verbal-db-questions.md)
-
-#### **Java Core**
-Fundamentals, OOP, memory, concurrency, language features.
-[Java Core Questions](verbal/verbal-java-core-questions.md)
-
-#### **Java Advanced**
-Advanced patterns, frameworks, performance, architecture.
-[Java Advanced Questions](verbal/verbal-java-advanced-questions.md)
-
-#### **Spring Boot & Web**
-Spring framework, dependency injection, REST APIs, web development.
-[Spring Boot Questions](verbal/verbal-spring-boot-questions.md)
-
-#### **Microservices & Distributed Systems**
-Architecture patterns, scalability, resilience, distributed computing.
-[Microservices Questions](verbal/verbal-microservices-questions.md)
-
-#### **System Design**
-Designing scalable systems, trade-offs, real-world scenarios.
-[System Design Questions](verbal/verbal-system-design-questions.md)
-
-#### **DevOps & Cloud**
-Deployment, containerization, infrastructure, cloud platforms.
-[DevOps Questions](verbal/verbal-devops-questions.md)
-
-#### **Machine Learning & AI**
-ML concepts, algorithms, deep learning, LLM applications.
-[ML/AI Questions](verbal/verbal-ml-ai-questions.md)
-
-#### **Design Patterns**
-Gang of Four patterns, creational/structural/behavioral, real-world applications.
-[Design Patterns Questions](verbal/verbal-design-patterns-questions.md)
+- **[Coding Questions](coding/index.md)**: algorithm and implementation problems with multiple approaches and complexity analysis.
+- **[Verbal Questions](verbal/index.md)**: conceptual Q&A by domain (Java, Spring, databases, microservices, system design, DevOps, ML/AI).
 
 ---
 
-## Interview Tips
+## Before the Interview
 
-### **Coding Questions**
-- **Think aloud**: Explain your approach before coding
-- **Clarify**: Ask about constraints, edge cases, examples
-- **Brute force first**: Start simple, then optimize
-- **Test**: Walk through examples, check edge cases
-- **Complexity**: State time/space complexity before submitting
+- **Research the company**: business model, tech stack, recent news, culture.
+- **Practice**: coding problems, system design, and behavioral stories (see [Behavioral Rounds](#behavioral-rounds-star)).
+- **Prepare questions to ask**: team structure, technical challenges, how success is measured, growth opportunities.
 
-### **Verbal Questions**
-- **Understand the question**: Rephrase to confirm understanding
-- **Structured answer**: 
-  1. Direct answer
-  2. Why (reasoning/trade-offs)
-  3. Examples (real-world or code)
-  4. Alternatives (when applicable)
-- **Deep dive**: Be ready for follow-ups; show depth
-- **Connect concepts**: Link to related topics when relevant
+### How to Practice
 
-### **General Tips**
-- **Be honest**: "I don't know, but I'd approach it this way..."
-- **Ask clarifications**: Better to understand than assume
-- **Discuss trade-offs**: Compare approaches (speed vs readability, etc.)
-- **Show enthusiasm**: Problem-solving mindset, curiosity
+1. **Pick a topic** from the coding or verbal sections.
+2. **Prepare your answer**: write down key points, then practice explaining them out loud.
+3. **Time yourself**: about 10–15 minutes per verbal question, 30–45 minutes per coding problem.
+4. **Practice with a peer**: speaking answers aloud is different from knowing them.
+5. **Iterate**: refine based on feedback.
 
 ---
 
-## How to Use This Section
+## During the Interview
 
-1. **Pick a topic** from the list above
-2. **Review the questions** (will be filled in progressively)
-3. **Prepare your answer**: 
-   - Write down key points
-   - Practice explaining clearly
-   - Time yourself (typical interview: 10-15 min per question)
-4. **Discuss with a peer**: Verbal practice is valuable
-5. **Iterate**: Refine based on feedback
+### Technical Rounds
+
+- **Coding**: listen carefully, ask clarifying questions, think aloud, handle edge cases, optimize step by step. See the [coding approach](coding/index.md#how-to-approach-coding-questions).
+- **System design**: scope the functional and non-functional requirements, estimate scale, propose a high-level architecture, deep-dive into components, call out trade-offs.
+- **Verbal / conceptual**: give a direct answer first, then the reasoning, an example, and alternatives. See the [answer structure](verbal/index.md#interview-approach).
+
+### Communication
+
+- Clarify requirements before you start; it's better to ask than to assume.
+- Explain your thinking; don't work in silence.
+- Discuss trade-offs (speed vs. readability, consistency vs. availability, and so on).
+- Ask for a hint if you're stuck; show how you approach problems.
+- Be honest: "I don't know, but here's how I'd find out" beats guessing.
+- Show curiosity and a problem-solving mindset.
 
 ---
 
-**See also:** [Quick Reference](../interview-prep/quick-reference.md), [Behavioral / STAR](../interview-prep/behavioral.md)
+## Behavioral Rounds (STAR)
+
+Structure every behavioral answer as **STAR** and keep it to about 2 minutes.
+
+### The STAR Method
+
+- **Situation**: brief context (1–2 sentences).
+- **Task**: your specific responsibility or goal.
+- **Action**: what **you** did (say "I", not "we"); this is the bulk of the answer.
+- **Result**: the outcome, quantified where possible (latency, %, time saved, incidents avoided).
+
+### Prepare Stories for These Themes
+
+Have 5–6 flexible stories you can adapt:
+
+- A hard **technical problem** you solved.
+- A **production incident** or bug you diagnosed and fixed.
+- **Ownership**: something you drove end to end.
+- A **conflict or disagreement** and how you resolved it.
+- Delivering under **time pressure or ambiguity**.
+- A **mistake** you made, and what you changed afterward.
+- **Leadership, mentoring, or collaboration**.
+
+### Common Questions
+
+- "Tell me about yourself": 60–90 seconds covering your role, strengths, and why this role.
+- "Tell me about a challenging project."
+- "Tell me about a time you disagreed with a teammate or manager."
+- "Tell me about a time you failed or made a mistake."
+- "How do you handle tight deadlines or competing priorities?"
+- "Why do you want this role?" / "Why are you leaving your current one?" (stay positive).
+
+### Tips
+
+- **Lead with impact**, then explain how.
+- **Quantify** wherever possible; be specific, not generic.
+- Own your part clearly; give credit without hiding your contribution.
+- For failures, emphasize the **fix and prevention**, not blame.
+
+### STAR Template
+
+> **S**: _context_ · **T**: _my goal_ · **A**: _what I did (steps)_ · **R**: _measurable outcome + learning_
+
+---
+
+## After the Interview
+
+- Send a thank-you email within 24 hours.
+- Reference specific points from the conversation.
+- Express genuine interest in the role.
+- Ask about the timeline for next steps if it wasn't mentioned.

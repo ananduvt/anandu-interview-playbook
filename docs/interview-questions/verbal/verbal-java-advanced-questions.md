@@ -587,4 +587,4 @@ System.out.println(coffee.cost());         // 2.7
 
 ---
 
-**See also:** [Design Patterns](../../java-patterns-advanced/design-patterns.md), [Concurrency](../../java-collections-concurrency/concurrency.md), [Interview Questions Overview](../index.md)
+**See also:** [Design Patterns](../../java-patterns-advanced/design-patterns.md), [Concurrency](../../java-collections-concurrency/concurrency.md), [Interview Preparation](../index.md)

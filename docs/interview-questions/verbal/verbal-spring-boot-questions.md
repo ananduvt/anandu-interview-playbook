@@ -976,7 +976,6 @@ public class OrderService {
 
 ## Additional Topics
 
-See [Sample Topics](../index.md) for more areas to explore:
 - What's the difference between @Component, @Service, @Repository?
 - How does Spring Data JPA repository derivation work?
 - Explain the N+1 query problem and how to solve it
@@ -988,4 +987,4 @@ See [Sample Topics](../index.md) for more areas to explore:
 
 ---
 
-**See also:** [Spring Boot Fundamentals](../../spring-web/spring-boot.md), [Spring Annotations](../../spring-web/spring-annotations-components.md), [Interview Questions Overview](../index.md)
+**See also:** [Spring Boot Fundamentals](../../spring-web/spring-boot.md), [Spring Annotations](../../spring-web/spring-annotations-components.md), [Interview Preparation](../index.md)

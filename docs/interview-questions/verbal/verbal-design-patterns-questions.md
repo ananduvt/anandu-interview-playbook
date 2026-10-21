@@ -776,4 +776,4 @@ See [Design Patterns Reference](../../java-patterns-advanced/design-patterns.md)
 
 ---
 
-**See also:** [Gang of Four Design Patterns](../../java-patterns-advanced/design-patterns.md), [Interview Questions Overview](../index.md)
+**See also:** [Gang of Four Design Patterns](../../java-patterns-advanced/design-patterns.md), [Interview Preparation](../index.md)

@@ -193,6 +193,4 @@ Modern functional Java with Stream API:
 
 ---
 
-[Additional questions to be added progressively]
-
-**See also:** [Interview Questions Overview](../index.md), [DSA Coding Problems](../../dsa/coding-problems.md)
+**See also:** [Interview Preparation](../index.md), [DSA Coding Problems](../../dsa/coding-problems.md)

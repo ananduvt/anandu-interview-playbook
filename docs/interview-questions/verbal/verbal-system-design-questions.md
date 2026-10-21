@@ -52,4 +52,4 @@ Designing large-scale systems: scalability, reliability, performance, and trade-
 
 ---
 
-**See also:** [System Design Fundamentals](../../system-design/fundamentals.md), [Building Blocks](../../system-design/building-blocks.md), [Interview Questions Overview](../index.md)
+**See also:** [System Design Fundamentals](../../system-design/fundamentals.md), [Building Blocks](../../system-design/building-blocks.md), [Interview Preparation](../index.md)

@@ -612,7 +612,6 @@ CREATE INDEX idx_name ON users(last_name, first_name);
 
 ## Additional Topics
 
-See [Sample Topics](../index.md) for more areas to explore:
 - Explain normalization and why it matters
 - When would you denormalize a database?
 - What's the difference between clustering and non-clustering indexes?
@@ -622,4 +621,4 @@ See [Sample Topics](../index.md) for more areas to explore:
 
 ---
 
-**See also:** [SQL & Relational Databases](../../databases/sql.md), [Interview Questions Overview](../index.md)
+**See also:** [SQL & Relational Databases](../../databases/sql.md), [Interview Preparation](../index.md)

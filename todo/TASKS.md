@@ -45,6 +45,7 @@ Questions to add live in `todo/to-process/QUESTIONS_TODO.json`.
   - Malformed Baeldung marker-interface link (trailing backslash)
 - [ ] Consolidate overlapping threading pages: `java-collections-concurrency/concurrency.md` and `threading.md` both cover Runnable vs Callable, synchronization, and thread pools. Keep each topic in one place and cross-link (`threading.md` uniquely has virtual threads and concurrency patterns; `concurrency.md` has CompletableFuture and IPC)
 - [ ] Consolidate overlapping web/API pages: SOAP, REST, GraphQL, and gRPC appear in `foundations/web-fundamentals.md`, `spring-web/api-styles.md`, and `spring-web/web-services.md`. Pick one home per topic and cross-link. `web-services.md` uniquely has the authentication methods section
+- [ ] Consolidate the DSA reference in `interview-questions/coding/index.md`: its complexity cheat sheet and common-techniques table overlap `dsa/algorithms.md` and `dsa/data-structures.md`. Keep the reference in `dsa/`, and leave the coding overview with the interview approach plus links
 - [ ] `docs/spring-web/index.md`: the Web Services description (WSDL, content negotiation, versioning) doesn't match the page (SOAP vs REST, GraphQL, authentication methods); rewrite it. Also missing entries for WebFlux and Actuator, which are in the nav
 
 ## Batch 5 — Split oversized files (limits in CONTRIBUTING.md → Size Limits)
@@ -95,6 +96,16 @@ Long-form references (`docs/resources/`) are exempt.
     - SQL joins; `HAVING` vs `WHERE`; indexing; sharding
     - Designing a backend for 1M users
   - Coding (`coding-problems.md`): max subarray (Kadane), palindrome check, print 1..N without loops
+- [ ] Coverage check for items from the removed `docs/interview-prep/quick-reference.md` (last-minute recall prompts). For each, confirm it's covered in the matching learning page or `verbal-*` file; add it if not:
+  - System design checklist: clarify → estimate scale → API → components → data/storage → scale (LB, cache, async) → resilience → trade-offs (`system-design/fundamentals.md`)
+  - Resilience: timeout, retry (idempotent + backoff + jitter), circuit breaker, bulkhead, fallback / graceful degradation
+  - Caching: cache-aside vs read-through, TTL + LRU, local vs distributed (Redis), invalidation, cache stampede
+  - REST: verb idempotency (GET/PUT/DELETE idempotent, POST not), status codes 400/401/403/404/409/429/5xx, URI versioning, pagination (offset vs cursor), statelessness, masking sensitive data
+  - Java: HashMap internals (buckets, 0.75 load factor, treeify at 8), ConcurrentHashMap vs `synchronizedMap`, streams are lazy and single-use, `Optional` (avoid `.get()`), records as immutable DTOs, constructor injection, stateless singleton beans, `@Transactional` rolls back on unchecked exceptions
+  - Concurrency: volatile = visibility, synchronized/Lock = mutual exclusion, Atomic = CAS, the 4 deadlock conditions, `ThreadLocal` confinement, immutability as thread safety, virtual threads (Java 21)
+  - Theory: ACID vs BASE, CAP (C vs A under partition), SOLID / DRY / KISS / YAGNI, idempotency, at-least-once vs exactly-once delivery
+  - Coding-round patterns: hash map, two pointers, sliding window, binary search, BFS/DFS, heap / top-k, DP basics, LRU cache
+- [ ] Answer or move the unanswered "Additional Topics" question lists at the end of `verbal-db-questions.md`, `verbal-java-core-questions.md`, `verbal-microservices-questions.md`, and `verbal-spring-boot-questions.md` (published lists of questions without answers)
 
 ## Batch 8 — Content gaps (topics to write)
 

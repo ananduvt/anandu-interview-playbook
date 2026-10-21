@@ -101,4 +101,4 @@ ML concepts, algorithms, deep learning, LLMs.
 
 ---
 
-**See also:** [Interview Questions Overview](../index.md), [Coding Questions](../coding/index.md)
+**See also:** [Interview Preparation](../index.md), [Coding Questions](../coding/index.md)
