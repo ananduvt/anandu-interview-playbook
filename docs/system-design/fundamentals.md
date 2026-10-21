@@ -14,7 +14,7 @@
 - **Load balancer** — L4 (transport) vs L7 (application); round-robin, least-connections.
 - **Caching** — cut latency + load → [Caching](../distributed-cloud/caching.md).
 - **Database** — replication (read scaling), sharding/partitioning (write scaling), indexing.
-- **Message queue** — decouple + smooth spikes → [Messaging](../distributed-cloud/messaging.md).
+- **Message queue** — decouple + smooth spikes → [Messaging](../microservices-distributed/messaging.md).
 - **CDN** — static assets near users.
 - **API gateway** — routing, auth, rate limiting, aggregation.
 

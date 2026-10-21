@@ -22,7 +22,7 @@ This playbook aims to:
 Found an error? Want to improve an explanation? Have a suggestion?
 
 - **Report issues** via [GitHub Issues](https://github.com/ananduvt/anandu-interview-playbook/issues)
-- **Contribute content** via Pull Requests (see [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines)
+- **Contribute content** via Pull Requests (see [CONTRIBUTING.md](https://github.com/ananduvt/anandu-interview-playbook/blob/main/CONTRIBUTING.md) for guidelines)
 - **Start a discussion** using GitHub Discussions below
 
 ---

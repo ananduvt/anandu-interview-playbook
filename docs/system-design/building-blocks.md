@@ -15,7 +15,7 @@ Cut latency + DB load. Cache-aside, TTL + LRU, local vs distributed (Redis). See
 
 ## Message queue / stream
 Decouple producers/consumers, absorb spikes, enable async & event-driven. Kafka (stream), RabbitMQ/SQS (queue).
-See [Messaging](../distributed-cloud/messaging.md).
+See [Messaging](../microservices-distributed/messaging.md).
 
 ## API gateway
 Single entry point: routing, auth, rate limiting, aggregation, TLS termination.

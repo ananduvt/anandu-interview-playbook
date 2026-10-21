@@ -6,10 +6,6 @@ Structured strategies for technical interviews: behavioral questions, technical 
 
 ## Topics
 
-### [Question Bank](question-bank.md)
-**Technical Questions - Java - Spring - Databases - System Design - Microservices - DevOps - Follow-ups**  
-Common interview questions organized by topic: depth-first answers, follow-up questions, real-world examples, edge cases, trade-offs, production considerations.
-
 ### [Behavioral / STAR](behavioral.md)
 **STAR Method - Storytelling - Culture Fit - Conflict Resolution - Failure Narratives - Growth Mindset**  
 Non-technical interviews: Situation-Task-Action-Result framework, communicating impact, handling difficult questions, demonstrating learning from failures, alignment with company values.

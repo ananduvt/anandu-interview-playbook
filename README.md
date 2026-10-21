@@ -13,35 +13,27 @@ Hosted on GitHub Pages. Auto-rebuilds on merge to `main`.
 ## Structure
 ```
 .
-├── docs/            # site content (Markdown) — published to GitHub Pages
-│   ├── index.md     # home page
-│   ├── java-core/   # Java fundamentals
-│   ├── spring-web/  # Spring Framework
-│   ├── ...          # other topic sections
-├── mkdocs.yml       # site config (theme, navigation)
-├── AGENTS.md        # conventions for content contributors
-└── README.md        # this file
+├── docs/              # site content (Markdown), published to GitHub Pages
+│   ├── index.md       # home page
+│   ├── java-core/     # Java fundamentals
+│   ├── spring-web/    # Spring Framework
+│   └── ...            # other topic sections
+├── todo/              # content intake pipeline and internal task list (not published)
+├── mkdocs.yml         # site config (theme, navigation)
+├── CONTRIBUTING.md    # contributor guide
+└── README.md          # this file
 ```
 
 ## Contributing
 
-All content under `docs/` is **public**. Before contributing, read:
-
-1. **[AGENTS.md](AGENTS.md)** — Core rules for editors (file size targets, splitting strategy, no commit without review, safety guidelines)
-2. **[CONTRIBUTING.md](CONTRIBUTING.md)** — Content style and patterns (how to write annotations, design patterns, performance sections; section index page templates)
+All content under `docs/` is **public**. Before contributing, read **[CONTRIBUTING.md](CONTRIBUTING.md)**. It covers the git workflow, where new content goes, size limits, formatting, question templates, and the checklist that keeps the site working.
 
 ### Quick Guidelines
-- **No internal identifiers**: No system/service names, endpoints, ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs
+- **No client or internal identifiers**: no company, system, or service names, endpoints, ticket IDs, hostnames, or internal URLs
 - **Describe generically**: e.g., "an aggregation microservice", "a downstream service"
-- **Interview-focused**: Use real-world examples and general technical knowledge
-- **Stay within limits**: Aim for 300–600 lines per file; split if it grows beyond 600 lines
-- **Max 6 subtopics per section**: If more, create a new parent section
-- **🔄 Update related files**: When adding/changing content, ALWAYS update:
-  - Section index pages (`docs/*/index.md`)
-  - `mkdocs.yml` navigation
-  - `docs/index.md` home page
-  - Cross-references between topics
-- **Review before merge**: Never commit without approval
+- **Interview-focused**: use real-world examples and general technical knowledge
+- **Keep the site working**: every change also updates `mkdocs.yml` nav, section index pages, and inbound links
+- **Review before merge**: the owner commits to `main`; other contributors open a PR for approval
 
 ## Run locally
 
@@ -56,6 +48,6 @@ mkdocs serve                                           # http://127.0.0.1:8000
 
 ## Maintaining
 
-Clone → branch → open a PR → review → merge. The site rebuilds automatically on merge to `main`.
+Contributors: clone → branch → open a PR → review → merge. The site rebuilds automatically on merge to `main`.
 
-See [AGENTS.md](AGENTS.md) for content guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for content guidelines.

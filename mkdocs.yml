@@ -68,32 +68,36 @@ nav:
           - Building Blocks: system-design/building-blocks.md
           - Scalability & Resilience: system-design/scalability-resilience.md
           - Worked Examples: system-design/worked-examples.md
-      - Java Core:
-          - Overview: java-core/index.md
-          - Basics: java-core/basics.md
-          - OOP: java-core/oop.md
-          - Strings & Primitives: java-core/strings-primitives.md
-          - Exceptions: java-core/exceptions.md
-          - Versions & Features: java-core/versions-features.md
-          - Interface vs Abstract Class: java-core/interface-vs-abstract-class.md
-      - Java Collections & Concurrency:
-          - Overview: java-collections-concurrency/index.md
-          - Collections: java-collections-concurrency/collections.md
-          - Functional Programming: java-collections-concurrency/functional-programming.md
-          - Streams: java-collections-concurrency/streams.md
-          - Concurrency, Threads & Virtual Threads: java-collections-concurrency/concurrency.md
-          - Testing: java-collections-concurrency/testing.md
-      - Java Patterns & Advanced:
-          - Overview: java-patterns-advanced/index.md
-          - Design Patterns: java-patterns-advanced/design-patterns.md
-          - Logging & Performance: java-patterns-advanced/logging-performance.md
-          - Advanced Topics: java-patterns-advanced/advanced.md
+      - Java:
+          - Java Core:
+              - Overview: java-core/index.md
+              - Basics: java-core/basics.md
+              - OOP: java-core/oop.md
+              - Strings & Primitives: java-core/strings-primitives.md
+              - Exceptions: java-core/exceptions.md
+              - Versions & Features: java-core/versions-features.md
+              - Interface vs Abstract Class: java-core/interface-vs-abstract-class.md
+          - Collections & Concurrency:
+              - Overview: java-collections-concurrency/index.md
+              - Collections: java-collections-concurrency/collections.md
+              - Functional Programming: java-collections-concurrency/functional-programming.md
+              - Streams: java-collections-concurrency/streams.md
+              - Concurrency & Threads: java-collections-concurrency/concurrency.md
+              - Threading Deep-Dive & Virtual Threads: java-collections-concurrency/threading.md
+              - Testing: java-collections-concurrency/testing.md
+          - Patterns & Advanced:
+              - Overview: java-patterns-advanced/index.md
+              - Design Patterns: java-patterns-advanced/design-patterns.md
+              - Logging & Performance: java-patterns-advanced/logging-performance.md
+              - Advanced Topics: java-patterns-advanced/advanced.md
       - Spring:
           - Core Overview: spring-web/index.md
           - Spring Boot: spring-web/spring-boot.md
           - Annotations & Components: spring-web/spring-annotations-components.md
           - Spring Boot Advanced: spring-web/spring-boot-advanced.md
           - Exception Handling: spring-web/spring-exceptions.md
+          - API Styles & Protocols: spring-web/api-styles.md
+          - Web Services: spring-web/web-services.md
           - Security & RBAC: spring-web/security.md
           - JWT & OAuth2: spring-web/jwt-oauth.md
           - JPA & ORM: spring-web/jpa-orm.md
@@ -110,7 +114,8 @@ nav:
           - ML Fundamentals: ai-ml/fundamentals.md
           - ML Algorithms: ai-ml/algorithms.md
           - Deep Learning: ai-ml/deep-learning.md
-          - LLMs, RAG & Generative AI: ai-ml/llms-transformers.md
+          - LLMs & Transformers: ai-ml/llms-transformers.md
+          - RAG & Generative AI: ai-ml/rag-generative.md
           - AI & Java Integration: ai-ml/ai-java.md
       - Microservices & Distributed Systems:
           - Overview: microservices-distributed/index.md
@@ -139,11 +144,13 @@ nav:
       - Coding Questions:
           - Overview: interview-questions/coding/index.md
           - Coding Problems: interview-questions/coding/coding-problems.md
+          - Stream API Problems: interview-questions/coding/coding-stream-api-problems.md
       - Verbal Questions:
           - Overview: interview-questions/verbal/index.md
           - Databases: interview-questions/verbal/verbal-db-questions.md
           - Java Core: interview-questions/verbal/verbal-java-core-questions.md
           - Java Advanced: interview-questions/verbal/verbal-java-advanced-questions.md
+          - Design Patterns: interview-questions/verbal/verbal-design-patterns-questions.md
           - Spring Boot: interview-questions/verbal/verbal-spring-boot-questions.md
           - Microservices: interview-questions/verbal/verbal-microservices-questions.md
           - System Design: interview-questions/verbal/verbal-system-design-questions.md

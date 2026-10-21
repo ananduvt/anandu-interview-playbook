@@ -99,7 +99,7 @@ Work through these questions in order:
 1. **Does the content already exist?** Search `docs/` first (`grep -ri "keyword" docs`). If it exists, **update it** instead of creating a duplicate.
 2. **Is it a concept within an existing page's topic?** → Add a new `##`/`###`/`####` heading in that page.
 3. **Is it a distinct topic within an existing section?** → Create a new file in that section folder.
-4. **Does the section's nav group exceed 8 pages?** → Add **sub-groups** inside the section in `mkdocs.yml` (e.g., Spring → Core / Data / Security / Reactive) instead of a new top-level section.
+4. **Does a learning section's nav group exceed 8 pages?** → Add **sub-groups** inside the section in `mkdocs.yml` (e.g., Spring → Core / Data / Security / Reactive) instead of a new top-level section.
 5. **Is it a new subject area that fits no section?** → Create a new section folder with an `index.md`, and register it in `mkdocs.yml` and `docs/index.md`.
 
 ### Size Limits
@@ -111,7 +111,8 @@ Limits exist for readability and ease of maintenance. They differ by page type:
 | **Learning page** (`docs/<section>/*.md`) | 300–600 lines target, **800 max** | Over 800 lines or more than ~8 `##` sections → split by subtopic or into `-advanced` / `-deep-dive` files |
 | **Question bank** (`verbal-*`, `coding-*`) | **25 questions per file** | Over 25 questions → split by subtopic (e.g., `verbal-spring-boot-core-questions.md`, `verbal-spring-boot-data-questions.md`) |
 | **Long-form reference** (`docs/resources/`) | Exempt | Must use collapsibles and rely on the page table of contents |
-| **Nav group** (a section in `mkdocs.yml`) | **8 pages max** | Over 8 → add sub-groups inside the section |
+| **Learning nav group** (a `Learn` section in `mkdocs.yml`) | **8 pages max** | Over 8 → add sub-groups inside the section |
+| **Question nav group** (Verbal / Coding Questions) | No limit | One page per domain or topic; add as many as needed |
 
 When splitting, add "See also" cross-references between the resulting files and update every inbound link.
 
@@ -405,7 +406,7 @@ graph TD
 ### 2. Navigation & Index Pages (see [Keep the Site Working](#keep-the-site-working))
 - [ ] New, renamed, moved, or deleted files reflected in `mkdocs.yml` `nav:`
 - [ ] Every `docs/**/*.md` page is in the nav (no orphan pages)
-- [ ] Nav group has 8 pages or fewer (otherwise add sub-groups)
+- [ ] Learning nav group has 8 pages or fewer (otherwise add sub-groups); question groups have no limit
 - [ ] Section `index.md` updated with a keyword-dash one-liner
 - [ ] `docs/index.md` updated if a new section was added
 

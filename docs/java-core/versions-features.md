@@ -403,7 +403,7 @@ Feature matrix showing what each LTS version introduced:
   ```
 - **Pattern Matching for `switch`** (standard): Type-safe, exhaustive switch without casting
   ```java
-  String result = obj switch {
+  String result = switch (obj) {
       case Integer i when i > 0 -> "positive";
       case Integer i -> "non-positive";
       case String s -> "string: " + s;

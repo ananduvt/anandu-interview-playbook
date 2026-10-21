@@ -99,4 +99,4 @@ Gang of Four patterns, creational/structural/behavioral, real-world applications
 
 ---
 
-**See also:** [Quick Reference](../interview-prep/quick-reference.md), [Behavioral / STAR](../interview-prep/behavioral.md), [Question Bank](../interview-prep/question-bank.md)
+**See also:** [Quick Reference](../interview-prep/quick-reference.md), [Behavioral / STAR](../interview-prep/behavioral.md)

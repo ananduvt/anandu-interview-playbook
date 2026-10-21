@@ -38,7 +38,7 @@ Test the run-time performance of software - load testing
 check how the system works under unfavorable conditions
 
 ## TDD & BDD
-See [SDLC → BDD & TDD](sdlc.md#bdd--tdd) for the driven-development approaches.
+See [SDLC → BDD & TDD](sdlc.md#bdd-tdd) for the driven-development approaches.
 
 ## Principles & tooling
 - **AAA** — Arrange, Act, Assert. Test behavior, not implementation. Deterministic, independent, fast.

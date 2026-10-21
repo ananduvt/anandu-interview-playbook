@@ -350,5 +350,5 @@ All share same Trace ID
 
 ---
 
-**See also:** [REST API Best Practices](../../spring-web/api-styles.md), [HTTP Security](../../spring-web/security.md), [Web Services](../../spring-web/web-services.md)
+**See also:** [REST API Best Practices](../spring-web/api-styles.md), [HTTP Security](../spring-web/security.md), [Web Services](../spring-web/web-services.md)
 

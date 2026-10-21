@@ -30,6 +30,13 @@ Advanced patterns, performance, concurrency.
 - Functional programming, streams
 - Advanced collections, reflection
 
+### [Design Patterns](verbal-design-patterns-questions.md)
+Creational, structural, and behavioral patterns with Java examples.
+- Factory vs Abstract Factory, Builder
+- Singleton pitfalls and thread safety
+- Strategy, Observer, Decorator
+- When each pattern fits and its trade-offs
+
 ### [Spring Boot & Web](verbal-spring-boot-questions.md)
 Spring framework, dependency injection, REST APIs.
 - Dependency injection, bean lifecycle

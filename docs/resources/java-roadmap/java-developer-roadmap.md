@@ -1064,7 +1064,7 @@ graph TD
 
 1. **Parallel Tracks:** DSA while learning Java (weeks 1-6)
 2. **Project-Based Learning:** Build small projects each phase
-3. **Code Reviews:** Leverage [Java Code Review Guidelines](java-code-review-guidelines.md) for quality
+3. **Code Reviews:** Leverage [Java Code Review Guidelines](../code-review-guidelines/java-code-review-guidelines.md) for quality
 4. **Practice Coding:** Daily DSA + Spring Boot mini-projects
 5. **Read Documentation:** Official docs beat blog posts
 6. **Open Source:** Contribute to Spring/Kafka/Kubernetes projects
@@ -1085,7 +1085,7 @@ graph TD
 
 ## 📖 See Also
 
-- [Java Code Review Guidelines](java-code-review-guidelines.md) — Code quality standards
+- [Java Code Review Guidelines](../code-review-guidelines/java-code-review-guidelines.md) — Code quality standards
 - [Interview Questions](../../interview-questions/index.md) — Practice interview Q&As
 - [System Design Problems](../../system-design/index.md) — Deep dives on complex systems
 

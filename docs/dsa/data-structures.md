@@ -19,7 +19,7 @@
 
 ## Hashing
 - **HashMap** — buckets via `hashCode()`; O(1) avg; collisions via chaining (treeify at 8 in Java);
-  resize when size > capacity × load factor (0.75). See [Collections](../java/collections.md).
+  resize when size > capacity × load factor (0.75). See [Collections](../java-collections-concurrency/collections.md).
 - **HashSet** — backed by a HashMap.
 
 ## Trees & graphs

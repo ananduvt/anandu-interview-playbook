@@ -1,6 +1,6 @@
 # Spring Cloud & Microservices
 
-Building distributed systems with Spring. Complements [Microservices Principles](../distributed-cloud/principles.md).
+Building distributed systems with Spring. Complements [Microservices Principles](principles.md).
 
 ## Service discovery
 Services register and look each other up dynamically (no hard-coded hosts).
