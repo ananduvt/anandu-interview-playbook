@@ -325,6 +325,163 @@ Limits and restrictions to the use of var in Java include the following:
 
    [https://www.geeksforgeeks.org/var-keyword-in-java/](https://www.geeksforgeeks.org/var-keyword-in-java/)
 
+#### Switch Statements
+
+Java's `switch` has grown from a C-style jump table into a full pattern-matching construct. There are five forms to know:
+
+| # | Type | Since | Returns value? | Fall-through? | Key syntax |
+| :-- | :---- | :---- | :---- | :---- | :---- |
+| 1 | Classic switch statement | Java 1.0 | No | Yes (needs `break`) | `case X:` |
+| 2 | Arrow switch statement | Java 14 | No | No | `case X ->` |
+| 3 | Switch expression | Java 14 | Yes | No (arrow) | `var r = switch (x) { ... };` + `yield` |
+| 4 | Pattern matching switch | Java 21 | Either | No | `case Type t when cond ->` |
+| 5 | Record pattern switch | Java 21 | Either | No | `case Point(int x, int y) ->` |
+
+**1. Classic switch statement (colon form)**
+
+* Execution jumps to the matching `case` and **falls through** to the next cases until a `break`.
+* Supported selector types: `byte`, `short`, `char`, `int`, their wrappers, `enum` (Java 5), `String` (Java 7).
+* Not supported: `long`, `float`, `double`, `boolean`.
+
+```java
+switch (day) {
+    case "SAT":
+    case "SUN":                       // grouping via intentional fall-through
+        System.out.println("Weekend");
+        break;
+    case "MON":
+        System.out.println("Start of week");
+        break;                        // forgetting this is a classic bug
+    default:
+        System.out.println("Weekday");
+}
+```
+
+**2. Arrow switch statement (Java 14)**
+
+* `case X ->` runs only the code on the right; **no fall-through, no `break` needed**.
+* Multiple labels separated by commas.
+
+```java
+switch (day) {
+    case "SAT", "SUN" -> System.out.println("Weekend");
+    case "MON"        -> System.out.println("Start of week");
+    default           -> System.out.println("Weekday");
+}
+```
+
+**3. Switch expression (Java 14)**
+
+* `switch` produces a value, so it can be assigned, returned or passed as an argument.
+* Must be **exhaustive**: every possible input needs a case (or a `default`). For an `enum`, covering all constants is enough.
+* Use `yield` to return a value from a multi-statement block.
+
+```java
+int letters = switch (day) {
+    case MONDAY, FRIDAY, SUNDAY -> 6;
+    case TUESDAY                -> 7;
+    case THURSDAY, SATURDAY     -> 8;
+    case WEDNESDAY -> {
+        log.info("Midweek");
+        yield 9;                      // yield, not return
+    }
+};                                    // enum fully covered, so no default needed
+```
+
+`yield` also works with the old colon form, which still falls through:
+
+```java
+String type = switch (code) {
+    case 1:  yield "ONE";
+    case 2:  yield "TWO";
+    default: yield "OTHER";
+};
+```
+
+**4. Pattern matching switch (Java 21)**
+
+* The selector can be **any reference type**; cases match on type and bind a variable (no manual cast).
+* **Guards** (`when`) add conditions to a case.
+* `case null` handles null explicitly (otherwise a null selector throws `NullPointerException`).
+* Order matters: a broader pattern placed before a narrower one is a compile error ("dominated" label).
+
+```java
+String describe(Object obj) {
+    return switch (obj) {
+        case null                   -> "null";
+        case Integer i when i > 0   -> "positive int " + i;
+        case Integer i              -> "non-positive int " + i;
+        case String s               -> "string of length " + s.length();
+        case List<?> list           -> "list of size " + list.size();
+        default                     -> "unknown: " + obj.getClass().getSimpleName();
+    };
+}
+```
+
+With a **sealed** hierarchy the compiler knows every subtype, so no `default` is needed. Adding a new subtype later breaks compilation until it is handled, which is the main benefit.
+
+```java
+sealed interface Shape permits Circle, Square, Rectangle {}
+record Circle(double radius) implements Shape {}
+record Square(double side) implements Shape {}
+record Rectangle(double width, double height) implements Shape {}
+
+double area(Shape shape) {
+    return switch (shape) {
+        case Circle c    -> Math.PI * c.radius() * c.radius();
+        case Square s    -> s.side() * s.side();
+        case Rectangle r -> r.width() * r.height();
+    };
+}
+```
+
+**5. Record pattern switch (Java 21)**
+
+* Destructures a record's components straight in the `case` label, and patterns can be nested.
+
+```java
+record Point(int x, int y) {}
+
+String locate(Object obj) {
+    return switch (obj) {
+        case Point(int x, int y) when x == 0 && y == 0 -> "origin";
+        case Point(int x, int y) when y == 0          -> "on x-axis at " + x;
+        case Point(int x, int y)                      -> "point (" + x + ", " + y + ")";
+        default                                       -> "not a point";
+    };
+}
+```
+
+**Classic vs modern switch**
+
+| Aspect | Classic (`:`) | Modern (`->` / expression / patterns) |
+| :---- | :---- | :---- |
+| Fall-through | Default behaviour, needs `break` | None |
+| Returns a value | No | Yes (expression form) |
+| Exhaustiveness check | No | Yes (expressions and pattern switches) |
+| Null selector | Throws `NullPointerException` | Can be handled with `case null` |
+| Selector types | Primitives (int-compatible), wrappers, enum, String | Any reference type |
+| Variable scope | Shared across the whole switch block | Scoped to each case |
+
+**Under the hood**
+
+* Dense `int` cases compile to a `tableswitch` bytecode (O(1) jump table); sparse cases compile to `lookupswitch` (binary search).
+* A `String` switch switches on `hashCode()` first, then checks `equals()` to rule out collisions.
+* An `enum` switch uses the constant's `ordinal()`.
+* Pattern switches are compiled using `invokedynamic` (`SwitchBootstraps.typeSwitch`).
+
+**Common interview questions**
+
+* *Can you switch on a `long`?* No. Only int-compatible primitives, their wrappers, enum, String, and any reference type with pattern matching.
+* *Difference between `return` and `yield`?* `yield` exits the switch with a value; `return` exits the whole method and isn't allowed inside a switch expression.
+* *What happens when you switch on null?* Before Java 21: always `NullPointerException`. Java 21+: NPE unless there is a `case null`.
+* *Why prefer sealed types with pattern switch over `default`?* The compiler enforces exhaustiveness, so a newly added subtype can't be silently ignored.
+* *Can a switch statement replace polymorphism?* For closed hierarchies (sealed + records, data-oriented design) yes. For open hierarchies, overriding methods is still the better fit.
+
+[https://www.baeldung.com/java-switch](https://www.baeldung.com/java-switch)
+[https://www.baeldung.com/java-yield-switch](https://www.baeldung.com/java-yield-switch)
+[https://openjdk.org/jeps/441](https://openjdk.org/jeps/441)
+
 **Static**
 
 **Interface**

@@ -18,7 +18,6 @@ Curated reference materials, learning guides, best practices, and external resou
 - 10 categories (variables, methods, exceptions, collections, performance, etc.)
 - ✅/❌ code examples
 - Comprehensive review checklist
-- TSYS EMF production standards
 
 ---
 

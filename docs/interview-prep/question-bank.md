@@ -1,6 +1,6 @@
 # Question Bank
 
-Rapid Q&A for revision. Expand from the [Backlog](../backlog.md) over time.
+Rapid Q&A for revision.
 
 ## Java
 - **`==` vs `equals()`?** identity vs logical equality; override `equals`+`hashCode` together.

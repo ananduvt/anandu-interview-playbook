@@ -436,16 +436,4 @@ System.out.println(x + " " + y);
 
 ---
 
----
-
-## Backlog
-
-See [DSA Backlog](../../dsa/coding-problems.md) for additional problems:
-- Sort students by mark + rank assignment
-- List ↔ Array ↔ Stream conversions
-- Integer ↔ String conversions
-- Bitwise operations & tricks
-
----
-
-**See also:** [Coding Questions Overview](index.md), [DSA Algorithms](../../dsa/algorithms.md), [Backlog](../../backlog.md)
+**See also:** [Coding Questions Overview](index.md), [DSA Algorithms](../../dsa/algorithms.md), [DSA Coding Problems](../../dsa/coding-problems.md)

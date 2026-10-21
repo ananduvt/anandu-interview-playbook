@@ -51,6 +51,3 @@ public static int maxSubArray(int[] nums) {
 // [-2,1,-3,4,-1,2,1,-5,4] -> 6  (subarray [4,-1,2,1])
 ```
 O(n) time, O(1) space — an iterative DP.
-
-## More to add
-See [Backlog](../backlog.md): sort students by mark + rank, conversions, bitwise tricks.

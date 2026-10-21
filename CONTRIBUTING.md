@@ -1,142 +1,281 @@
 # CONTRIBUTING.md — Guidelines for All Contributors
 
-**Read this before editing, adding content, or contributing to this repository.** This single file contains all standards, patterns, rules, and workflow needed to work on the interview playbook.
+**Read this before editing, adding content, or contributing to this repository.** This file contains the standards, patterns, rules, and workflow for working on the interview playbook.
 
 ---
 
 ## 🎯 Repository Overview
 
-This is a structured interview preparation knowledge base published via MkDocs to GitHub Pages. All content under `docs/` is **public**. The repository follows strict standards to ensure consistency, quality, and safety across all contributions.
+A structured interview-preparation knowledge base, published with MkDocs (Material theme) to GitHub Pages. Two kinds of content make up most of the work:
+
+1. **Learning material**: topic pages under `docs/<section>/` (Java Core, Spring, Databases, and so on).
+2. **Question bank**: interview questions with answers under `docs/interview-questions/`.
+
+```
+.
+├── docs/                  # published site content (PUBLIC)
+│   ├── index.md           # home page
+│   ├── <section>/         # learning material, one folder per section
+│   ├── interview-questions/
+│   │   ├── coding/        # coding problems
+│   │   └── verbal/        # verbal Q&A, one file per domain
+│   ├── resources/         # long-form references (roadmap, code-review guidelines)
+│   └── feedback.md        # public feedback page
+├── todo/                  # content intake pipeline + TASKS.md (committed, NOT published)
+├── mkdocs.yml             # site config and navigation
+├── CONTRIBUTING.md        # this file
+└── README.md              # project intro and local setup
+```
 
 ---
 
 ## ⚠️ Publishing Model & Safety
 
 ### Content Visibility
-- All content under `docs/` is **published to a public site** (GitHub Pages).
-- Only content intended for public consumption belongs in `docs/`.
-- Internal guidelines, format instructions, and meta-content belong in this file or in root-level documentation files.
+- Everything under `docs/` is **published to a public site**.
+- `todo/` is committed to git but **not published**. The GitHub repository may still be public, so the same safety rules apply to it.
+- Editing notes, format instructions, and meta-guidance belong in this file, never on published pages.
 
-### What NOT to Include in Published Content
-- **No employer/client-specific information**: no internal system/service names, endpoints, ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs
-- Use generic descriptions instead (e.g., "an aggregation microservice", "a downstream transaction service", "our payment provider")
-- **No internal editing notes or format instructions** (those go in CONTRIBUTING.md, not published pages)
-- **No meta-guidance** like "how to write questions" on published pages
+### What NOT to Include
+- **No employer/client-specific information**: no company, client, or internal product names, system/service names, endpoints, ticket IDs, hostnames, cluster names, account/client IDs, or internal URLs.
+- Use generic descriptions instead (e.g., "an aggregation microservice", "a downstream transaction service", "our payment provider").
+- **No personal or sensitive data** of any kind.
+- **No internal editing notes** or "how to write this page" text on published pages.
 
-### Workflow Constraints
-- **Do not commit or push changes without explicit approval** from the repository owner
-- **Do not delete existing content without approval**
-- All changes must follow the mandatory checklist before committing
-
----
-
-## 🏗️ File Management Rules
-
-### File Size Targets
-- **Target range**: 300–600 lines per file (optimal for readability and maintenance)
-- Files over 600 lines must be split into subtopics
-
-### Splitting Large Files
-- Use suffixes: `-advanced`, `-deep-dive`, `-fundamentals`, or topic-specific names
-- **Example**: `spring-boot.md` (fundamentals) + `spring-boot-advanced.md` (DI, lifecycle, profiles)
-- Add cross-references between split files (use "See also:" sections)
-
-### Subtopic Limits per Section
-- **Maximum 6 subtopics per index page** (e.g., `docs/spring-web/index.md`)
-- If a section exceeds 6 subtopics, create a new parent category
-- **Example**: If `java-core/` grows beyond 6 topics, split into `java-core/` (basics, OOP, exceptions) and `java-advanced/` (advanced topics), then link both from home page
-
-### Directory Structure
-- Add new pages under `docs/` with descriptive names
-- Register all new files in `mkdocs.yml` under the `nav:` section
-- Keep `docs/index.md` as the landing/welcome page
-- Organize by topic area (e.g., `docs/spring-web/`, `docs/java-core/`, `docs/microservices-distributed/`)
+### Change Control
+- **Do not delete existing content without the owner's approval.**
+- Complete the [mandatory checklist](#mandatory-checklist) before committing.
 
 ---
 
-## 📝 Content Style & Writing Standards
+## 🧩 Keep the Site Working
+
+**Every change must include the follow-on changes that keep the published site working.** A change isn't done until navigation, index pages, and links are consistent with it. This applies to every contributor, and especially to AI assistants: make these updates as part of the same change, without waiting to be asked.
+
+| When you... | Also update |
+| :-- | :-- |
+| **Add a page** | Register it in `mkdocs.yml` `nav:` · add it to the section `index.md` · add "See also" links to and from related pages · update `docs/index.md` if it's a new section |
+| **Rename or move a page** | Update its `mkdocs.yml` entry · fix **every inbound link** (search for the old filename in `docs/`, including absolute `/anandu-interview-playbook/...` links inside HTML) · update the section `index.md` |
+| **Delete a page** | Remove its `mkdocs.yml` entry · remove or redirect **every inbound link** · remove it from the section `index.md` · get owner approval first |
+| **Split a page** | Register the new pages in `mkdocs.yml` · add cross-links between the parts · repoint inbound links (including `#anchor` links) to the part that now holds the content |
+| **Rename a heading** | Fix links to its `#anchor` (search for the old anchor in `docs/`) |
+| **Add or change questions** | Keep "📚 Learn more" links valid; make sure the learning page links back to the questions |
+| **Change a section's scope** | Update the section `index.md` description and its one-liner on `docs/index.md` |
+
+### Verify Before Committing
+- Find inbound links to a changed file: `grep -rn "old-file-name" docs`
+- Find pages missing from navigation: every `docs/**/*.md` file should appear in `mkdocs.yml` (MkDocs reports pages that aren't in the nav when you build).
+- Build the site with `mkdocs build --strict`. It fails on broken links and missing files; fix every warning before committing.
+- Open the changed pages with `mkdocs serve` and click their links.
+
+---
+
+## 🔀 Git Workflow
+
+| Who | Workflow |
+| :-- | :-- |
+| **Repository owner** | Commits directly to `main`. |
+| **Other contributors** | Create a feature branch, open a PR, and wait for the owner's approval before merge. |
+| **AI assistants** | Propose a high-level plan first, make the changes, summarize them, then **wait for explicit approval before committing**. Never push unless asked. |
+
+### Git Safety
+- **Stage only the files you intend to commit** by naming them (`git add path/to/file.md`). Never use `git add -A` or `git add .`.
+- When asked to "commit staged changes", commit exactly what is already staged; do not stage anything else.
+- Review `git status` and `git diff --staged` before every commit.
+- Commit messages: short imperative summary of *what and why* (e.g., "Add switch statement types to Java basics").
+
+### Publishing
+- The site rebuilds automatically on push/merge to `main` (`.github/workflows/deploy.yml`) and goes live within minutes.
+- After publishing, spot-check the changed pages for broken links or rendering issues.
+
+---
+
+## 🗂️ Organizing Content: Topics & Subtopics
+
+### Where Does New Content Go?
+
+Work through these questions in order:
+
+1. **Does the content already exist?** Search `docs/` first (`grep -ri "keyword" docs`). If it exists, **update it** instead of creating a duplicate.
+2. **Is it a concept within an existing page's topic?** → Add a new `##`/`###`/`####` heading in that page.
+3. **Is it a distinct topic within an existing section?** → Create a new file in that section folder.
+4. **Does the section's nav group exceed 8 pages?** → Add **sub-groups** inside the section in `mkdocs.yml` (e.g., Spring → Core / Data / Security / Reactive) instead of a new top-level section.
+5. **Is it a new subject area that fits no section?** → Create a new section folder with an `index.md`, and register it in `mkdocs.yml` and `docs/index.md`.
+
+### Size Limits
+
+Limits exist for readability and ease of maintenance. They differ by page type:
+
+| Page type | Limit | Split trigger & method |
+| :-- | :-- | :-- |
+| **Learning page** (`docs/<section>/*.md`) | 300–600 lines target, **800 max** | Over 800 lines or more than ~8 `##` sections → split by subtopic or into `-advanced` / `-deep-dive` files |
+| **Question bank** (`verbal-*`, `coding-*`) | **25 questions per file** | Over 25 questions → split by subtopic (e.g., `verbal-spring-boot-core-questions.md`, `verbal-spring-boot-data-questions.md`) |
+| **Long-form reference** (`docs/resources/`) | Exempt | Must use collapsibles and rely on the page table of contents |
+| **Nav group** (a section in `mkdocs.yml`) | **8 pages max** | Over 8 → add sub-groups inside the section |
+
+When splitting, add "See also" cross-references between the resulting files and update every inbound link.
+
+### Naming Conventions
+- **Files and folders**: lowercase kebab-case (`spring-boot-advanced.md`, `java-core/`).
+- **Split suffixes**: `-fundamentals`, `-advanced`, `-deep-dive`, or a specific subtopic name.
+- **Question files**: `verbal-{domain}-questions.md`, `coding-{topic}.md`.
+- **Every section folder** has an `index.md` overview page.
+
+---
+
+## 🛠️ Workflows
+
+### Adding or Updating Learning Material
+1. Search `docs/` to confirm the content doesn't already exist.
+2. Choose the location using [Where Does New Content Go?](#where-does-new-content-go).
+3. Read 1–2 existing pages in the same section and match their style.
+4. Write the content using the [Learning Page Formatting](#learning-page-formatting) rules.
+5. Check the size limits; split if needed.
+6. Make the follow-on updates in [Keep the Site Working](#keep-the-site-working) (nav, index pages, links).
+7. Link related interview questions to the new content (and vice versa).
+8. If the topic was listed in `todo/TASKS.md`, tick it off.
+9. Run `mkdocs build --strict` and check the page renders correctly with `mkdocs serve`.
+
+### Adding Interview Questions
+1. **Deduplicate**: search the matching `verbal-*` / `coding-*` file (and related ones) for the same or a paraphrased question. If one exists, improve that answer instead.
+2. Pick the domain file. If it already has 25 questions, split it first (see [Size Limits](#size-limits)).
+3. **Append** new questions at the end with the next number. Don't renumber existing questions — other pages may link to them.
+4. Use the matching [question template](#interview-question-templates).
+5. Add a "📚 Learn more" link to the related learning page. If no learning page covers the concept, add the concept to that page (or log it in `todo/TASKS.md` → Content gaps).
+6. If the question came from the `todo/` pipeline, mark it `ADDED` in `QUESTIONS_TODO.json`.
+
+### Tracking Work: `TASKS.md` and `feedback.md`
+- [`todo/TASKS.md`](todo/TASKS.md) is the single internal list of pending work: fixes, refactors, splits, **and topics still to be written**. Tick items off when done. Don't create "backlog" or "to add" pages under `docs/`.
+- `docs/feedback.md` is the public feedback page; don't use it for internal notes.
+
+---
+
+## 📝 Formatting Guide
 
 ### General Principles
-- **One topic per Markdown file**: Keep pages focused and scannable
-- **Use structured formatting**: headings, bullet points, tables, admonitions over long prose
-- **Prefer concrete, interview-useful explanations**: Include likely follow-up questions and edge cases
-- **Ground in reality**: Use project experience and verified facts; do not invent technical details
-- **Distinguish verified facts from general knowledge**: Label user-specific experience separately
-- **Prioritize examples**: Show real Java, Spring, or deployment code when feasible
-- **Preserve existing content**: Update instead of creating duplicates; keep existing structure and style
+- **Structured over prose**: headings, bullets, tables, and code over long paragraphs.
+- **Interview-useful**: include edge cases, gotchas, and likely follow-up questions.
+- **Accurate**: verify facts; don't invent technical details. Label personal project experience separately from general knowledge.
+- **Example-driven**: show real Java/Spring/YAML code whenever feasible.
+- **Preserve existing content**: update rather than duplicate; keep the existing structure.
 
-### Markdown Formatting
-- Use standard Markdown headings (`#`, `##`, `###`, etc.)
-- Use code blocks with language tags (` ```java `, ` ```yaml `, etc.)
-- Use admonitions for notes: `!!! note "Title"`
-- Use Mermaid diagrams for flows: ` ```mermaid ... ``` `
-- Use tables for comparisons (2–3 columns max for readability)
+### Learning Page Formatting
 
-### Cross-References & Internal Links
-- Link to related topics using "See also:" sections at the end of files
-- Use relative paths: `[Link text](../other-section/file.md)`
-- Verify all links point to existing files (broken links break navigation)
+**Heading levels**
+- One `#` title per page.
+- `##` for major sections, `###` for subsections, `####` for individual concepts inside a long page.
+- Don't skip levels (no `##` followed directly by `####`).
+
+**Recommended structure for a concept**
+1. One-paragraph explanation of what it is and why it matters.
+2. Code example(s).
+3. Comparison table (when contrasting options or versions).
+4. Gotchas / under-the-hood notes.
+5. **Common interview questions** (short Q → A bullets).
+6. Reference links (Baeldung, official docs, JEPs).
+
+**Example**: See the "Switch Statements" section in `docs/java-core/basics.md`.
+
+**Java versions**: when a feature is version-dependent, state the version (e.g., "Switch expression (Java 14)") and mark preview features as preview.
+
+### Markdown Rules
+- Code blocks always have a language tag: ` ```java `, ` ```yaml `, ` ```sql `, ` ```bash `.
+- Code must be correct and compilable (or clearly marked as a fragment). Use `// ✅ Good` / `// ❌ Bad` pairs to contrast patterns.
+- Tables: keep to ~5 columns or fewer so they stay readable on smaller screens.
+- Admonitions for callouts: `!!! note "Title"`, `!!! warning`, `!!! tip`.
+- **No emoji in numbering** (write `10. Topic`, not `🔟 Topic`). Emoji are fine as occasional section markers.
+
+### Collapsibles (`<details>`)
+Markdown is **not** reliably rendered inside raw HTML blocks. Inside `<details>`:
+- Use HTML only: `<h3>`, `<h4>`, `<p>`, `<b>`, `<ul>/<li>`, `<table>`.
+- Fenced code blocks (` ```java `) do render and may be used.
+- Leave a blank line after `<summary>...</summary>` and before `</details>`.
+
+### Links
+| Where the link is | Format | Why |
+| :-- | :-- | :-- |
+| Markdown text (learning pages) | Relative path to the `.md` file: `[Streams](../java-collections-concurrency/streams.md)` | MkDocs validates and rewrites it |
+| Raw HTML (inside `<details>`) | Absolute site path, no `.md`: `<a href="/anandu-interview-playbook/java-core/basics/">` | MkDocs does not rewrite HTML links |
+
+Verify every link target exists.
+
+### Mermaid Diagrams (Dark-Mode Safe)
+The site defaults to dark mode, so default Mermaid colors are hard to read.
+- Prefer vertical layouts (`graph TD`) over wide horizontal ones (`graph LR`).
+- Keep diagrams small (about 12 nodes or fewer); split large flows.
+- Use dark fills, bright strokes, and white text:
+
+```mermaid
+graph TD
+    A[Request] --> B[Service]
+    B --> C[Database]
+    style A fill:#1a3a52,stroke:#00bfff,color:#fff
+    style B fill:#3a2a4a,stroke:#da70d6,color:#fff
+    style C fill:#4a2a1a,stroke:#ff8c00,color:#fff
+```
 
 ---
 
 ## 🎓 Content Patterns by Topic Type
 
 ### Annotations & API References
-When documenting APIs, annotations, or large feature sets:
+- **Summary table**: annotation/API with its purpose.
+- **Code examples**: constructor, setter, and field patterns; highlight best practice (constructor injection first).
+- **Configuration YAML**: realistic config with comments explaining each field.
+- **Profile-specific examples**: dev vs. prod when relevant.
 
-- **Summary table**: List annotation/API with purpose (2–3 columns)
-- **Code examples**: Show constructor, setter, and field patterns; highlight best practices (constructor first)
-- **Configuration YAML**: Provide realistic config with comments explaining each field
-- **Profile-specific examples**: Show dev vs. prod configurations when relevant
-
-**Example**: See `docs/spring-web/spring-boot.md` (common annotations section)
+**Example**: `docs/spring-web/spring-boot.md` (common annotations section)
 
 ### Design Patterns & Architecture
-When documenting patterns (microservices, distributed systems, deployment strategies):
+- **Organize by category**: resilience, communication, data patterns, etc.
+- **Pattern structure**: motivation → how it works → example → trade-offs.
+- **Code examples**: real Spring/Java code; framework-native and custom implementations.
+- **Comparison tables**: contrast similar patterns by throughput, latency, cost, rollback speed.
+- **Diagrams**: Mermaid for flows (event choreography, state transitions, deployment cutover).
 
-- **Organize by category**: Group similar patterns (resilience patterns, communication patterns, data patterns)
-- **Pattern structure**: motivation + phases + example + trade-offs
-- **Code examples**: Show real Spring/Java code; include both framework-native and custom implementations
-- **Comparison tables**: When multiple similar patterns exist, contrast by throughput, latency, cost, rollback speed
-- **Diagrams**: Use Mermaid for flows (event choreography, state transitions, deployment cutover)
-
-**Example**: See `docs/microservices-distributed/principles.md` (design patterns, deployment patterns sections)
+**Example**: `docs/microservices-distributed/principles.md`
 
 ### Performance & Tuning
-When documenting performance, GC, caching, or profiling:
+- **Issue → Root Cause → Fix table** for quick lookup.
+- **Real config**: JVM flags and YAML tuning with concrete values.
+- **Tools section**: tools with use cases and one-liner commands.
+- **Before/After**: poor pattern vs. optimized pattern (e.g., N+1 queries).
 
-- **Issue → Root Cause → Fix table**: Format for quick lookup
-- **Real config examples**: Show JVM flags, YAML tuning parameters with concrete values
-- **Tools section**: List tools with specific use cases and one-liner commands
-- **Before/After**: Show poor pattern vs. optimized pattern (e.g., N+1 query problem)
+**Example**: `docs/java-patterns-advanced/advanced.md` (GC) and `docs/java-patterns-advanced/logging-performance.md`
 
-**Example**: See `docs/java-patterns-advanced/advanced.md` (GC section) and `docs/java-patterns-advanced/logging-performance.md` (performance tuning)
+### Section Index Pages
+- **Brief intro** (1–2 sentences) on the topic area.
+- **Topic list** with keyword-dash one-liners (e.g., "DI - Lifecycle - Profiles").
+- **Optional**: Quick Interview Prep bullets.
 
-### Interview Questions
+**Example**: `docs/spring-web/index.md`
 
-#### Coding Problems (`docs/interview-questions/coding/coding-problems.md`)
+---
 
-**Structure:**
-```markdown
+## ❓ Interview Question Templates
+
+### Coding Problems (`docs/interview-questions/coding/`)
+
+````markdown
 ## N. Question Title
 
 <details>
 <summary>View Solution</summary>
 
 <h3>Problem</h3>
-<p>Problem statement.</p>
+<p>Problem statement with example input/output.</p>
 
 <h3>Approach 1: Method Name</h3>
 ```java
-code example
+// complete, runnable code
 ```
 <p>Explanation.</p>
 
 <h3>Approach 2: Alternative Method</h3>
-(Include 2-3 approaches minimum)
+(2–3 approaches minimum)
 
 <h4>Complexity Comparison</h4>
-(Table: Time, Space, Pros, Cons)
+(HTML table: Approach | Time | Space | Pros | Cons)
 
 <h4>Key Insight: Topic</h4>
 <ul>
@@ -146,29 +285,25 @@ code example
 <p>📚 <a href="/anandu-interview-playbook/path/to/topic/">Learn more: Topic</a></p>
 
 </details>
-```
 
-**Requirements:**
-- ✅ 2-3+ approaches per problem
-- ✅ Complexity comparison table
-- ✅ Complete runnable code
-- ✅ HTML tags (not markdown) inside `<details>`
-- ✅ Absolute links: `/anandu-interview-playbook/section/file/` (no `.md`)
-- ✅ Key insights or patterns
+---
+````
 
-#### Verbal Questions (by domain)
+**Requirements**: 2–3+ approaches, complexity comparison table, complete runnable code, key insights.
 
-Files: `docs/interview-questions/verbal/verbal-{domain}-questions.md`
+### Verbal Questions (`docs/interview-questions/verbal/`)
+
+One file per domain: `verbal-{domain}-questions.md`
 - `verbal-java-core-questions.md`
+- `verbal-java-advanced-questions.md`
+- `verbal-design-patterns-questions.md`
 - `verbal-spring-boot-questions.md`
 - `verbal-db-questions.md`
 - `verbal-microservices-questions.md`
-- `verbal-java-advanced-questions.md`
 - `verbal-system-design-questions.md`
 - `verbal-devops-questions.md`
 - `verbal-ml-ai-questions.md`
 
-**Structure:**
 ```markdown
 ## N. Question Title
 
@@ -195,137 +330,132 @@ Files: `docs/interview-questions/verbal/verbal-{domain}-questions.md`
 <p>📚 <a href="/anandu-interview-playbook/path/to/topic/">Learn more: Topic</a></p>
 
 </details>
+
+---
 ```
 
-**Requirements:**
-- ✅ HTML tags (not markdown) inside `<details>`
-- ✅ Comparison tables when contrasting options
-- ✅ Real-world examples or code
-- ✅ Absolute links: `/anandu-interview-playbook/section/file/` (no `.md`)
-- ✅ Clear structure: Direct answer → Why → Table → Example → When to use
+**Requirements**: Direct answer → Why → Table → Example → When to use.
 
-**Formatting rules for both:**
-- ✅ No "All Questions" list upfront
-- ✅ Questions numbered sequentially: ## 1. Title, ## 2. Title, etc.
-- ✅ Separator `---` between questions
-- ✅ Use `<details><summary>View Solution</summary>` (consistent summary text)
-- ✅ Code blocks with language: ` ```java `, ` ```yaml `, etc.
-- ✅ Tables in HTML format inside collapsibles
-- ✅ Reference similar files in same section for style consistency
-
-### Section Index Pages
-When creating or updating a section index (e.g., `docs/spring-web/index.md`):
-
-- **Brief intro** (1–2 sentences) on the topic area
-- **Topic list** with keywords and one-liner descriptions for quick scanning
-- **Optional**: Quick Interview Prep section (bullet points of essentials to memorize)
-
-**Example**: See `docs/spring-web/index.md`
+### Rules for Both
+- Summary text: **"View Solution"** for coding problems, **"View Answer"** for verbal questions.
+- No "All Questions" list at the top of the page.
+- Number sequentially (`## 1. Title`, `## 2. Title`); append new questions at the end.
+- `---` separator between questions.
+- HTML inside collapsibles (see [Collapsibles](#collapsibles-details)).
+- Every answer ends with a "📚 Learn more" link to the related learning page.
 
 ---
 
+## 📥 Content Intake Pipeline (`todo/`)
+
+Raw interview notes and topic ideas pass through `todo/` before they reach `docs/`. The folder is committed but **not published**.
+
+| Folder | Contents | Rules |
+| :-- | :-- | :-- |
+| `todo/raw/` | Unprocessed input: interview notes, question dumps, topic ideas. | Paste as-is, but **scrub employer/client names and personal data before committing**. Use a `.txt` or `.md` extension. |
+| `todo/to-process/` | Cleaned-up, deduplicated items **ready to add** to `docs/`. | Questions go in `QUESTIONS_TODO.json`. Topic ideas go in `todo/TASKS.md` → Content gaps. |
+| `todo/processed/` | Raw files that have been fully extracted. | Kept for reference only; don't edit. |
+| `todo/TASKS.md` | All pending work: fixes, refactors, splits, and topics to write. | Work through it batch by batch; tick items off when done. |
+
+### Flow
+
+```mermaid
+graph TD
+    A[raw/ notes] --> B[Clean up and dedupe]
+    B --> C[to-process/ QUESTIONS_TODO.json]
+    C --> D[Add to docs/ with answers]
+    D --> E[Mark ADDED in JSON]
+    A --> F[Move raw file to processed/]
+    style A fill:#1a3a52,stroke:#00bfff,color:#fff
+    style C fill:#3a2a4a,stroke:#da70d6,color:#fff
+    style D fill:#4a2a1a,stroke:#ff8c00,color:#fff
+```
+
+1. **Capture**: drop raw content into `todo/raw/`.
+2. **Clean up**: rewrite each item as a clear, standalone question; split combined questions; drop pure behavioural or company-specific ones unless they're useful generically.
+3. **Deduplicate**: check against `QUESTIONS_TODO.json` **and** the existing `docs/interview-questions/` files.
+4. **Queue**: add the cleaned items to `todo/to-process/QUESTIONS_TODO.json` with a unique ID, source file, status, and short notes.
+5. **Archive**: move the raw file to `todo/processed/` once everything is extracted.
+6. **Publish in batches**: add questions to `docs/` using the [question templates](#interview-question-templates), then mark them `ADDED`.
+
+### `QUESTIONS_TODO.json` Rules
+- **IDs**: category prefix + number (`SB_001`, `KFK_004`). IDs are never reused or renumbered.
+- **Status values**:
+
+| Status | Meaning |
+| :-- | :-- |
+| `NEW` | Cleaned up, not in the repo yet; ready to add |
+| `REVIEW` | Might already exist in the repo; check before adding |
+| `DUPLICATE` | Already covered in the repo (note where); skip |
+| `ADDED` | Added to `docs/` (note the file and question number) |
+
+- **Counts are derived, never hand-typed**: if the file keeps `count`/`total` fields, recompute them from the actual entries whenever the file changes.
+- Question text may be edited during clean-up; once a question is `ADDED`, update only `status` and `notes`.
+
+---
+
+<a id="mandatory-checklist"></a>
 ## ✅ Mandatory Checklist Before Committing
 
-**Every content change requires updating related files.** Complete this checklist before committing:
+### 1. Placement & Size
+- [ ] Searched `docs/` for existing coverage (no duplicates)
+- [ ] Content placed per [Where Does New Content Go?](#where-does-new-content-go)
+- [ ] File within [size limits](#size-limits); split if not, with cross-references
 
-### 1. Section Index Pages
-- [ ] Add new topics with keywords and one-liner descriptions
-- [ ] Update existing topic descriptions if content changed
-- [ ] Verify count does not exceed 6 subtopics
-- [ ] Use keyword-dash format (e.g., "DI - Lifecycle - Profiles")
+### 2. Navigation & Index Pages (see [Keep the Site Working](#keep-the-site-working))
+- [ ] New, renamed, moved, or deleted files reflected in `mkdocs.yml` `nav:`
+- [ ] Every `docs/**/*.md` page is in the nav (no orphan pages)
+- [ ] Nav group has 8 pages or fewer (otherwise add sub-groups)
+- [ ] Section `index.md` updated with a keyword-dash one-liner
+- [ ] `docs/index.md` updated if a new section was added
 
-### 2. Navigation Configuration
-- [ ] Register new files in `mkdocs.yml` under the `nav:` section
-- [ ] Update section labels if topics were renamed
-- [ ] Maintain hierarchy (parent → children)
-- [ ] Test navigation locally (no broken internal links)
+### 3. Links
+- [ ] "See also" links added; related pages link to the new content
+- [ ] Questions link to learning pages and vice versa
+- [ ] Relative links in Markdown, absolute site links inside HTML
+- [ ] All link targets exist
+- [ ] Inbound links fixed for any renamed, moved, split, or deleted page or heading
 
-### 3. Parent/Overview Pages
-- [ ] Update `docs/index.md` with links to new sections
-- [ ] Update section descriptions if content changed significantly
-- [ ] Fix any broken cross-references
-- [ ] Verify relative paths are correct
+### 4. Formatting
+- [ ] Matches the style of other files in the same section
+- [ ] HTML (not Markdown) inside `<details>`
+- [ ] Code blocks have language tags; code is correct
+- [ ] Mermaid diagrams use dark-mode colors
+- [ ] No emoji in numbering
 
-### 4. Internal Cross-References
-- [ ] Add "See also" links to related topics
-- [ ] Update related files that should link to your new content
-- [ ] Example: "See [Spring Boot Advanced](spring-boot-advanced.md) for..."
-- [ ] Use relative paths accounting for file depth
+### 5. Safety
+- [ ] No employer/client names, internal identifiers, or personal data
+- [ ] No internal editing notes on published pages
 
-### 5. File Size & Structure
-- [ ] If file exceeds 600 lines, split into subtopics (`-advanced`, `-deep-dive`, etc.)
-- [ ] Add cross-references between split files
-- [ ] Verify consistent formatting with existing files in the section
-
-### 6. Consistency Check
-- [ ] Match existing formatting, style, and heading structure
-- [ ] Follow the content patterns specified above
-- [ ] Preserve one-liner descriptions for quick scanning
-- [ ] Verify code examples follow project conventions
-
-### 7. Markdown & Link Validation
-- [ ] Check all Markdown formatting (no syntax errors)
-- [ ] Verify all internal links exist and use correct relative paths
-- [ ] Run local MkDocs build: `mkdocs serve` and test navigation in browser
-- [ ] Verify no 404 errors when clicking links
+### 6. Verify & Commit
+- [ ] `mkdocs build --strict` passes; changed pages render correctly in `mkdocs serve`
+- [ ] `QUESTIONS_TODO.json` / `TASKS.md` updated if relevant
+- [ ] Only intended files staged (`git status`, `git diff --staged`)
+- [ ] Changes summarized; approval received (AI assistants and PR contributors)
 
 ---
 
-## 🔄 Workflow
+## 💻 Local Development
 
-### Local Development
-1. **Clone the repository** and create a feature branch
-2. **Edit files** in `docs/` following the patterns above
-3. **Run locally**: `mkdocs serve` (builds site locally at `http://localhost:8000`)
-4. **Test navigation**: Click all links and verify they work
-5. **Complete the mandatory checklist** before committing
+```sh
+python -m venv .venv
+source .venv/bin/activate          # macOS/Linux
+# .venv\Scripts\Activate.ps1       # Windows PowerShell
 
-### Before Committing
-- Verify all changes follow this guide
-- Ensure the mandatory checklist is complete
-- Summarize which files changed and why
+pip install mkdocs-material
+mkdocs serve                       # http://127.0.0.1:8000
+```
 
-### Committing & Pushing
-- Create clear commit messages (e.g., "Add Spring Boot dependency injection Q&A")
-- **Do not commit or push without explicit approval from the repository owner**
-- Link to issues or PRs if applicable
-- Include co-authorship if working with others
-
-### After Merging
-- The public site rebuilds automatically on merge to `main`
-- Changes go live within minutes
-- Monitor for any broken links or formatting issues
+Click through every changed page and link before committing.
 
 ---
 
-## 💡 Quick Reference for AI Contributors
+## 💡 Quick Reference for AI Assistants
 
-**If you're an AI agent adding content to this repository:**
-
-1. **Read this entire file first** — all standards and patterns are here
-2. **Before editing any file**:
-   - Check existing files in the same section for style consistency
-   - Verify file size (if adding to a file over 500 lines, consider splitting)
-   - Identify related files that might need cross-references
-
-3. **When adding new content**:
-   - Follow the content patterns matching your topic type
-   - Update section index pages (docs/*/index.md)
-   - Update mkdocs.yml navigation
-   - Add cross-references to related topics
-   - Run through the mandatory checklist
-
-4. **When editing existing content**:
-   - Preserve existing structure unless explicitly asked to change it
-   - Update related files if description or structure changed
-   - Verify all links still work
-   - Don't delete content without explicit approval
-
-5. **Before the final commit**:
-   - Summarize which files changed and why
-   - Report any outstanding issues or decisions
-   - Wait for explicit approval before committing or pushing
-
----
-
-**Questions?** Refer back to the relevant section above. This file contains everything needed to contribute confidently.
+1. **Read this file first**, then read 1–2 existing files in the target section.
+2. **Plan first**: give the owner a high-level summary of intended changes before editing.
+3. **Follow** the workflows, formatting guide, and templates above.
+4. **Keep the site working**: make every follow-on change (nav, index pages, inbound links) as part of the same change, without being asked. See [Keep the Site Working](#keep-the-site-working).
+5. **Complete** the [mandatory checklist](#mandatory-checklist).
+6. **Summarize** changed files, open issues, and decisions needed.
+7. **Wait** for explicit approval before committing. Stage only named files. Never push unless asked.

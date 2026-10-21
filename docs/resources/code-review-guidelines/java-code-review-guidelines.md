@@ -773,15 +773,6 @@ Comprehensive checklist for reviewing Java code — formatting, naming, exceptio
 
 ## Source & Attribution
 
-### Internal Company Standards
-These guidelines are based on **enterprise Java code review best practices** established across multiple projects and teams:
-- TSYS Enterprise Mainframe Framework (EMF) — multi-year accumulated knowledge
-- NACH (National ACH) XML Provider projects — payment processing standards
-- IRL, NOA, INTCH packet processors — production-critical systems
-- Internal code review PRs and technical discussions
-
-**Key contributors**: Architecture leads, senior engineers, and tech reviewers across EMF ecosystem
-
 ### External References & Best Practices
 - **Java Code Style**: [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
 - **Clean Code**: Robert C. Martin's "Clean Code" — method design, naming conventions
