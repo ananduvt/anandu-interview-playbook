@@ -1,0 +1,26 @@
+records class example
+hashcode method and usages 
+spring annotations table for quick overview
+java version quick compare table 
+@ControllerAdvice & @ExceptionHandler, exapmle error handling 
+crud operations and comparsions , examples 
+springboot versions and changes
+data base migration basics, db seeding 
+java version migration cleanup , major steps 
+primitive vs object data types, 
+pass by value vs reference 
+autoboxing and unboxing mechanisms between primitives and their wrapper classes?
+java generics and examples, wildcards 
+passing method as param
+java jit complier , c1 c2 
+ Encapsulation and Abstraction exaample 
+whats java version lts 
+spring boot @ConditionalOnClass
+how multi db connection example
+how use multi env example
+how to use cloud env use example
+@profile working 
+how to inject encrypted sensitive properties safely across environments using tools like Spring Cloud Config or HashiCorp Vault
+HashiCorp Vault - basics & sample use cases
+
+
