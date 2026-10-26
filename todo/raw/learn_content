@@ -462,6 +462,1838 @@ Recent major framework iterations have introduced massive runtime performance bo
 
 ###############
 
+ The Basic Record Example
+
+Instead of writing 50+ lines of standard POJO boilerplate code, you can define a record using the record keyword.
+java
+// That's it! This single line creates an immutable data class.
+public record Employee(int id, String name, double salary) {}
+Use code with caution.
+
+What the Compiler Automatically Generates Behind the Scenes:
+
+• private final fields for id, name, and salary.
+• A Canonical Constructor that accepts all arguments to initialize the fields.
+• Public accessor methods (getters) named exactly like the fields (id(), name(), salary()) rather than getId().
+• toString(), equals(), and hashCode() implementations based on the record components.
+
+2. How to Use the Record
+
+You instantiate and use a record exactly like a regular class, but your data is immutable (read-only):
+java
+public class Main {
+    public static void main(String[] args) {
+        // 1. Create an instance (Calls the auto-generated canonical constructor)
+        Employee emp = new Employee(101, "Alice Smith", 85000.0);
+
+        // 2. Access data using the auto-generated getter methods
+        System.out.println("Employee Name: " + emp.name()); // Output: Alice Smith
+        System.out.println("Employee Salary: " + emp.salary()); // Output: 85000.0
+
+        // 3. Print the object (Calls the auto-generated toString method)
+        System.out.println(emp); 
+        // Output: Employee[id=101, name=Alice Smith, salary=85000.0]
+
+        // 4. Check for equality (Calls the auto-generated equals method)
+        Employee emp2 = new Employee(101, "Alice Smith", 85000.0);
+        System.out.println(emp.equals(emp2)); // Output: true (Compares values, not references)
+    }
+}
+Use code with caution.
+
+3. Adding Validations: The Compact Constructor
+
+If you need to validate data before it gets assigned to the fields, you can use a Compact Constructor. This constructor does not require parameters or manual field assignment (this.x = x) because Java handles that automatically right after validation.
+java
+public record Employee(int id, String name, double salary) {
+    
+    // Compact constructor for validation
+    public Employee {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID must be greater than zero.");
+        }
+        if (salary < 0) {
+            throw new IllegalArgumentException("Salary cannot be negative.");
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
+        }
+        // No need to write: this.id = id; (Java does it implicitly!)
+    }
+}
+Use code with caution.
+
+Key Rules to Remember 💡
+
+1. Immutability: Fields are final by default. There are no setter methods generated, and you cannot alter data once the object is created.
+2. Inheritance: Records implicitly extend java.lang.Record and are marked final. This means a record cannot extend another class, nor can any class extend a record.
+3. Interfaces: While they cannot use class inheritance, records can implement interfaces.
+###############
+The core difference is that MyClass.myMethod() executes the method immediately, while MyClass::myMethod creates a reusable reference to the method to be executed later.
+Here is the direct breakdown of how they compare:
+
+Feature	MyClass.myMethod()	MyClass::myMethod
+What it is	Method Invocation (Calling the method)	Method Reference (Pointing to the method)
+When it runs	Right now, on that exact line of code.	Later, when a functional interface calls it.
+What it returns	The actual return value of the myMethod() method.	A Functional Interface object (like a Runnable).
+Syntax Context	Standard Java execution syntax.	Lambda expression shortcut (introduced in Java 8).
+
+###############
+
+Summary Comparison Table
+
+
+Framework	Startup Speed	Memory Footprint	Ecosystem Maturity	Best Suited For
+Spring Boot	Moderate	High	Unmatched	Standard corporate apps, enterprise scale
+Quarkus	Blazing Fast	Ultra-Low	Very Good	Serverless, Kubernetes, cloud-native scale
+Micronaut	Blazing Fast	Ultra-Low	Very Good	Lean microservices, serverless functions
+Javalin	Fast	Very Low	Minimal	Small utilities, scripts, prototyping
+
+###############
+GraalVM Native Image compilation completely shifts how Java applications are run.
+Traditionally, Java code compiles into generic bytecode (.class or .jar files). At runtime, the Java Virtual Machine (JVM) interprets this bytecode and dynamically compiles "hot" code paths into machine code using a Just-In-Time (JIT) compiler.
+GraalVM Native Compilation bypasses the JVM at runtime entirely. It uses Ahead-of-Time (AOT) compilation to translate your Java code directly into a standalone, platform-specific native executable binary (like a .exe on Windows or a binary on Linux).
+
+How GraalVM Native Compilation Works (The Closed-World Assumption)
+
+To create a self-contained executable that doesn't need a full JVM, the GraalVM native-image tool uses a strict rule called the Closed-World Assumption:
+1. Points-To Analysis: During compilation, GraalVM scans your main method and traces every possible path the code can take.
+2. Dead Code Elimination: Any class, method, or dependency in your project that cannot be reached from the main method is completely discarded.
+3. Heap Snapshotting: It initializes static variables and builds a starting memory heap right during compilation, writing that state into the final binary.
+4. Substrate VM: Instead of a massive JVM, GraalVM packages a tiny runtime embedded within the executable called Substrate VM to handle low-level operations like memory management and thread scheduling.
+
+Why Use Native Compilation? (The Benefits)
+
+
+Metric	Traditional JIT JVM	GraalVM Native Executable
+Startup Time	Seconds (Needs to boot JVM, load classes, warm up)	Milliseconds (Near-instant, zero warm-up)
+Memory (RAM)	High (Needs memory for JVM infrastructure & JIT metadata)	Ultra-Low (Fraction of standard Java RAM usage)
+File / Container Size	Large (Requires base JRE/JDK image inside containers)	Small (Fits in minimal distroless or scratch containers)
+
+These traits make native compilation perfect for modern cloud-native computing, Serverless architectures (like AWS Lambda, where slow "cold starts" cost money), and highly scalable Kubernetes microservices.
+
+Basic Example: Compiling a Native App
+
+
+1. The Code (HelloWorld.java)
+
+java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello from a GraalVM Native Binary!");
+    }
+}
+Use code with caution.
+
+2. The Traditional Way (JVM)
+
+bash
+javac HelloWorld.java
+java HelloWorld
+# Starts a JVM instance, loads the class loader, runs the code (takes ~100-200ms)
+Use code with caution.
+
+3. The GraalVM Native Way
+
+(Requires the GraalVM JDK installed with your local OS C-compiler tools like gcc or Visual Studio).
+bash
+# 1. Compile to standard bytecode
+javac HelloWorld.java
+
+# 2. Compile ahead-of-time into a native binary
+native-image HelloWorld
+
+# 3. Execute the native file directly (No 'java' command required!)
+./helloworld  # (Or helloworld.exe on Windows)
+# Starts instantly (~2-5ms) and consumes minimal RAM
+Use code with caution.
+
+The "Gotchas" of Native Compilation ⚠️
+
+Because GraalVM locks down the application at compile time (Closed-World Assumption), dynamic Java features can break if not handled carefully:
+• Reflection & Dynamic Proxies: If your code (or a third-party library) looks up classes dynamically at runtime using Class.forName("ClassName"), GraalVM won't see it during compilation and will throw a ClassNotFoundException. You must provide a JSON configuration file to tell GraalVM to keep those specific classes.
+• Compilation Time: Native compilation is computationally heavy. A build that takes 5 seconds on a traditional JVM can take several minutes to compile into a native image.
+• Framework Support: Because configuration is complex, you rely on frameworks like Quarkus, Micronaut, or Spring Boot 3+, which handle the underlying reflection configurations for you automatically.
+###############
+You can customize Spring Boot's auto-configuration settings by defining key-value pairs inside the src/main/resources/application.properties file.
+Spring Boot provides thousands of built-in configuration keys. When you define a key in this file, Spring Boot detects it at startup and uses your custom value instead of its default choice.
+Here is a grouped checklist of the most common auto-configuration overrides used in development.
+
+1. Server Customization
+
+By default, Spring Boot starts an embedded Tomcat server on port 8080 with a root context path (/). You can change this behavior instantly:
+properties
+# Change the server port
+server.port=9090
+
+# Add a global prefix to all API endpoints
+server.servlet.context-path=/api/v1
+
+# Configure Tomcat connection timeout (in milliseconds)
+server.tomcat.connection-timeout=20000
+Use code with caution.
+
+2. Database Connections (DataSource)
+
+If Spring Boot finds a database driver (like PostgreSQL or MySQL) on your classpath, it tries to auto-configure a DataSource. You guide it to your specific database instance using these keys:
+properties
+# Database URL, Username, and Password
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydb
+spring.datasource.username=dbuser
+spring.datasource.password=securepassword
+
+# Hibernate/JPA auto-generation behavior (e.g., validate, update, create-drop)
+spring.jpa.hibernate.ddl-auto=update
+
+# Show SQL queries executed by the framework in the logs
+spring.jpa.show-sql=true
+Use code with caution.
+
+3. JSON Parsing (Jackson)
+
+Spring Boot auto-configures the Jackson library to convert your Java objects to JSON. You can customize how dates are formatted or how missing fields are handled:
+properties
+# Format all Java Date/Time objects globally
+spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+
+# Do not include fields in the JSON response if their value is null
+spring.jackson.default-property-inclusion=non_null
+
+# Prevent errors when your backend receives unknown JSON properties
+spring.jackson.deserialization.fail-on-unknown-properties=false
+Use code with caution.
+
+4. Application Logging
+
+You can fine-tune what details get printed to your console or log files without altering a single line of Java code:
+properties
+# Set the global logging level (TRACE, DEBUG, INFO, WARN, ERROR)
+logging.level.root=INFO
+
+# Set a specific package (like your custom algorithms package) to a deeper debug level
+://level.com.yourpackage.algorithms=DEBUG
+
+# Save logs to a physical file on the disk
+logging.file.name=logs/app.log
+Use code with caution.
+
+5. Creating Your Own Custom Properties
+
+In addition to overriding Spring Boot's settings, you can inject your own custom properties using the @Value annotation in your Java classes.
+
+Inside application.properties:
+
+properties
+app.benchmark.max-runs=50
+app.benchmark.environment=production
+Use code with caution.
+
+Inside your Java Code:
+
+java
+@RestController
+public class BenchmarkController {
+
+    // Spring injects the value 50 directly into this variable at startup
+    @Value("${app.benchmark.max-runs}")
+    private int maxRuns;
+
+    @GetMapping("/config")
+    public String getConfig() {
+        return "Max benchmark runs allowed: " + maxRuns;
+    }
+}
+###############
+
+ How Properties and YML Files Are Chosen (The Priority Hierarchy)
+
+If you have both an application.properties and an application.yml file in the same folder, application.properties takes precedence and will override any conflicting keys in the YML file. However, it is a best practice to use only one format in your project to prevent confusion.
+Spring Boot uses a highly strict Externalized Configuration Order to determine which values win. If a key is defined in multiple locations, the location highest on this list wins and overwrites the others:
+1. Command-Line Arguments: (e.g., java -jar app.jar --server.port=9090) -> Highest priority.
+2. OS Environment Variables: (e.g., setting SERVER_PORT=9090 in your system environment).
+3. Profile-Specific Application Properties (Outside the jar): application-{profile}.properties or .yml placed in the folder where the jar is running.
+4. Profile-Specific Application Properties (Inside the jar): application-{profile}.properties or .yml packaged inside your classpath.
+5. Standard Application Properties (Outside the jar): Packaged in an external configuration directory.
+6. Standard Application Properties (Inside the jar): The default src/main/resources/application.properties or .yml -> Lowest priority.
+
+###############
+In Spring Boot, there are three primary strategies to define and create beans. They range from fully automated scanning to manual programmatic definition.
+Choosing the right strategy depends on whether you own the source code of the class or need to configure third-party libraries.
+
+1. The Automated Strategy (Stereotype Annotations)
+
+This is the most common approach. You mark your classes with Stereotype Annotations, and Spring's Component Scanner automatically discovers, instantiates, and manages them as beans during startup.
+• When to use: For standard application classes that you write and own (e.g., your business logic, controllers, repositories).
+• Key Annotations:
+	• @Component: The generic baseline marker for any Spring-managed bean.
+	• @Service: Denotes facade classes containing business logic.
+	• @Repository: Used for data access layers (DAOs/Repositories); it automatically translates database exceptions into Spring's data exception hierarchy.
+	• @RestController / @Controller: Declares web-facing controllers handling HTTP traffic.
+
+Code Example:
+
+java
+package com.example.demo.service;
+import org.springframework.stereotype.Service;
+
+@Service // Spring automatically finds this and turns it into a bean
+public class PalindromeService {
+    public boolean check(String text) {
+        return new StringBuilder(text).reverse().toString().equals(text);
+    }
+}
+Use code with caution.
+
+2. The Programmatic Strategy (Configuration Classes)
+
+Instead of letting Spring guess, you take control by writing a configuration class annotated with @Configuration. Inside, you write methods annotated with @Bean. The return value of that method is registered as a bean in the container.
+• When to use:
+	• When configuring third-party libraries (e.g., Jackson ObjectMappers, data sources, security filters) where you cannot open the source code to add @Component.
+	• When bean creation logic requires complex setup conditional statements.
+• Key Annotations: @Configuration (class level) and @Bean (method level).
+
+Code Example:
+
+java
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Configuration // Tells Spring this class contains manual bean blueprints
+public class AppConfig {
+
+    @Bean // The returned ObjectMapper object becomes a Spring Bean
+    public ObjectMapper customObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        // Configure the third-party object manually
+        mapper.findAndRegisterModules();
+        return mapper;
+    }
+}
+Use code with caution.
+
+3. The Declarative Strategy (XML Configuration)
+
+This is the legacy way of managing Spring applications. Beans are declared inside an external XML file using <bean> tags.
+• When to use: Almost never in modern Spring Boot applications. It is strictly kept for backward compatibility with 10+ year-old enterprise legacy systems.
+
+Code Example (beans.xml):
+
+xml
+<beans xmlns="http://springframework.org" ...>
+    <bean id="myService" class="com.example.demo.LegacyService" />
+</beans>
+Summary Strategy Selector
+
+
+Strategy	Ownership of Code	Setup Style	Configuration Type
+Automated (@Component)	🟢 Yes (Your own code)	Implicit / Auto-scanned	Annotation-driven [1]
+Programmatic (@Bean)	🔴 No (Third-party libraries)	Explicit / Manual Java code	Java-based configuration
+Declarative (<bean>)	🟡 Either (Legacy migration)	Explicit / External file	XML-driven
+
+
+###############
+
+Using a Remote Git Repo YAML File as an Environment File
+
+To load configurations dynamically from a remote Git repository, the industry standard is to use Spring Cloud Config Server.
+
+Step A: Create a centralized Config Server application
+
+You create a small standalone Spring Boot app with the spring-cloud-config-server dependency.
+java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
+
+@EnableConfigServer // Turns this app into a configuration service
+@SpringBootApplication
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}
+Use code with caution.
+In its application.yml, point it to your remote repository:
+yaml
+server:
+  port: 8888
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com
+          search-paths: config-folder
+Use code with caution.
+
+Step B: Connect your main application to the Config Server
+
+In your actual business application (application.yml), direct it to pull its environment settings from that running server at startup:
+yaml
+spring:
+  application:
+    name: my-payment-service # Looks for 'my-payment-service.yml' in the remote git repo
+  config:
+    import: "optional:configserver:http://localhost:8888"
+Use code with caution.
+When your app boots, it fetches the remote YAML configuration file over HTTP and merges it into the local environment environment context before creating any beans.
+
+###############
+
+Concrete Examples: @Component vs @Configuration
+
+
+@Component Example
+
+Use this when you are writing your own custom logic from scratch. Spring automatically discovers the class and turns it into a bean instance.
+java
+package com.example.demo.service;
+import org.springframework.stereotype.Component;
+
+@Component // Spring instantiates this automatically via component scanning
+public class EncryptionEngine {
+    public String hash(String input) {
+        return Integer.toHexString(input.hashCode());
+    }
+}
+Use code with caution.
+
+@Configuration Example
+
+Use this when you need to configure an external library class (like a database client or an encryption utility from Apache Commons) whose source code you cannot modify to add @Component.
+java
+package com.example.demo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Configuration // This class acts as a factory blueprint
+public class ThirdPartyConfig {
+
+    @Bean // Tells Spring: "Run this method and manage the returned object as a bean"
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        // Custom configuration of a class you didn't write
+        return mapper;
+    }
+}
+
+###############
+
+ JVM Arguments Breakdown (-D, -X, -XX)
+
+JVM arguments dictate how the underlying Java runtime environment behaves. They are broken down into three categories based on their standardization and purpose:
+
+Flag Type	Category Name	Purpose	Example
+-D	System Properties	Defines application-level properties or settings accessible via System.getProperty().	-Dserver.port=9090
+-X	Non-Standard Arguments	Configures common JVM resource allocations (like memory allocations).	-Xmx2g (Set max heap memory to 2 GB)
+-XX	Advanced/Developer	Controls garbage collection behavior, performance optimizations, and debugging diagnostics.	-XX:+UseG1GC (Enable G1 Garbage Collector)
+
+
+###############
+
+
+Commonly Used String Formatters
+
+These are the everyday tools you will use for standard logging, console output, and building basic strings.
+• String.format(): A static utility method that returns a new formatted string. It uses a C-style layout engine where formatting flags (like %s, %d) are mapped sequentially to arguments.
+• System.out.printf(): A terminal-bound printing method. It operates identically to String.format() behind the scenes, but instead of saving the output to a string variable, it writes it directly to the console output stream.
+• String.formatted() (Introduced in Java 15): A modern instance method chained directly to your template string. It is highly clean and commonly used when formatting multi-line Text Blocks.
+
+Specifier	Data Type / Description	Example Syntax	Output Result
+%s	String (Converts any object to text via toString())	String.format("%s", "Java")	Java
+%S	String (Uppercase) (Automatically capitalizes input)	String.format("%S", "hello")	HELLO
+%d	Integer (Decimal integer: byte, short, int, long)	String.format("%d", 42)	42
+%,d	Integer with Commas (Adds locale-specific thousands separators)	String.format("%,d", 1000000)	1,000,000
+%05d	Zero-Padded Integer (Pads numbers with zeros to a fixed width)	String.format("%05d", 7)	00007
+%f	Floating-Point (Decimal numbers: float, double)	String.format("%f", 3.14)	3.140000
+%.2f	Fixed-Precision Float (Rounds up to a specific decimal count)	String.format("%.2f", 42.589)	42.59
+%b	Boolean (Prints true or false)	String.format("%b", 5 > 2)	true
+%c	Character (Prints a single Unicode character)	String.format("%c", 'A')	A
+%x	Hexadecimal (Converts integers to base-16)	String.format("%x", 255)	ff
+%e	Scientific Notation (Formats floats in exponential layout)	String.format("%e", 1234.56)	1.234560e+03
+%n	Platform Newline (Line separator relative to OS)	String.format("Line 1%nLine 2")	Moves to next line
+
+###############
+
+What is a HashMap?
+
+A HashMap is a key-value data structure in Java (part of the java.util package) that implements the Map interface. It stores data as Key-Pair associations (e.g., matching an Employee ID to their profile).
+• It allows one null key and multiple null values.
+• It does not guarantee order; the arrangement of items can change over time as new elements are added.
+• It offers near-instant operations, providing O(1) constant time complexity for basic operations like put() and get().
+
+2. The Core Architecture Components
+
+Before looking at the execution flow, you need to understand the underlying infrastructure that lives inside a HashMap:
+• The Node Array (Bucket Table): Internally, a HashMap contains an array of nodes (Node<K,V>[] table). Each slot in this array is called a bucket.
+• The Node Structure: Each index in the array contains a linked list or tree node containing four fields:
+	1. int hash (The calculated hash code)
+	2. K key (The actual key object)
+	3. V value (The stored data value)
+	4. Node<K,V> next (A pointer to the next node in case of collisions)
+
+3. How it Works Internally (Step-by-Step)
+
+
+A. The Storage Process: map.put(key, value)
+
+When you insert a key-value pair, the HashMap executes a distinct sequence:
+[Calculate hashCode()] ➔ [Apply Hash Function] ➔ [Determine Bucket Index] ➔ [Check for Collision] ➔ [Insert Node]
+1. Hashing: The HashMap calls the key object's native hashCode() method. It then processes this value through its own internal hash function (shifting bits) to distribute values evenly and prevent clustering.
+2. Index Calculation: It converts the final hash into an array boundary index using a bitwise formula:
+\(\text{Index}=\text{hash}\ \&\ (n-1)\)
+(where n is the current length of the bucket array).
+3. The Perfect Fit: If the calculated bucket index is empty, the Node object is placed directly into that array slot.
+
+B. Handling Hash Collisions (The Collision Strategy)
+
+A Hash Collision happens when two completely different keys produce the exact same bucket index calculation.
+Java handles collisions using Chaining:
+• Linked List Chain: If a bucket is already occupied by a node, the new node is attached to the end of the existing node as a linked list (node.next = newNode).
+• Treeification (Java 8 Optimization): If a linked list chain inside a single bucket grows past a threshold of 8 nodes (TREEIFY_THRESHOLD), and the total map capacity is at least 64, Java automatically converts that specific bucket from a slow linked list into a highly optimized Balanced Red-Black Tree. This ensures that even during extreme collisions, worst-case lookup performance drops to \(O(\log N)\) instead of O(N).
+
+C. The Retrieval Process: map.get(key)
+
+When you fetch a value using a key, it mirrors the storage process:
+1. It hashes your input key to find the exact target bucket index immediately (O(1)).
+2. If multiple elements exist in that bucket (due to a collision), it iterates through the chain.
+3. It checks each node using the equals() method (node.key.equals(key)). Once it finds a true match, it extracts and returns the value.
+
+4. Resizing and Capacity Factors
+
+A HashMap cannot grow infinitely without degrading performance. It relies on two properties to determine when to expand:
+• Initial Capacity: The baseline size of the internal bucket array when created. The default configuration is 16.
+• Load Factor: A metric determining how full the map can get before expanding. The default is 0.75 (75% full).
+• The Threshold: Calculated as Capacity × Load Factor. For a default map (16 × 0.75 = 12), the moment you add the 13th element, the HashMap triggers a Resize.
+• Rehashing: During a resize, the map doubles its bucket array size (e.g., from 16 to 32). It then loops through every single existing item, recalculates its index using the new array boundaries, and moves it to its new bucket location.
+
+
+
+While you cannot completely eliminate hash collisions due to the Pigeonhole Principle (fitting infinite possible object variations into a finite set of integer values), you can drastically minimize their occurrence.
+Here are the four engineering strategies used to avoid and mitigate hash collisions in Java.
+
+1. Design a High-Entropy hashCode() Function
+
+A great hash function must distribute keys uniformly across the entire range of integer values. If your hash codes are clustered together, your elements will pile up into the same buckets.
+
+Do Not Write Lazy Hash Functions:
+
+java
+// ❌ CRITICAL COLLISION HAZARD: Every single object ends up in the exact same bucket!
+@Override
+public int hashCode() {
+    return 42; 
+}
+Use code with caution.
+
+Best Practice (Use Prime Multipliers):
+
+Multiply fields by prime numbers (typically 31). Prime numbers reduce structural clustering when combining different field types (like mixing an int with a String).
+java
+//  RECOMMENDED: Uniformly spreads bit distribution
+@Override
+public int hashCode() {
+    int result = 17;
+    result = 31 * result + id;
+    result = 31 * result + (name != null ? name.hashCode() : 0);
+    return result;
+}
+Use code with caution.
+
+2. Leverage String and Java Record Defaults
+
+Unless you have highly specialized cryptographic or bitwise performance requirements, do not write custom hash math calculations from scratch.
+• Java Strings have a highly optimized, battle-tested hashCode() implementation that minimizes collisions natively.
+• Java Records automatically compile a highly optimal hashCode() calculation matching all component fields perfectly.
+• java.util.Objects.hash(...) uses a stable variant of the prime-multiplier algorithm under the hood.
+
+3. Enforce Strict Immutability on Map Keys
+
+If a key object's internal fields change after it has been stored inside a HashMap, its hashCode() changes with it. This causes a devastating issue:
+1. You call map.put(key, value). The map hashes the key and places it in Bucket 4.
+2. You modify a field on the key object (e.g., key.setName("Bob")).
+3. You call map.get(key). The map computes the new hash, which points to Bucket 9.
+4. The map looks in Bucket 9, finds nothing, and returns null.
+The original object is now permanently stuck in Bucket 4, resulting in a silent memory leak and simulated structural collisions. Always mark key fields as private final to guarantee stability.
+
+4. Optimize Capacity Adjustments Upfront
+
+If you know you need to store roughly 500 items, do not initialize a default empty HashMap.
+A default map starts with only 16 buckets. As you add items, it continually compresses large hashes down to fit those 16 slots, forcing multiple elements into the same buckets. Even though it automatically doubles in size at the threshold, sizing the map properly upfront keeps the bucket pool large and collisions near zero.
+###############
+The Java Executor Framework (introduced in Java 5 inside java.util.concurrent) is an asynchronous task execution framework.
+Traditionally, creating a new thread in Java via new Thread(runnable).start() is an expensive operating system operation. If your app creates hundreds of threads on the fly, it can crash due to memory exhaustion. The Executor Framework solves this by separating task submission from task execution using managed Thread Pools.
+[Your Tasks / Runnables] ➔ [Executor Service Queue] ➔ [Managed Thread Pool] ➔ [CPU Cores]
+
+1. The Core Interfaces
+
+The framework is built on a hierarchy of three primary interfaces:
+• Executor: The minimalist root interface containing a single method: execute(Runnable).
+• ExecutorService: The production-standard interface. It adds lifecycle management methods (shutdown()) and handles tasks that return results (submit()).
+• ScheduledExecutorService: An extension of ExecutorService designed to schedule tasks to run after a delay or periodically.
+
+2. Commonly Used Factory Methods (Executors Class)
+
+You can spin up pre-configured thread pools using the static factory methods inside the Executors utility class:
+• Executors.newFixedThreadPool(int nThreads): Creates a pool with a fixed number of threads. If all threads are busy, incoming tasks wait in a queue. Best for predictable, steady workloads.
+• Executors.newCachedThreadPool(): Creates a pool that creates new threads as needed but reuses old ones when available. Idle threads are destroyed after 60 seconds. Best for short-lived asynchronous tasks.
+• Executors.newSingleThreadExecutor(): Uses exactly one worker thread. Tasks are executed sequentially in order of submission. Best for tasks that must run one at a time.
+• Executors.newScheduledThreadPool(int corePoolSize): Creates a pool that can schedule commands to run after a given delay or periodically. An excellent, robust replacement for java.util.Timer.
+
+3. Essential Framework Methods
+
+Once you instantiate an ExecutorService, you control it using these fundamental execution and lifecycle methods:
+
+A. Task Submission Methods
+
+• void execute(Runnable task): Submits a fire-and-forget task. It returns nothing and cannot throw checked exceptions back to the caller.
+• Future<T> submit(Callable<T> task): Submits a task that returns a value. It returns a Future object, which acts as a wrapper or receipt. You call future.get() later to extract the result once the calculation finishes.
+• List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks): Executes a batch of tasks, blocking the calling thread until all of them complete.
+• T invokeAny(Collection<? extends Callable<T>> tasks): Executes a batch of tasks, returning the result of the first one that completes successfully, then cancelling the remaining tasks.
+
+B. Lifecycle & Shutdown Methods
+
+Thread pools do not close automatically when your code finishes; they keep running waiting for new tasks. You must shut them down cleanly:
+• void shutdown(): Initiates an orderly shutdown. It stops accepting new tasks but allows previously submitted tasks in the queue to finish executing.
+• List<Runnable> shutdownNow(): Attempts to stop all actively executing tasks immediately (via thread interruption) and returns a list of tasks that were waiting in the queue but never got started.
+• boolean awaitTermination(long timeout, TimeUnit unit): Blocks the calling thread until all tasks have completed execution after a shutdown request, or the timeout occurs.
+
+4. Complete Code Example
+
+Here is a practical example showing how to submit tasks, capture returned values using a Callable, and shut down the pool safely:
+java
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+public class ExecutorExample {
+    public static void main(String[] args) {
+        // 1. Create a thread pool with 3 worker threads
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        // 2. Submit a Callable task that returns a result
+        Callable<String> computationalTask = () -> {
+            Thread.sleep(1000); // Simulate processing time
+            return "Task completed by " + Thread.currentThread().getName();
+        };
+
+        System.out.println("Submitting task...");
+        Future<String> futureReceipt = executor.submit(computationalTask);
+
+        // 3. Do other work while the thread pool processes the task asynchronously
+        System.out.println("Doing main thread work...");
+
+        try {
+            // 4. Extract the result (This blocks the main thread if the task isn't done yet)
+            String result = futureReceipt.get();
+            System.out.println("Result received: " + result);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            // 5. Always shut down the executor cleanly
+            System.out.println("Shutting down executor...");
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+            }
+        }
+    }
+}
+###############
+
+Both Runnable and Callable are functional interfaces in Java designed to encapsulate a block of code that is meant to execute on a separate thread.
+The core difference is that Runnable cannot return a value or throw checked exceptions, while Callable can return a dynamic result and throw checked exceptions.
+
+Direct Comparison Table
+
+
+Feature	Runnable	Callable<V>
+Introduced In	Java 1.0 (Legacy standard)	Java 5.0 (Modern concurrency standard)
+Execution Method	public void run()	public V call() throws Exception
+Return Value	None (void)	Yes (Returns an object of generic type V)
+Exception Handling	Unchecked exceptions only (RuntimeException)	Checked exceptions allowed (e.g., IOException)
+Core Usage	Thread creation (new Thread(runnable))	Executor Service tasks (executor.submit(callable))
+
+
+1. Code Syntax: Runnable vs Callable
+
+
+The Runnable Interface
+
+Because run() returns void, any data calculated inside a Runnable must be stored inside a class instance variable or written to an external data stream.
+java
+@FunctionalInterface
+public interface Runnable {
+    public abstract void run();
+}
+Use code with caution.
+
+The Callable Interface
+
+Because call() uses a generic type parameter <V>, it can return an Integer, a String, a custom Record, or a collection object directly back to the thread pool supervisor.
+java
+@FunctionalInterface
+public interface Callable<V> {
+    V call() throws Exception;
+}
+Use code with caution.
+
+2. Implementation Example
+
+Here is a single, complete class demonstrating how to write and execute both interfaces side-by-side using an ExecutorService.
+java
+import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class TaskComparison {
+    public static void main(String[] args) throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        // ==========================================
+        // 1. RUNNABLE APPROACH (Fire-and-forget)
+        // ==========================================
+        Runnable runnableTask = () -> {
+            System.out.println("Runnable executing logic silently...");
+            // Inside a runnable, you CANNOT throw a checked exception like IOException
+            // try { throw new IOException(); } catch(IOException e) {} // Requires manual try-catch
+        };
+
+        // Submitting a Runnable returns a Future<?>, but future.get() will just return 'null'
+        Future<?> runnableReceipt = executor.submit(runnableTask);
+
+
+        // ==========================================
+        // 2. CALLABLE APPROACH (Computes and Returns Data)
+        // ==========================================
+        // This Callable calculates a sum and throws a checked exception if needed
+        Callable<Integer> callableTask = () -> {
+            System.out.println("Callable processing mathematical computation...");
+            int result = 50 + 100;
+            
+            if (result > 1000) {
+                throw new IOException("Simulated network/disk error during computation");
+            }
+            
+            return result; // Value is packaged into the Future
+        };
+
+        // Submitting a Callable captures the return value receipt
+        Future<Integer> callableReceipt = executor.submit(callableTask);
+
+        // ==========================================
+        // EXTRACTING THE RESULTS
+        // ==========================================
+        System.out.println("Runnable Receipt (Void): " + runnableReceipt.get()); // Output: null
+        System.out.println("Callable Result (Data):  " + callableReceipt.get()); // Output: 150
+
+        executor.shutdown();
+    }
+}
+Use code with caution.
+
+How to choose between them?
+
+• Choose Runnable if you are performing a side-effect action that does not produce data, such as writing a log file to disk, updating a dashboard metric UI element, or firing background clean-up tasks.
+• Choose Callable if you are processing a computation, pulling records from a remote database, querying a third-party REST API, or need to handle methods that naturally throw checked exceptions (like Thread.sleep() or file I/O operations).
+
+###############
+
+ How Future Handles Exceptions
+
+When a Callable throws a checked or unchecked exception, the Executor Framework catches it immediately. The background worker thread does not crash. Instead, the exception is stored inside the Future object like a package.
+The exception remains hidden until you call future.get(). At that exact moment, future.get() will throw a checked ExecutionException. To see the real error your algorithm caused, you must call .getCause().
+java
+import java.io.IOException;
+import java.util.concurrent.*;
+
+public class FutureExceptionExample {
+    public static void main(String[] args) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        Callable<String> failingTask = () -> {
+            System.out.println("1. Running background computation...");
+            throw new IOException("Database connection timed out!"); // The error happens here
+        };
+
+        Future<String> future = executor.submit(failingTask);
+
+        try {
+            System.out.println("2. Waiting for result...");
+            String result = future.get(); // 💥 The exception is re-thrown right here!
+            System.out.println("Result: " + result);
+        } catch (InterruptedException e) {
+            System.out.println("The main thread was interrupted while waiting.");
+        } catch (ExecutionException e) {
+            System.out.println("3. Caught ExecutionException!");
+            // Extract the real source error
+            Throwable rootCause = e.getCause(); 
+            System.out.println("Real Error Source: " + rootCause.getClass().getName());
+            System.out.println("Real Error Message: " + rootCause.getMessage());
+        } finally {
+            executor.shutdown();
+        }
+    }
+}
+Use code with caution.
+
+Part 2: The Modern Alternative — CompletableFuture
+
+Traditional Future objects are blocking. If you call future.get(), your main thread halts and freezes until the background task finishes or throws an error.
+Introduced in Java 8, CompletableFuture fixes this by introducing Asynchronous Reactive Pipelines. Instead of waiting around for data, you give the future a "callback recipe" using functional chains. It runs completely in the background without locking your main execution thread, and it includes built-in functional error handling via .exceptionally().
+Here is the exact same logic written using a non-blocking CompletableFuture:
+java
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+public class CompletableFutureExample {
+    public static void main(String[] args) throws InterruptedException {
+        
+        System.out.println("1. Main thread starting pipeline...");
+
+        // Supply an asynchronous task (Uses the global ForkJoinPool by default)
+        CompletableFuture.supplyAsync(() -> {
+            System.out.println("2. Running async logic on: " + Thread.currentThread().getName());
+            if (true) {
+                // Simulating a calculation error
+                throw new RuntimeException("Algorithm failed due to illegal inputs!");
+            }
+            return "Success Data";
+        })
+        // Step 2: Transform the data if successful (Skipped if an error occurs)
+        .thenApply(data -> data + " - Processed!")
+        
+        // Step 3: Handle errors cleanly inside the pipeline
+        .exceptionally(throwable -> {
+            System.out.println("3. Exception caught in pipeline: " + throwable.getMessage());
+            return "Fallback Default Data"; // Provides a graceful recovery value
+        })
+        
+        // Step 4: Consume the final result (either Success or Fallback data)
+        .thenAccept(finalResult -> {
+            System.out.println("4. Final Pipeline Output: " + finalResult);
+        });
+
+        System.out.println("5. Main thread is completely free and not blocked!");
+        
+        // Keep the application alive for a moment so the background thread can print
+        Thread.sleep(500); 
+    }
+}
+Use code with caution.
+
+Core Summary: Future vs CompletableFuture
+
+
+Feature	Future	CompletableFuture
+Execution Style	Blocking (Calling thread must wait at .get())	Non-blocking (Uses reactive functional callbacks)
+Chaining Tasks	No (Cannot automatically pass output of Task A to Task B)	Yes (Using .thenApply(), .thenCombine())
+Error Architecture	Throws a heavy checked ExecutionException	Handled fluently inline using .exceptionally()
+
+###############
+
+Actuator Core Capabilities
+
+Actuator exposes pre-built endpoints that yield insights into your application. By default, most endpoints are disabled or hidden over HTTP for security reasons (only /health is exposed by default).
+
+Core Pre-Built Endpoints
+
+• /health: Displays application health status (e.g., UP, DOWN) along with component checks (DB, Disk Space).
+• /beans: Returns a complete list of all configured Spring beans in the ApplicationContext.
+• /metrics: Exposes OS and JVM metrics (memory usage, CPU usage, thread counts).
+• /env: Reveals current environment properties (properties from application.properties, environment variables).
+• /loggers: Shows and allows dynamic modification of log levels without restarting the application.
+• /threaddump: Performs a thread dump on the JVM, useful for identifying deadlocks.
+• /shutdown: Allows the application to be gracefully shut down (disabled by default, requires POST).
+
+2. Step-by-Step Implementation
+
+
+Step 2.1: Add the Dependency
+
+Add the Actuator starter package to your project's build file.
+Maven (pom.xml):
+xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+Use code with caution.
+Gradle (build.gradle):
+groovy
+implementation 'org.springframework.boot:spring-boot-starter-actuator'
+Use code with caution.
+
+Step 2.2: Configure Web Exposure (application.properties)
+
+Because endpoints leak sensitive architecture configurations, you must explicitly choose what to expose over the web.
+properties
+# Expose all endpoints (Use for Development/Testing only)
+management.endpoints.web.exposure.include=*
+
+# Alternative: Expose selective endpoints for production
+# management.endpoints.web.exposure.include=health,info,metrics
+
+# Exclude sensitive endpoints explicitly if wildcard is used
+management.endpoints.web.exposure.exclude=env
+
+# Enable the sensitive shutdown endpoint (requires POST request)
+management.endpoint.shutdown.enabled=true
+Use code with caution.
+
+Step 2.3: Change Default Path and Port (Optional)
+
+To avoid clashing with business endpoints or to isolate monitoring traffic behind a firewall, you can customize the actuator routing:
+properties
+# Change the base path from /actuator to /management
+management.endpoints.web.base-path=/management
+
+# Run Actuator on a completely different port (e.g., application runs on 8080, monitoring on 9001)
+management.server.port=9001
+Use code with caution.
+
+3. Implementing a Custom Actuator Endpoint
+
+If you need to expose custom domain diagnostics (e.g., checking the status of a third-party payment gateway, cache hit ratios, or system alerts), you can implement a custom endpoint using the @Endpoint annotation.
+Here is how to create a custom monitoring endpoint called /actuator/custom-diagnostics:
+java
+package com.example.actuatorservice.endpoint;
+
+import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
+@Endpoint(id = "custom-diagnostics") // Becomes accessible at /actuator/custom-diagnostics
+public class CustomDiagnosticsEndpoint {
+
+    // HTTP GET: Triggers when accessing the endpoint via GET
+    @ReadOperation
+    public Map<String, Object> getAppDiagnostics() {
+        Map<String, Object> details = new HashMap<>();
+        details.clear();
+        details.put("customServiceStatus", "OPERATIONAL");
+        details.put("activeConnections", 42);
+        details.put("systemMessage", "Situation normal, all systems running fine.");
+        return details;
+    }
+
+    // HTTP POST: Triggers when sending a POST request to update state
+    @WriteOperation
+    public String updateDiagnosticState(String newStatus) {
+        // Business logic to update internal components dynamically
+        return "System status updated to: " + newStatus;
+    }
+
+    // HTTP DELETE: Triggers when sending a DELETE request
+    @DeleteOperation
+    public String resetDiagnostics() {
+        // Business logic to clear internal diagnostic caches
+        return "Diagnostic logs cleared.";
+    }
+}
+Use code with caution.
+
+Mapping Annotation Operations to HTTP Operations:
+
+• @ReadOperation → Translates to an HTTP GET request.
+• @WriteOperation → Translates to an HTTP POST request.
+• @DeleteOperation → Translates to an HTTP DELETE request.
+
+4. Securing Actuator Endpoints
+
+Exposing infrastructure layout, environmental parameters, and thread state introduces production vulnerabilities. If Spring Security is placed on your classpath, you can lock down Actuator endpoints:
+java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth
+            // Leave /actuator/health accessible for load-balancer health-checks
+            .requestMatchers("/actuator/health").permitAll()
+            // Restrict everything else under /actuator/ to users with an ADMIN role
+            .requestMatchers("/actuator/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
+        )
+        .httpBasic(Customizer.withDefaults()); // Require Basic Authentication
+    return http.build();
+
+###############
+Spring AOP (Aspect-Oriented Programming) is a core framework module that allows you to complement traditional Object-Oriented Programming (OOP) by isolating cross-cutting concerns.
+In standard applications, common tasks like logging, transaction management, auditing, and security validation are repeated across multiple layers. Instead of duplicating this logic in every service method, Spring AOP allows you to modularize it into standalone components called Aspects and inject them dynamically where needed without altering the underlying business code.
+
+1. Core Architectural Concepts
+
+To master Spring AOP, it is essential to understand its foundational terminology:
+• Aspect: A modular unit of a cross-cutting concern. A normal Java class annotated with @Aspect.
+• Join Point: A specific point during execution of the program where code execution can be intercepted. In Spring AOP, a Join Point always represents a method execution.
+• Advice: The actual action/code executed by an aspect at a particular Join Point (e.g., executing a log statement before or after a method runs).
+• Pointcut: An expression that matches specific Join Points to determine where an Advice should run. It defines the target package, class, or method signature.
+• Target Object: The application object whose methods are intercepted by the aspect.
+• AOP Proxy: A dynamic proxy object created by the Spring framework to implement the aspect contracts (wrapping the target object).
+
+2. Types of Advice
+
+Spring AOP provides five distinct types of advice based on when you want your cross-cutting code to execute relative to the target method:
+
+Advice Type	Annotation	Description
+Before	@Before	Runs before the target method executes. Cannot stop execution unless it throws an exception.
+After Returning	@AfterReturning	Runs after the target method completes successfully without throwing exceptions.
+After Throwing	@AfterThrowing	Runs after the target method finishes by throwing an exception.
+After (Finally)	@After	Runs after the target method completes, regardless of its outcome (success or failure).
+Around	@Around	The most powerful advice. Surrounds the method invocation, allowing you to control whether, when, and how the target method executes.
+
+
+3. Step-by-Step Implementation
+
+
+Step 3.1: Add the AOP Dependency
+
+Add the Spring AOP starter package to your project build file.
+Maven (pom.xml):
+xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+Use code with caution.
+
+Step 3.2: Create the Target Business Service
+
+Here is a normal Spring service class that handles payment processing. It should remain clean and completely unaware of logging or tracking concerns.
+java
+package com.example.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentService {
+
+    public String processPayment(String accountId, double amount) {
+        System.out.println("Executing core business logic: Processing payment for " + accountId);
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
+        }
+        return "SUCCESS_TXN_9921";
+    }
+}
+Use code with caution.
+
+Step 3.3: Implement the Aspect and Pointcuts
+
+Now, build the aspect class to intercept processPayment using different advices.
+java
+package com.example.aspect;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.stereotype.Component;
+import java.util.Arrays;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    // Pointcut expression matching any method in PaymentService
+    @Pointcut("execution(* com.example.service.PaymentService.*(..))")
+    public void paymentServiceMethods() {}
+
+    // 1. Before Advice: Log method input arguments before it starts
+    @Before("paymentServiceMethods()")
+    public void logBeforeMethod(JoinPoint joinPoint) {
+        String methodName = joinPoint.getSignature().getName();
+        Object[] args = joinPoint.getArgs();
+        System.out.println(">> [AOP BEFORE] Entering method: " + methodName + " with args: " + Arrays.toString(args));
+    }
+
+    // 2. After Returning Advice: Capture the returned output value
+    @AfterReturning(pointcut = "paymentServiceMethods()", returning = "result")
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        System.out.println("<< [AOP AFTER-RETURNING] Method executed successfully. Returned: " + result);
+    }
+
+    // 3. After Throwing Advice: Capture exceptions raised by target methods
+    @AfterThrowing(pointcut = "paymentServiceMethods()", throwing = "exception")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
+        System.err.println("!! [AOP AFTER-THROWING] Method encountered an error: " + exception.getMessage());
+    }
+
+    // 4. Around Advice: Measure execution performance time
+    @Around("paymentServiceMethods()")
+    public Object profileExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        
+        try {
+            // Explicitly proceed with target method execution
+            Object result = proceedingJoinPoint.proceed(); 
+            
+            long endTime = System.currentTimeMillis();
+            System.out.println("== [AOP AROUND] Execution completed in " + (endTime - startTime) + " ms");
+            return result;
+        } catch (Throwable throwable) {
+            long endTime = System.currentTimeMillis();
+            System.out.println("== [AOP AROUND] Failed execution tracked in " + (endTime - startTime) + " ms");
+            throw throwable; // Rethrow to ensure AfterThrowing advice still catches it
+        }
+    }
+}
+Use code with caution.
+
+4. Anatomy of Pointcut Expressions
+
+Pointcut expressions dictate matching rules. The expression format used above is:
+execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern) throws-pattern?)
+
+Common Examples:
+
+• execution(* com.example.service.*.*(..)): Matches any method inside any class inside the com.example.service package.
+• execution(public * *(..)): Matches any public method in the entire application.
+• @annotation(com.example.annotation.LogExecution): Matches any method decorated with a custom annotation named @LogExecution.
+
+5. How Spring AOP Works Under the Hood
+
+Spring AOP relies heavily on Runtime Dynamic Proxies. When the application starts up:
+1. Spring analyzes classes to see if they match any defined Pointcut rules.
+2. If a match is found, Spring does not inject the raw class bean into the ApplicationContext. Instead, it generates a Proxy Object.
+3. When another component calls paymentService.processPayment(), it invokes the method on the Proxy.
+4. The Proxy executes relevant @Before advice, invokes the actual code via proceed(), and then fires the remaining @After advices.
+Note on Internal Calls: Because Spring AOP relies on proxy wrappers, if methodA() inside PaymentService directly calls methodB() within the same class, the proxy is bypassed. Consequently, any aspect attached to methodB() will not trigger.
+
+###############
+
+Java Optional Class Example
+
+The Optional<T> class (introduced in Java 8) is a container object used to represent the presence or absence of a non-null value. It helps developers avoid explicit null checks and prevent NullPointerException (NPE).
+
+Code Example
+
+Here is a complete example demonstrating how to create, check, and safely extract values using Optional:
+java
+import java.util.Optional;
+
+public class OptionalExample {
+    public static void main(String[] args) {
+        // 1. Creating Optionals
+        Optional<String> emptyOptional = Optional.empty();
+        Optional<String> valuedOptional = Optional.of("Spring Boot");
+        Optional<String> nullableOptional = Optional.ofNullable(null); // Safe even if null
+
+        // 2. Safe Data Extraction with Fallbacks
+        
+        // returns "Default Value" because nullableOptional contains null
+        String fallbackValue = nullableOptional.orElse("Default Value"); 
+        System.out.println("orElse Result: " + fallbackValue);
+
+        // returns "SPRING BOOT" because valuedOptional has data
+        String transformedValue = valuedOptional.map(String::toUpperCase)
+                                                .orElse("UNKNOWN");
+        System.out.println("Mapped Result: " + transformedValue);
+
+        // 3. Conditional Execution using ifPresent
+        valuedOptional.ifPresent(val -> System.out.println("Value is present: " + val));
+
+        // 4. Throwing custom exceptions if data is missing
+        try {
+            emptyOptional.orElseThrow(() -> new IllegalArgumentException("Data is missing!"));
+        } catch (Exception e) {
+            System.out.println("Caught Expected Exception: " + e.getMessage());
+        }
+    }
+}
+Use code with caution.
+
+2. Core Features of var (Local Variable Type Inference)
+
+Introduced in Java 10, the var keyword allows the compiler to infer the data type of a local variable based on its initialization value.
+• Compile-Time Only: It does not introduce dynamic typing. The variable remains strictly typed under the hood; the compiler simply writes the type for you at compilation.
+• Local Scope Restriction: It can only be used for local variables inside methods, loops, or static blocks. It cannot be used for class fields, method parameters, or return types.
+• Immediate Initialization Mandatory: You cannot declare a var without initializing it on the same line (e.g., var explicit; is invalid).
+• Enhances Readability with Generics: It eliminates boilerplate code, especially when working with deeply nested collections:java
+// Traditional approach
+Map<String, List<User>> userMapping = new HashMap<String, List<User>>();
+
+// Using var
+var userMapping = new HashMap<String, List<User>>();
+Use code with caution.
+• Cannot handle null/lambda inferences directly: You cannot initialize a var to null directly (var x = null; fails) or assign a standalone lambda expression without an explicit cast.
+
+3. Checked Exceptions: Advantages and Disadvantages
+
+Checked exceptions are exceptions that are checked by the compiler at compile-time. If a method throws a checked exception (e.g., IOException, SQLException), the calling code must either handle it using a try-catch block or declare it in its method signature using the throws keyword.
+
+Advantages
+
+• Enforced Reliability: They force developers to anticipate and explicitly handle common environmental runtime failures (like missing files or network dropouts).
+• Self-Documenting Code: The method signature explicitly states what can go wrong, acting as a clear contract for anyone consuming your API.
+
+Disadvantages
+
+• Code Bloat & Boilerplate: Developers often end up writing extensive try-catch blocks that clutter the primary business logic.
+• Erosion of Architecture Layers: Lower-level exceptions (like SQLException) frequently ripple upwards through service interfaces to controller layers, forcing higher layers to adapt to infrastructure concerns.
+• Swallowing Exceptions: Frustrated developers often catch exceptions and leave the block empty (catch(Exception e) {}), which silently swallows critical bugs.
+
+4. The Liskov Substitution Principle (LSP) & Inheritance
+
+
+Explaining LSP
+
+The Liskov Substitution Principle (LSP) states that objects of a superclass should be replaceable with objects of its subclasses without breaking the application. In simpler terms, a subclass must honor the behavioral contract established by its parent class. It must not alter the expected behavior, weaken pre-conditions, or strengthen post-conditions.
+• Classic violation example: A Square extending a Rectangle. A rectangle allows you to change width and height independently. If setting a Square's width implicitly modifies its height, it violates the parent class's behavior and breaks LSP.
+
+If a subclass can replace its parent, why is inheritance required?
+
+The phrasing of this question highlights a common conceptual knot: LSP is a constraint on inheritance, not an alternative to it.
+Inheritance is required to establish the foundational relationship that allows substitution to happen in the first place. Here is why we use them together:
+• Polymorphism & Abstraction: Inheritance allows you to write decoupled code that targets a broad, abstract parent type. Without inheritance, you could not pass diverse implementations into a single component.
+• LSP is the Rulebook for Inheritance: Inheritance provides the mechanism for code reuse and subtyping, while LSP provides the safety rules. LSP ensures that when you leverage inheritance, you do not accidentally create fragile, broken hierarchies that surprise the application at runtime.
+• Code Sharing: Inheritance prevents you from writing identical logic across dozens of standalone classes by allowing common state and behavior to live in a single superclass.
+
+
+ Identical Default Methods in Multiple Interfaces
+
+When a class implements two interfaces containing identical default methods (same name and parameter signatures), Java throws a compile-time error due to the Diamond Problem. The compiler cannot implicitly guess which interface implementation should take precedence.
+
+Resolution Strategy
+
+The implementing class must override the conflicting method and manually specify which default behavior to use, or provide an entirely new implementation. You can explicitly call a specific parent interface's method using the syntax InterfaceName.super.methodName().
+java
+interface InterfaceA {
+    default void logMessage() { System.out.println("Message from A"); }
+}
+
+interface InterfaceB {
+    default void logMessage() { System.out.println("Message from B"); }
+}
+
+// Resolving the conflict
+class LoggerImplementation implements InterfaceA, InterfaceB {
+    @Override
+    public void logMessage() {
+        // Manually resolving ambiguity by picking InterfaceA's implementation
+        InterfaceA.super.logMessage(); 
+        
+        // Alternatively, you can add custom logic here
+    }
+}
+Use code with caution.
+
+2. Types of Methods Defined in a Java Interface
+
+Modern Java permits four types of methods inside an interface:
+• Abstract Methods: The traditional default type. They have no body and must be implemented by concrete subclasses.
+• Default Methods: Introduced in Java 8. Methods containing a body that provide a fallback implementation so implementing classes do not break when new methods are added.
+• Static Methods: Introduced in Java 8. Belong to the interface class itself and cannot be overridden by implementing classes. They are called via InterfaceName.staticMethod().
+• Private Methods (and Private Static): Introduced in Java 9. Used to encapsulate and share redundant code blocks between multiple default or static methods within the same interface.
+
+3. Interface vs. Abstract Class
+
+
+Criterion	Interface	Abstract Class
+Inheritance Model	A class can implement multiple interfaces.	A class can extend only one abstract class.
+State / Fields	Cannot hold instance state. All variables are implicitly public static final.	Can hold instance fields (state) with any access modifier (private, protected).
+Constructors	Cannot have constructors.	Can have constructors to initialize subclass state.
+Primary Intent	Defines a peripheral capability or behavioral contract ("can-do" relationship).	Defines a core identity and shared structural base ("is-a" relationship).
+
+
+4. Factory Design Pattern
+
+The Factory Pattern abstracts the instantiation logic of objects, allowing a client to create instances without coupling itself to concrete implementation classes.
+
+Modified Implementation (Using Java 8+ Functional Interfaces and Map Registry)
+
+Instead of a rigid switch-case statement that violates the Open/Closed Principle, this modified version uses a dynamic registry map.
+java
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+// 1. Common Product Interface
+interface Notification {
+    void send(String message);
+}
+
+// 2. Concrete Implementations
+class SMSNotification implements Notification {
+    public void send(String msg) { System.out.println("SMS sent: " + msg); }
+}
+class EmailNotification implements Notification {
+    public void send(String msg) { System.out.println("Email sent: " + msg); }
+}
+
+// 3. Modified Factory using a Functional Registry
+class NotificationFactory {
+    private static final Map<String, Supplier<Notification>> registry = new HashMap<>();
+
+    // Register products dynamically without editing the factory class body later
+    static {
+        registry.put("SMS", SMSNotification::new);
+        registry.put("EMAIL", EmailNotification::new);
+    }
+
+    public static Notification createNotification(String type) {
+        Supplier<Notification> supplier = registry.get(type.toUpperCase());
+        if (supplier == null) {
+            throw new IllegalArgumentException("Unknown notification type: " + type);
+        }
+        return supplier.get();
+    }
+}
+Use code with caution.
+
+5. The volatile Keyword
+
+The volatile keyword is a visibility modifier used in multi-threaded programming. It guarantees that changes made to a variable by one thread are immediately visible to all other threads.
+
+How it Works:
+
+• Bypasses CPU Cache: Normally, threads cache shared variables in CPU registers for performance. volatile forces the application to read and write the variable directly from the Main Memory (RAM).
+• Prevents Instruction Reordering: It establishes a memory barrier, ensuring the compiler does not reorder statements around it for optimization purposes.
+• Crucial Limitation: It does not provide mutual exclusion (locking) and does not make compound operations atomic.
+
+6. volatile vs. Atomic Classes
+
+
+Feature	volatile	Atomic Classes (AtomicInteger, etc.)
+Thread Safety Level	Solves Visibility issues only.	Solves both Visibility and Atomicity issues.
+Compound Operations	Unsafe for operations like read-modify-write (count++).	Safe for compound actions via hardware-level operations.
+Underlying Mechanism	Direct Main Memory access / CPU cache flushing.	Compare-And-Swap (CAS) non-blocking CPU instructions.
+
+
+7. Key CompletableFuture Methods
+
+CompletableFuture is used for asynchronous, non-blocking programming in Java.
+• supplyAsync(Supplier<U>): Runs an asynchronous task on a background thread pool (ForkJoinPool) and returns a result.
+• thenApply(Function<T,R>): A synchronous callback that transforms the result of the previous stage once it finishes (similar to map).
+• thenCompose(Function<T,CompletableFuture<U>>): Flattens nested futures. Used when the transformation step itself returns another CompletableFuture (similar to flatMap).
+• thenCombine(CompletionStage, BiFunction): Runs two independent asynchronous futures concurrently and combines their results when both complete.
+• exceptionally(Function<Throwable, T>): Acts as a catch block to handle errors gracefully by returning a fallback value.
+
+8. Difference Between map and flatMap in Streams
+
+Both methods transform stream data, but they handle the structure of the output differently:
+• map(): Transforms each element into one single value. If the mapping function returns a collection, you end up with a nested stream (e.g., Stream<List<String>>).
+• flatMap(): Transforms each element into a Stream of values and then merges all those individual streams into a single, continuous, unified stream (e.g., flattens Stream<List<String>> into Stream<String>).
+
+9. Internal Working of the Spring Container
+
+The Spring Container (ApplicationContext) manages the lifecycle of beans using the following internal flow:
+[Read Definitions] ➔ [BeanFactoryPostProcessor] ➔ [Instantiate Beans] ➔ [Populate Properties] ➔ [BeanPostProcessor] ➔ [Ready]
+1. Resource Loading: The container reads configuration metadata (Java Config annotations like @Configuration, @Component, or XML files).
+2. Bean Definition Creation: Metadata is parsed into internal BeanDefinition objects, which serve as blueprints.
+3. BeanFactoryPostProcessing: Custom interceptors (BeanFactoryPostProcessor) modify the metadata blueprints before any objects are instantiated (e.g., replacing ${db.url} placeholders with real property values).
+4. Instantiation & Dependency Injection: The container physically creates instances using reflection and resolves properties via @Autowired.
+5. Initialization Interception: The container applies BeanPostProcessor engines to wrap the fresh beans (e.g., wrapping them in AOP proxies for transaction management).
+
+10. The Spring Bean Lifecycle
+
+The lifecycle of a single Spring-managed bean consists of four core phases:
+[1. Instantiation] ➔ [2. Populate Properties] ➔ [3. Initialization Stage] ➔ [4. Destruction Stage]
+
+Detailed Stages:
+
+1. Instantiation: The constructor executes to allocate object memory.
+2. Populate Properties: Setter methods and field injections execute (@Autowired).
+3. Aware Interfaces: If the bean implements interfaces like BeanNameAware or ApplicationContextAware, Spring injects the container context into it.
+4. Pre-Initialization: BeanPostProcessor.postProcessBeforeInitialization() runs.
+5. Initialization: The custom init methods execute in this exact sequence:
+	• Methods annotated with @PostConstruct.
+	• afterPropertiesSet() from the InitializingBean interface.
+	• Any custom initMethod defined on @Bean.
+6. Post-Initialization: BeanPostProcessor.postProcessAfterInitialization() runs (where AOP proxies are generated). The bean is now Ready for Use.
+7. Destruction: When the context shuts down, destruction cleanups run in this sequence:
+	• Methods annotated with @PreDestroy.
+	• destroy() from the DisposableBean interface.
+	• Any custom destroyMethod declaration.
+
+11. Fetch Types: Lazy vs. Eager Loading
+
+Fetch types dictate how Hibernate / JPA fetches associated child relationships from the database when loading a parent entity.
+
+Eager Loading (FetchType.EAGER)
+
+• Behavior: The parent and all associated child collections/entities are loaded immediately in a single database operation (typically using an SQL OUTER JOIN).
+• When to Use: When you know the application will absolutely use the child data every single time it accesses the parent.
+• Risk: Can trigger severe performance degradation if applied to large datasets, leading to massive memory overhead.
+
+Lazy Loading (FetchType.LAZY)
+
+• Behavior: The database fetches only the parent record first. Associated child data is replaced with a lightweight "Proxy object". The actual query to load the children executes only if and when you explicitly call the getter method (e.g., parent.getChildren()).
+• When to Use: The recommended default setting for collections (@OneToMany, @ManyToMany).
+• Risk: Throws a LazyInitializationException if you attempt to call the child getter method after the database transaction/EntityManager session has already closed.
+###############
+Here is a practical, production-ready implementation of combining multiple asynchronous API calls using CompletableFuture.
+
+The Scenario
+
+Imagine building an API gateway aggregator for an e-commerce dashboard. To compile a single UserDashboard object, you must fetch data from three separate microservices:
+1. User Profile Service (Fast)
+2. Order History Service (Slow)
+3. Recommendation Service (Independent of orders, but requires the user profile)
+We will execute these tasks concurrently and combine their results efficiently without blocking the main application thread.
+
+1. Consolidated Code Implementation
+
+java
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class AsyncDashboardAggregator {
+
+    // Define a custom thread pool dedicated to external I/O tasks 
+    // to avoid starving the default ForkJoinPool.commonPool().
+    private final ExecutorService ioExecutor = Executors.newFixedThreadPool(10);
+
+    // Mock Domain Models
+    public record UserProfile(String userId, String name, String tier) {}
+    public record Order(String orderId, double amount) {}
+    public record Recommendation(String itemId, String name) {}
+    public record UserDashboard(UserProfile profile, List<Order> orders, List<Recommendation> recommendations) {}
+
+    public UserDashboard getUserDashboard(String userId) {
+        System.out.println("Starting dashboard aggregation on thread: " + Thread.currentThread().getName());
+
+        // 1. Fetch User Profile Asynchronously
+        CompletableFuture<UserProfile> profileFuture = CompletableFuture.supplyAsync(
+                () -> fetchUserProfile(userId), ioExecutor);
+
+        // 2. Fetch Order History Asynchronously (Runs in parallel with profile)
+        CompletableFuture<List<Order>> ordersFuture = CompletableFuture.supplyAsync(
+                () -> fetchOrderHistory(userId), ioExecutor)
+                .exceptionally(ex -> {
+                    System.err.println("Failed to fetch orders, returning empty fallback list: " + ex.getMessage());
+                    return List.of(); // Graceful fallback
+                });
+
+        // 3. Fetch Recommendations DEPENDING on the User Profile (thenCompose)
+        // thenCompose flattens the nested CompletableFuture structure (like flatMap)
+        CompletableFuture<List<Recommendation>> recommendationsFuture = profileFuture.thenComposeAsync(
+                profile -> CompletableFuture.supplyAsync(() -> fetchRecommendations(profile), ioExecutor), 
+                ioExecutor
+        );
+
+        // 4. Combine all independent futures when they ALL finish
+        UserDashboard combinedDashboard = CompletableFuture.allOf(profileFuture, ordersFuture, recommendationsFuture)
+                .thenApply(v -> {
+                    // All futures are guaranteed to be complete at this block
+                    UserProfile profile = profileFuture.join();
+                    List<Order> orders = ordersFuture.join();
+                    List<Recommendation> recommendations = recommendationsFuture.join();
+                    
+                    return new UserDashboard(profile, orders, recommendations);
+                })
+                .orTimeout(3, TimeUnit.SECONDS) // Prevent hung threads by setting a global SLA timeout
+                .join(); // Block safely here to return the final aggregated object to the client
+
+        return combinedDashboard;
+    }
+
+    // Mock API call implementations simulate network delays
+    private UserProfile fetchUserProfile(String userId) {
+        delay(300); // 300ms delay
+        return new UserProfile(userId, "John Doe", "PREMIUM");
+    }
+
+    private List<Order> fetchOrderHistory(String userId) {
+        delay(800); // 800ms delay
+        return List.of(new Order("TXN-101", 120.50), new Order("TXN-102", 45.00));
+    }
+
+    private List<Recommendation> fetchRecommendations(UserProfile profile) {
+        delay(400); // 400ms delay
+        if ("PREMIUM".equals(profile.tier())) {
+            return List.of(new Recommendation("REC-01", "Luxury Watch"), new Recommendation("REC-02", "Noise Cancelling Headphones"));
+        }
+        return List.of(new Recommendation("REC-03", "Standard Sneakers"));
+    }
+
+    private void delay(long milliseconds) {
+        try { Thread.sleep(milliseconds); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+    }
+
+    public static void main(String[] args) {
+        AsyncDashboardAggregator aggregator = new AsyncDashboardAggregator();
+        long startTime = System.currentTimeMillis();
+        
+        UserDashboard dashboard = aggregator.getUserDashboard("user_99");
+        
+        long endTime = System.currentTimeMillis();
+        System.out.println("\n--- Aggregation Complete ---");
+        System.out.println("Profile: " + dashboard.profile().name());
+        System.out.println("Orders Count: " + dashboard.orders().size());
+        System.out.println("Recommendations: " + dashboard.recommendations().size());
+        System.out.println("Total Execution Time: " + (endTime - startTime) + " ms");
+        
+        aggregator.ioExecutor.shutdown();
+    }
+}
+Use code with caution.
+
+2. Key Architecture Mechanics Explained
+
+• CompletableFuture.allOf(...): This acts as an asynchronous barrier. It orchestrates execution, moving to the calculation phase only when every supplied future is done. This prevents individual thread synchronization cleanups.
+• thenComposeAsync: We used this for the Recommendation service because it depends on the result of the profile service. Instead of creating a messy CompletableFuture<CompletableFuture<List<Recommendation>>>, thenComposeAsync flattens the pipeline cleanly.
+• .exceptionally(): Implements resilience. If the Order service goes down and throws an exception, the pipeline doesn't crash; instead, it catches the error and falls back gracefully to an empty list List.of().
+• Custom ExecutorService: By default, CompletableFuture runs tasks inside the global ForkJoinPool.commonPool(). If your microservice API threads block on network calls, you can saturate this pool and lock up internal framework processing. Passing a dedicated ioExecutor completely isolates web calling workloads.
+• .orTimeout(3, TimeUnit.SECONDS) (Java 9+): Protects your microservice from stalling if an upstream service undergoes a cascading failure or suffers infinite latency. It throws a TimeoutException if things take too long.
+
+###############
+
+It is completely normal to be confused by this! Since Java 8 and 9 added default, static, and private methods to interfaces, they look almost identical on the surface.
+However, they serve entirely different architectural purposes. The fundamental difference comes down to identity vs. ability, and how your classes are allowed to grow.
+Here is the exact breakdown of why we absolutely need both.
+
+1. The Core Conceptual Difference
+
+• Abstract Class = "Is A" (Identity & Heritage): It defines what an object is. It shares structural identity, internal state, and core bloodlines. A Dog is an Animal.
+• Interface = "Can Do" (Ability & Behavior): It defines what an object can do. It is a contract or a driver's license that guarantees a specific capability, regardless of what the object actually is. A Dog can Runnable, but a Thread can also Runnable. They are completely unrelated objects, but they share an ability.
+
+2. The Golden Rule: Multiple Inheritance
+
+Java allows a class to extend only one class, but implement unlimited interfaces. This is the single biggest reason why interfaces are indispensable.
+Imagine you are building a video game:
+java
+// You can only pick ONE parent class. Choose wisely!
+public class Warrior extends Hero { ... } 
+
+// But your Warrior can have dozens of independent abilities via interfaces!
+public class Warrior extends Hero implements Swimmable, Flyable, Damageable, Tradeable { ... }
+Use code with caution.
+If Swimmable and Flyable were abstract classes, you would be structurally blocked. You could never make a hero that can both swim and fly.
+
+3. State vs. No State (The Technical Line in the Sand)
+
+While interfaces can now hold behavior (methods), they are strictly forbidden from holding instance state (variables that change per object).
+• Interfaces cannot have instance fields. Every field in an interface is automatically public static final (a hardcoded constant). An interface cannot remember its own age, name, or health points.
+• Abstract Classes can have instance fields. They can maintain private, protected, and changing states that belong strictly to that individual object.
+
+Direct Code Comparison:
+
+
+Feature	Interface 🧩	Abstract Class 🏗️
+Instance State	❌ No. Cannot have fields like private int health;	Yes. Can manage mutable object states.
+Constructors	❌ No. Cannot be initialized or pass data up via super().	Yes. Can use constructors to set up foundational states.
+Inheritance Limit	Unlimited (a class can implement 10+ interfaces).	Exactly one per class.
+Access Modifiers	❌ No control over visibility. Everything public to the world.	Full control. Can hide internal logic using protected or private.
+
+
+4. Real-World Scenario: When to use which?
+
+
+Scenario A: Use an Abstract Class when objects share the same DNA.
+
+If you are building an e-commerce app with CreditCardPayment, PayPalPayment, and CryptoPayment, they all share foundational infrastructure. They all need to track a transactionId, an amount, a timestamp, and run an internal validateSecurity() routine.
+• Solution: Use an Abstract Class (PaymentProcessor) to hold that shared data and secure logic so you don't repeat yourself.
+
+Scenario B: Use an Interface when completely different things share a capability.
+
+Think about the concept of being "Serializable" (converting an object into a stream of bytes to save to a file). A UserAccount needs to be saved, an Image needs to be saved, and a GameMap needs to be saved. These three classes have zero properties in common. They do not share DNA.
+• Solution: Use an Interface (Serializable). It forces each of them to implement a saveToDisk() method, without forcing them into a fake family tree.
+
+Summary Rule of Thumb
+
+Use an Abstract Class when you want to build a tightly coupled family of objects that share real data state and setup logic. Use an Interface when you want to establish an open contract or add flexible plug-and-play capabilities to completely unrelated classes.
+
+
+###############
+Here is a clean, modern example of a Kafka Producer and Kafka Consumer written in Java.
+This example uses the official Apache Kafka client library. To run this code, make sure you have the Kafka client dependency added to your project (e.g., org.apache.kafka:kafka-clients in Maven or Gradle).
+
+1. The Kafka Producer
+
+The producer connects to the Kafka brokers and sends messages (records) to a specific topic.
+java
+package com.example.kafka;
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.StringSerializer;
+
+import java.util.Properties;
+import java.util.concurrent.Future;
+
+public class SampleProducer {
+    public static void main(String[] args) {
+        String bootstrapServers = "localhost:9092";
+        String topic = "sample-topic";
+
+        // 1. Define Producer Configuration Properties
+        Properties properties = new Properties();
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        // Kafka transfers raw bytes; serializers tell it how to convert Java objects to bytes
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        // 2. Create the Producer instance
+        try (KafkaProducer<String, String> producer = new KafkaProducer<>(properties)) {
+            
+            System.out.println("--- Starting Kafka Producer ---");
+
+            // 3. Send a few sample messages
+            for (int i = 1; i <= 5; i++) {
+                String key = "id_" + i;
+                String value = "Hello Kafka World Number " + i;
+
+                // Create the record (Topic, Key, Value)
+                ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, value);
+
+                // Send data asynchronously and track the delivery status using a callback
+                producer.send(record, (RecordMetadata metadata, Exception exception) -> {
+                    if (exception == null) {
+                        System.out.printf("Sent successfully! Topic: %s | Partition: %d | Offset: %d | Key: %s%n",
+                                metadata.topic(), metadata.partition(), metadata.offset(), key);
+                    } else {
+                        System.err.println("Error while producing message: " + exception.getMessage());
+                    }
+                });
+            }
+
+            // 4. Flush remaining buffered messages to Kafka before closing
+            producer.flush();
+            System.out.println("--- All messages dispatched ---");
+        } 
+    }
+}
+Use code with caution.
+
+2. The Kafka Consumer
+
+The consumer runs continuously, pulling batches of messages from the topic and tracking its read progress using a consumer group identifier.
+java
+package com.example.kafka;
+
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
+
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Properties;
+
+public class SampleConsumer {
+    public static void main(String[] args) {
+        String bootstrapServers = "localhost:9092";
+        String topic = "sample-topic";
+        String groupId = "my-java-consumer-group";
+
+        // 1. Define Consumer Configuration Properties
+        Properties properties = new Properties();
+        properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        // Deserializers turn the broker's raw bytes back into Java Strings
+        properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        // "earliest" reads from the start of the topic if no previous offsets exist
+        properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        // 2. Create the Consumer instance
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
+            
+            // 3. Subscribe to our target topic
+            consumer.subscribe(Collections.singletonList(topic));
+            System.out.println("--- Kafka Consumer Started. Listening for messages... ---");
+
+            // 4. Poll Loop: Continuously request data from the Kafka cluster
+            while (true) {
+                // Poll Kafka for new data every 100 milliseconds
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+
+                for (ConsumerRecord<String, String> record : records) {
+                    System.out.printf("Received Message -> Key: %s | Value: %s | Partition: %d | Offset: %d%n",
+                            record.key(), record.value(), record.partition(), record.offset());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Consumer encountered an error: " + e.getMessage());
+        }
+    }
+}
+Use code with caution.
+
+Quick Requirements Checklist to Run This:
+
+1. Running Broker: Make sure a local Kafka broker is running at localhost:9092 (via Docker or local binary install).
+2. Topic Creation: You can create the topic manually beforehand using Kafka's CLI utilities, or rely on Kafka's auto-topic-creation setting (auto.create.topics.enable=true) on the broker.
+3. Execution Order: Start the SampleConsumer first so it is listening, and then execute the SampleProducer to see the messages appear instantly in the consumer console window.
+
+###############
+Here is a simple, plain-English breakdown of core Kafka terminology and how data flows through the system.
+
+Core Kafka Terminology
+
+• Producer: The sender of data. A producer is any application (like a web server or mobile app) that generates messages and pushes them into the Kafka system.
+• Consumer: The receiver of data. A consumer is an application (like a database writer or analytics engine) that subscribes to Kafka to pull and process messages.
+• Topic: A category or folder name used to organize messages. For example, you might have a topic named user-signups or payment-logs. Producers write to specific topics, and consumers read from specific topics.
+• Partition: A topic is split into smaller, ordered parts called partitions distributed across different servers. Partitions allow Kafka to scale; instead of one giant file, the data is split across multiple machines so multiple consumers can read it at the same time.
+• Offset: A unique sequence number (like a page number in a book) assigned to every message inside a partition. Offsets are strictly sequential (0, 1, 2, 3...).
+	• Note: Consumers keep track of their "current offset" so if they crash, they know exactly which message number to read next without losing data.
+• Broker: A single Kafka server. A collection of brokers working together forms a Kafka Cluster.
+• Zookeeper: The cluster coordinator. Historically, Zookeeper managed Kafka's metadata, tracking which brokers were alive and picking cluster leaders.
+	• Modern Update: In recent versions of Kafka, Zookeeper has been fully replaced by KRaft (Kafka Raft metadata mode), allowing Kafka to manage its own cluster coordination internally without an external tool.
+
+The Step-by-Step Workflow
+
+Think of Kafka like a highly advanced, distributed postal sorting office. Here is how data moves through it:
+[ Producer ] ───(Sends message)───> [ Topic: "Orders" ]
+                                     ├── Partition 0 [Msg 0][Msg 1][Msg 2 (Offset 2)] ──> [ Consumer A ]
+                                     └── Partition 1 [Msg 0][Msg 1 (Offset 1)]        ──> [ Consumer B ]
+
+Step 1: Writing Data (The Producer)
+
+An application—like an e-commerce website—wants to log a new purchase. The Producer packages this action into a message and sends it to the Orders Topic. Kafka automatically assigns this message to a specific Partition within that topic and gives it the next available Offset number (e.g., Partition 0, Offset 42).
+
+Step 2: Storing Data (The Broker)
+
+The Broker receives the message and appends it to a commit log on the hard drive. Because Kafka writes sequentially to the disk, this process is incredibly fast. The message is immutable, meaning it can never be altered or deleted by a consumer. It will stay there until it expires based on your retention rules (e.g., delete after 7 days).
+
+Step 3: Reading Data (The Consumer)
+
+A fulfillment application (the Consumer) is constantly asking the topic for new messages. It pulls the message at Offset 42, processes the shipment, and then updates its progress placeholder saying, "I have successfully read up to Offset 42 on Partition 0."
+Because consumers pull data at their own pace, multiple different consumer systems (e.g., Shipping Dept, Analytics Dept, Email Notification Dept) can read the exact same message independently without slowing each other down.
+
+
+What is a Consumer Group?
+
+A Consumer Group is a collection of consumers that collaborate to read messages from the same Kafka topic. It is Kafka’s secret weapon for scalability and high availability.
+Think of a consumer group like a team of warehouse workers. Instead of one person trying to unload a massive delivery truck alone, the work is split up among the team members so it gets done much faster.
+
+The Architecture Rules of Consumer Groups
+
+Kafka uses two strict rules to manage how work is split within a group:
+• Load Balancing (Divide & Conquer): Each partition in a topic can only be assigned to one consumer inside a specific consumer group at any given time. This guarantees that messages within a partition are processed in the exact order they arrived, without two workers accidentally handling the same message.
+• Parallelism Limit: If you have more consumers in a group than you have partitions in a topic, the extra consumers will sit idle. They act as backup workers, waiting for someone to crash.
+
+Visualizing How Work Scales
+
+Let's look at a topic that has 4 partitions, and see how Kafka balances the workload as consumers join the group.
+
+Case A: 2 Consumers in the Group
+
+The work is split evenly. Each consumer handles 2 partitions.
+[ Topic: "Order-Log" ]
+├── Partition 0 ──────┐
+├── Partition 1 ──────┴──> [ Consumer 1 ]
+├── Partition 2 ──────┐
+└── Partition 3 ──────┴──> [ Consumer 2 ]
+
+Case B: 4 Consumers in the Group (Max Efficient Scale)
+
+Perfect balance. Every consumer gets exactly 1 partition. Processing power is maximized.
+[ Topic: "Order-Log" ]
+├── Partition 0 ─────────> [ Consumer 1 ]
+├── Partition 1 ─────────> [ Consumer 2 ]
+├── Partition 2 ─────────> [ Consumer 3 ]
+├── Partition 3 ─────────> [ Consumer 4 ]
+
+Case C: 5 Consumers in the Group (Over-scaled)
+
+Because there are only 4 partitions, Consumer 5 goes idle. It does nothing unless one of the active consumers goes down.
+[ Topic: "Order-Log" ]
+├── Partition 0 ─────────> [ Consumer 1 ]
+├── Partition 1 ─────────> [ Consumer 2 ]
+├── Partition 2 ─────────> [ Consumer 3 ]
+├── Partition 3 ─────────> [ Consumer 4 ]
+                           [ Consumer 5 ] <── (Idle Backup)
+
+What happens if a Consumer crashes? (Rebalancing)
+
+Kafka actively monitors consumers using "heartbeats." If a consumer stops responding (crashes or lags significantly due to a heavy workload), Kafka triggers a process called a Rebalance.
+1. Kafka notices Consumer 3 stopped sending heartbeats.
+2. It revokes Partition 2 from the dead consumer.
+3. It instantly assigns Partition 2 to the idle Consumer 5.
+4. Consumer 5 looks at Kafka's stored offset history, figures out exactly where Consumer 3 left off, and continues processing without losing data.
+
+Pub/Sub vs. Queueing (The Ultimate Benefit)
+
+Because of consumer groups, Kafka can behave as both a traditional message queue and a publish-subscribe system simultaneously:
+• If you want a Queue (only one application processes each message): Put all your consumers into the same consumer group ID.
+• If you want a Pub/Sub Broadcast (multiple applications need their own copy of every message): Give each application its own unique consumer group ID. Both groups will get every single message independently.
+
+
+1. How does a consumer know there is a new message? (The Pull Model)
+
+Kafka consumers do not sit and wait for the broker to push data to them. Instead, they use a Pull Model [text].
+The consumer application runs a continuous loop executing a poll() method [text].
+• The Request: The consumer actively sends a request to the Kafka broker saying, "Give me any new messages that have arrived since my last recorded offset."
+• The Wait: If there are no new messages, the consumer waits for a specified timeout duration (e.g., 100 milliseconds) [text] before asking again.
+• The Benefit: This prevents the broker from overwhelming a slow consumer. The consumer only asks for data when it has the CPU power and memory ready to process it.
+
+2. How can multiple consumers consume the exact same message?
+
+To make multiple consumers read the same message, you place them into different Consumer Groups.
+Kafka isolates data streams by group.id [text]. When a message arrives in a topic, Kafka makes it available to every unique consumer group registered to that topic.
+
+Real-World Example: An E-Commerce Order
+
+When a user buys an item, one single message is sent to the orders topic. Three separate systems need to process this exact same message:
+                      ┌──> [ Group A: Shipping Service ] ──> Prints shipping label
+                      │
+[ Topic: Orders ] ────┼──> [ Group B: Inventory Service ] ──> Deducts item from stock
+                      │
+                      └──> [ Group C: Email Service ] ────> Sends receipt to customer
+Because Group A, Group B, and Group C each maintain their own independent offsets [text], they all read message #100 completely independently without interfering with one another.
+
+3. How do you resolve issues if multiple consumers in the same group process the same message?
+
+By default, Kafka's core architecture strictly prevents two consumers in the same group from reading the same partition [text]. Kafka acts as its own traffic cop.
+However, if your system architecture is misconfigured, or if a consumer behaves erratically, you can encounter a glitch where a message is processed twice. Here is how you fix those scenarios:
+
+Scenario A: The "Zombie" Rebalance (Most Common)
+
+• The Problem: Consumer 1 pulls a batch of messages. The processing takes too long (e.g., a slow database write). Kafka thinks Consumer 1 has died because it took too long to call poll() again. Kafka triggers a rebalance and assigns that exact same partition to Consumer 2. Consumer 2 starts reading the exact same messages, resulting in duplicate processing.
+• The Fix:
+	1. Increase max.poll.interval.ms in your consumer properties. This gives your consumer more time to finish processing a heavy batch before Kafka assumes it is dead.
+	2. Decrease max.poll.records. Force the consumer to pull smaller batches of data so it can finish processing them faster.
+
+Scenario B: The Crash Before Commit
+
+• The Problem: Consumer 1 reads a message and successfully processes it, but crashes before it can tell Kafka "I am done, update my offset to #101". When the consumer restarts (or a backup takes over), it looks at Kafka, sees the last saved offset is still #100, and processes the message a second time.
+• The Fix (The Industry Standard): Make your Consumers Idempotent.
+Since network hiccups and crashes cannot be 100% prevented, you must design your downstream processing code to handle duplicates gracefully.
+	• Before saving data, have your consumer check a database constraint (like a Unique Order ID). If the ID already exists in your database, ignore the message and discard it.
+
+
+###############
+
+###############
+
+###############
+
+###############
+
+###############
+
+###############
+
+###############
+
+###############
+
 ###############
 
 ###############

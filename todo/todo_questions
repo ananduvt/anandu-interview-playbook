@@ -1,1 +1,45 @@
+𝗖𝗼𝗿𝗲 𝗝𝗮𝘃𝗮 & 𝗟𝗮𝗻𝗴𝘂𝗮𝗴𝗲 𝗙𝗲𝗮𝘁𝘂𝗿𝗲𝘀:
+1. What are the key features introduced in Java 17?
+2. What is the `var` keyword? Can it be used as a generic type?
+3. What is an effectively final variable in Java?
+4. What is a Record class? How can query results be mapped to Records, and how do you fetch the first record?
+5. What is the Optional class?
+6. What are checked exceptions? Discuss their advantages and disadvantages.
+7. What is exception handling? What is `@ControllerAdvice`?
+8. Reverse a string without using predefined methods.
+9. Can HashMap keys be mutable? Why or why not?
 
+𝗜𝗻𝘁𝗲𝗿𝗳𝗮𝗰𝗲𝘀 & 𝗢𝗢𝗣:
+10. Can we define private methods in an interface?
+11. What types of methods can be defined in an interface?
+12. What happens when two interfaces contain identical default methods and a class implements both? How can it be resolved?
+13. Explain the SOLID principles.
+14. Explain the Liskov Substitution Principle. If a subclass can replace its parent, why is inheritance required?
+15. Explain and implement the Factory Design Pattern with modifications.
+
+𝗖𝗼𝗻𝗰𝘂𝗿𝗿𝗲𝗻𝗰𝘆 & 𝗠𝘂𝗹𝘁𝗶𝘁𝗵𝗿𝗲𝗮𝗱𝗶𝗻𝗴:
+16. Difference between `synchronized` and `ReentrantLock`. What are the trade-offs?
+17. What is the `volatile` keyword?
+18. Difference between `volatile` and Atomic classes such as `AtomicInteger` and `AtomicFloat`.
+19. Explain key `CompletableFuture` methods.
+
+𝗦𝘁𝗿𝗲𝗮𝗺𝘀 & 𝗙𝘂𝗻𝗰𝘁𝗶𝗼𝗻𝗮𝗹 𝗣𝗿𝗼𝗴𝗿𝗮𝗺𝗺𝗶𝗻𝗴:
+20. Difference between sequential and parallel streams. Have you used parallel streams in a production project?
+21. Difference between `stream` and `flatMap`.
+
+𝗦𝗽𝗿𝗶𝗻𝗴 𝗙𝗿𝗮𝗺𝗲𝘄𝗼𝗿𝗸 & 𝗦𝗽𝗿𝗶𝗻𝗴 𝗕𝗼𝗼𝘁:
+22. Explain the internal working of the Spring Container.
+23. Explain the Spring Bean Lifecycle.
+24. What does `@EnableAutoConfiguration` do?
+25. What is `@Qualifier`? How does it differ from `@Primary`?
+26. Difference between IoC and Dependency Injection.
+27. What is Dependency Injection? Explain its types.
+28. What is a Spring Profile, and how have you used it?
+29. Difference between Path Variables and Request Parameters.
+30. How does `@Transactional` work?
+31. What are Fetch Types? Explain Lazy vs Eager Loading.
+
+𝗦𝗽𝗿𝗶𝗻𝗴 𝗦𝗲𝗰𝘂𝗿𝗶𝘁𝘆 & 𝗝𝗪𝗧:
+32. Explain the fundamentals of Spring Security.
+33. How have you implemented Spring Security in your project?
+34. How did you implement Spring Security across distributed microservices?

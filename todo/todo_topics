@@ -22,5 +22,7 @@ how to use cloud env use example
 @profile working 
 how to inject encrypted sensitive properties safely across environments using tools like Spring Cloud Config or HashiCorp Vault
 HashiCorp Vault - basics & sample use cases
-
+ Sealed Classes + Records + Java 21 Pattern Matching
+runnable / callable 
+thread vs runnable 
 
