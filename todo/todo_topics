@@ -25,4 +25,5 @@ HashiCorp Vault - basics & sample use cases
  Sealed Classes + Records + Java 21 Pattern Matching
 runnable / callable 
 thread vs runnable 
-
+n+1 query problem in hibernate
+kafaka consumer group Rebalancing 
