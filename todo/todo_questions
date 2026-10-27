@@ -43,3 +43,429 @@
 32. Explain the fundamentals of Spring Security.
 33. How have you implemented Spring Security in your project?
 34. How did you implement Spring Security across distributed microservices?
+
+
+
+
+############################################# IBA interview 
+
+Q1: Can you give a bit of introduction about yourself?
+
+Answer: Anandu Tulasiran has nine plus years of experience in Java-based Spring Boot REST APIs hosted on AWS cloud services, specializing in modernizing legacy services for payments and finance systems. For the last five years, he has been working as a contract employee from UST for US and Noida-based finance and banking system service providers.
+His primary responsibilities include delivering sprint stories (development), enhancing existing APIs, analyzing and fixing production/UAT issues, guiding junior contract employees from UST, and handling automation and technical documentation.
+
+Q2: Can you tell me what technical areas in Java are you good at?
+
+Answer: He is highly skilled in API Development, specifically creating payments REST APIs that act as wrappers around existing SOAP-based legacy endpoints, implementing business logic, calling internal/external services, and performing database calls. He also has strong experience in Messaging and Concurrency, where he posts events into Kafka topics from the framework level and occasionally implements multi-threading or async calls for parallel service invocations.
+
+Q3: What kind of payment system application is it, and which countries are you targeting?
+
+Answer: It is a cardholder payment system focusing on credit card payments, including recurring and one-time payments. It also handles issuing team APIs that provide customer and account details to client front-ends. The primary target domains are the US and Europe.
+
+Q4: Did you work on any enhancements recently, and can you explain one?
+
+Answer: Yes. He resolved an account details issue where international commercial endpoints failed to return deceased customers, unlike other regional endpoints (split across North America, international, consumer, and commercial categories). He discovered the backend implementation was missing for that specific region, collaborated with the backend team, and updated the service layer to send a specific flag in the XML calls to successfully retrieve all customers.
+
+Q5: In your new modernized infrastructure, do you have any service discovery or are you calling microservices by hardcoded URLs?
+
+Answer: The architecture relies on Namespace Configuration. Direct REST API calls utilize namespace configurations where services are deployed within the same namespace, allowing service endpoints to automatically derive hosts from configs without hardcoding URLs.
+
+Q6: If a private method is annotated with @transactional, will it work at runtime?
+
+Answer: No, it will not be transactional. Because Spring's bean proxy mechanisms invoke methods and enforce transaction boundaries, transactional behavior does not work on a private method—especially when invoked from within the same class.
+
+Q7: What are the steps when a Spring Boot application starts?
+
+Answer: The application startup follows these lifecycle steps:
+1. Loads properties and YAML files.
+2. Initializes the application context.
+3. Instantiates required beans.
+4. Establishes database driver connections or initializes embedded servers.
+5. Activates the REST controllers.
+
+Q8: How does the concept of offset work in Kafka?
+
+Answer: Messages posted to a Kafka topic are marked with an offset, which acts as an index. Consumers track their last processed offset to poll and process new messages sequentially from the queue.
+
+Q9: Are you aware of the new date handling APIs introduced in Java?
+
+Answer: Yes, he recalls classes like Instant and Duration. However, he noted that due to five months of working primarily with client-mandated AI prompting tools, he has slight difficulty recalling the exact, syntax-level details immediately.
+
+Q10: Can you explain the Saga pattern in microservices?
+
+Answer: The Saga pattern involves a coordinator that invokes sequential services. Each step in the process posts success or failure events to a queue. This either triggers subsequent service calls or, if a failure occurs, initiates compensating reverse operations to roll back the distributed transaction.
+
+Q11: What are circuit breakers used for?
+
+Answer: They are used for failure protection. A circuit breaker monitors whether downstream services are up or taking too long to respond, preventing the application from wasting time and resources trying to call failing services.
+
+Q12: Which data type would you use in Oracle to store a JSON?
+
+Answer: He uses VARCHAR2 for smaller JSON data, and BLOB or larger storage formats for massive, raw JSON data.
+
+Q13: In the payments industry, would you prefer SQL or NoSQL?
+
+Answer: He prefers SQL for the payments industry because the data is highly structured (without the need to store images or files), legacy systems excel at handling complex financial records, and SQL provides faster reads and writes for basic transaction operations.
+
+Q14: Which AWS services have you used?
+
+Answer: He has previous hands-on experience with S3, Lambda, EC2 instances, and SNS notification services, though serverless components are not directly used in his current project.
+
+Q15: Have you heard about two phase commitment distributed systems?
+
+Answer: No, he has not heard about the two-phase commitment (2PC) pattern.
+
+Q16: Is there any retry mechanism while calling third party APIs or external URLs in your system?
+
+Answer: Yes. The internal framework configuration manages the retry implementation for REST templates. This allows developers to set minor configurations like maximum timeouts and retry counts. He also mentioned seeing Resilience4j utilized for this purpose in other projects.
+
+Q17: What are the basic things that you look for while reviewing code?
+
+Answer: His code review checklist includes:
+• Adherence to organizational architectural standards.
+• Proper domain packaging.
+• Clean API module splitting between service and provider layers.
+• Validation of Sonar reports.
+• Proper optimization for loops or parallel invocations.
+
+Q18: Have you faced any rare production issue and resolved it?
+
+Answer: Yes, he handled the triage and resolution process for the deceased customer endpoint failure. He analyzed the issue from scratch by examining code, executing test data, identifying backend gaps, coordinating with the backend team for contract flags, and successfully deploying the fix.
+
+Q19: What have you done for transforming and aggregating data from legacy SOAP services?
+
+Answer: He manages data aggregation by orchestrating downstream API calls. The service first retrieves the core customer list, and then queries detailed account, billing, or card information either sequentially or in parallel, returning a consolidated, clean JSON response via a REST endpoint.
+
+Q20: How would you call two services in parallel and wait for both threads to complete?
+
+Answer: He uses CompletableFuture. By executing both service calls within an executor using CompletableFuture, he then calls the .join() method to wait for both responses to complete before proceeding with data aggregation.
+If you'd like, I can:
+• Provide an evaluation score for the candidate based on these answers.
+• Write a technical summary comparing his strengths against potential gaps (like distributed systems).
+• Draft follow-up questions for a secondary interview round.
+Let me know how you would like to proceed with this candidate's profile!
+
+i dont think answers were correct or proper , so update the answers correctly  for my future reference
+
+Here is the corrected, updated, and technically accurate guide for the core technical questions from your transcript. Use these refined explanations for your future reference and interview preparation:
+
+Java Core & Spring Framework Execution
+
+
+Q6: If a private method is annotated with @Transactional, will it work at runtime?
+
+• Correct & Proper Answer: No, it will not work. Spring AOP uses dynamic proxies (either JDK dynamic proxies or CGLIB) to manage transactions.
+	• Visibility Constraint: Spring's proxy framework only intercepts public method invocations. If a method is private, the proxy logic cannot wrap around it, and the @Transactional annotation is silently ignored.
+	• Self-Invocation Issue: Even if a method is public, calling it internally from another method within the same bean bypasses the proxy entirely, meaning the transaction context will not be applied.
+
+Q7: What are the steps when a Spring Boot application starts?
+
+• Correct & Proper Answer: The initialization of a Spring Boot application (SpringApplication.run()) follows a highly structured lifecycle:
+	1. Bootstrap & Environment Setup: Prepares the ConfigurableEnvironment, loads application properties, system variables, and active profiles (e.g., application.yml).
+	2. ApplicationContext Creation: Instantiates the appropriate ApplicationContext based on the application type (e.g., AnnotationConfigServletWebServerApplicationContext for web apps).
+	3. Bean Definition Loading: Scans the classpath (@ComponentScan) to find components, configurations, and controllers, registering their BeanDefinitions.
+	4. Context Refresh & Bean Instantiation: Executes refreshContext(). This is where core Spring lifecycle steps happen—invoking bean factory post-processors, initializing the bean post-processors, and instantiating singleton beans (including REST controllers and database drivers via dependency injection).
+	5. Embedded Server Startup: If it's a web application, it starts the embedded servlet container (e.g., Tomcat, Jetty).
+	6. Runners Execution: Executes any beans implementing CommandLineRunner or ApplicationRunner.
+
+Q9: Can you explain the date handling APIs introduced in Java 8?
+
+• Correct & Proper Answer: Java 8 completely replaced the flawed java.util.Date and Calendar with the thread-safe, immutable java.time package (JSR-310). Key classes include:
+	• Instant: Represents a specific point on the timeline in UTC (nanosecond resolution), ideal for machine timestamps.
+	• LocalDateTime / LocalDate / LocalTime: Represents date/time details without timezone context (e.g., "2026-10-26 at 5:00 PM").
+	• ZonedDateTime: Combines a date and time with a specific timezone (e.g., Asia/Kochi).
+	• Duration vs. Period: Duration measures time in machine-based units (seconds, nanoseconds), while Period measures time in human-centric units (days, months, years).
+
+Microservices Architecture & Messaging
+
+
+Q5: How does service discovery work in a containerized namespace infrastructure versus hardcoded URLs?
+
+• Correct & Proper Answer: In modern containerized environments (like Kubernetes or OpenShift), hardcoded external URLs are replaced by DNS-based Service Discovery.
+	• Services deployed within the same namespace can communicate using their short Service Name (e.g., http://account-service/api).
+	• The cluster's internal DNS server automatically resolves this name to the correct internal cluster IP. This eliminates the need for an explicit service discovery registry (like Netflix Eureka) at the application framework level.
+
+Q8: How does the concept of offset work in Kafka?
+
+• Correct & Proper Answer: An offset is a monotonically increasing 64-bit integer assigned sequentially to every message committed to a specific Kafka topic-partition.
+	• Log Identity: It acts as a unique identifier/index for a message within its partition.
+	• Consumer Progress: Consumers track their reading position by periodically committing their current offset (either automatically or manually via the ConsumerOffsets topic). This allows them to resume processing precisely where they left off in the event of a failure or rebalance.
+
+Q10: Can you explain the Saga pattern in microservices?
+
+• Correct & Proper Answer: The Saga pattern manages data consistency across distributed microservices by breaking a global transaction into a series of local transactions. Each service updates its own database and emits an event. There are two primary types:
+	• Orchestration: A centralized orchestrator tells each service exactly what local transaction to execute sequentially.
+	• Choreography: Services act independently, listening to events and triggering their own local actions reactively.
+	• Compensating Transactions: If any step fails, the Saga triggers an explicit series of compensating transactions in reverse order to undo the changes made by the previous steps, maintaining eventual consistency.
+
+Q11: What are circuit breakers used for?
+
+• Correct & Proper Answer: Circuit Breakers (implemented via tools like Resilience4j) prevent a localized failure in a downstream dependency from cascading throughout the entire system. It operates via three structural states:
+	• Closed: Normal operations; all requests pass through to the downstream service.
+	• Open: If the failure rate crosses a specified threshold, the breaker "trips". Requests immediately fail-fast (returning a fallback response) without calling the broken downstream service, protecting system resources.
+	• Half-Open: After a configured timeout period, the breaker permits a limited number of trial requests to see if the downstream service has recovered. If successful, the circuit closes again; if it fails, it returns to the open state.
+
+Q15: What is a Two-Phase Commit (2PC) distributed system?
+
+• Correct & Proper Answer: Two-Phase Commit (2PC) is an atomic commitment protocol used to achieve ACID compliance across multiple distributed databases or resources. It relies on a central Coordinator and multiple Participants across two phases:
+	1. Prepare Phase: The coordinator asks all participants if they are ready to commit their changes. Participants execute everything up to the final write, lock resources, and vote "Yes" (ready) or "No".
+	2. Commit Phase: If all participants voted "Yes", the coordinator sends a broadcast command to globally commit the data. If any participant voted "No" or timed out, the coordinator sends a command to roll back the entire transaction everywhere.
+
+	• Tradeoff: Unlike the Saga pattern (which favors eventual consistency), 2PC guarantees strong consistency but introduces high latency and locking issues, making it less scalable in massive microservice architectures.
+
+Database Management & Optimization
+
+
+Q12: Which data type would you use in Oracle to store a JSON document?
+
+• Correct & Proper Answer:
+	• In Oracle 21c and later, use the dedicated native JSON data type, which stores documents in an optimized binary format (OSON) for faster query performance and indexing.
+	• In older versions (like Oracle 12c or 19c), JSON is stored as a BLOB or CLOB text data type, protected by an explicit IS JSON check constraint to validate format integrity.
+
+Q13: In the payments industry, would you prefer SQL or NoSQL?
+
+• Correct & Proper Answer: A hybrid approach is standard, but SQL is strictly preferred for core financial ledger transactions.
+	• Why SQL: Payment ledger systems require absolute data integrity, strict consistency, and multi-table relationships. Relational databases natively provide strict ACID compliance, ensuring data is never lost, corrupted, or duplicated.
+	• When NoSQL is used: NoSQL (like MongoDB or Cassandra) is reserved for supplementary payment domains like audit logs, real-time fraud detection pipelines, or high-throughput session state caching where horizontal scale outweights absolute transactional locking.
+
+Q20: How do you invoke two downstream services in parallel and wait for both to complete in Java?
+
+• Correct & Proper Answer: You utilize Java's concurrent framework via CompletableFuture coupled with a dedicated thread pool executor:
+java
+// Supply async tasks to a thread pool
+CompletableFuture<ResponseA> futureA = CompletableFuture.supplyAsync(() -> serviceA.call(), customExecutor);
+CompletableFuture<ResponseB> futureB = CompletableFuture.supplyAsync(() -> serviceB.call(), customExecutor);
+
+// Combine both and block until both executions finish execution
+CompletableFuture.allOf(futureA, futureB).join();
+
+// Extract responses safely without blocking indefinitely
+ResponseA resA = futureA.get();
+ResponseB resB = futureB.get();
+Use code with caution.
+Using CompletableFuture.allOf(...).join() ensures that the calling thread blocks efficiently until all parallel processes return their data.
+
+
+
+############################################# Walmart Internal 
+
+Q1: How do you go about taking on a refactor task whenever you're implementing a feature?
+
+Answer: A systematic approach ensures safety and maintainability:
+• Write/Verify Tests First: Ensure there is high test coverage (unit/integration) for the existing code to create a safety net.
+• Identify Code Smells: Look for tightly coupled logic, long methods, duplicate code, or violations of Single Responsibility.
+• Apply Small, Incremental Changes: Refactor in tiny, verifiable steps (e.g., extracting methods, moving logic to the Service layer) rather than large, sweeping rewrites.
+• Separate Refactoring from Feature Work: Commit the refactored code first to ensure it passes all regression tests, then implement the new feature on top of the clean codebase.
+
+Q2: How do you go about breaking down a God interface without introducing risk to breaking other things?
+
+Answer: Apply the Interface Segregation Principle (ISP):
+• Create Smaller Interfaces: Define new, highly focused interfaces that group related methods together.
+• Refactor via Multi-Interface Implementation: Modify the existing implementation class to implement both the old "God" interface and the new smaller interfaces simultaneously. This ensures no existing code breaks.
+• Migrate Clients Gradually: Update client classes to inject and depend on the new, smaller interfaces instead of the large one.
+• Deprecate and Remove: Once all clients are migrated, deprecate the old interface and eventually remove it.
+
+Q3: How do we know which interface implementation to use for which specific controller when breaking down interfaces?
+
+Answer: Spring provides several mechanisms to handle ambiguous dependencies:
+• @Qualifier("beanName"): Explicitly specifies the exact bean name to inject at the injection point in the controller.
+• @Primary: Designates one implementation as the default choice when multiple beans of the same type exist.
+• Profile-Based Injection (@Profile): Determines which implementation to load based on the active runtime environment (e.g., Dev, Prod).
+• Dynamic Resolution: Inject a Map<String, YourInterface> into the controller to dynamically look up the required implementation at runtime using a key.
+
+Q4: How does the application context get bootstrapped and initialize all the dependencies when Spring Boot starts up?
+
+Answer: The startup process follows these core phases:
+1. Entry Point: Execution begins at the @SpringBootApplication class via SpringApplication.run().
+2. Environment Preparation: Spring creates and configures the Environment (loading application.properties, YAML, and system environment variables).
+3. Context Creation: The ApplicationContext (usually AnnotationConfigServletWebServerApplicationContext for web apps) is instantiated.
+4. Bean Definition Loading: Component scanning finds bean definitions, and auto-configuration triggers look for metadata in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports.
+5. Context Refresh: Spring iterates through bean definitions, resolves dependencies, instantiates the singleton beans, and injects them (Dependency Injection).
+6. Embedded Server Startup: The embedded servlet container (like Tomcat) is initialized and started.
+
+Q5: What does component scan do?
+
+Answer: Component scanning is the mechanism Spring uses to automatically discover and register beans:
+• Directive: Triggered by the @ComponentScan annotation (implicit within @SpringBootApplication).
+• Package Scanning: It recursively scans the base package and its sub-packages.
+• Stereotype Detection: It looks for classes annotated with @Component, @Service, @Repository, or @Controller.
+• Metadata Creation: For every matching class found, Spring creates a BeanDefinition and registers it within the Application Context so it can be managed and injected.
+
+Q6: Can you give me a breakdown on the differences between constructor and field injection?
+
+Answer:
+
+Feature	Constructor Injection	Field Injection
+Syntax	Dependencies are passed through the class constructor.	@Autowired is placed directly on private fields.
+Immutability	Supported. Fields can be declared final, ensuring thread safety.	Not supported. Fields cannot be final.
+Testability	Easy. Dependencies can be passed manually in plain unit tests without starting Spring.	Hard. Requires Spring context or reflection/Mockito runner to inject values.
+Null Safety	Guaranteed. The object cannot be instantiated without its required dependencies.	Risk of NPE. Objects can be instantiated in an uninitialized state.
+Industry Standard	Highly recommended and preferred.	Strictly discouraged in modern Spring development.
+
+
+Q7: What are all the different steps that happen within Spring Boot itself when a consumer makes a request to the controller?
+
+Answer: The request lifecycle follows the Front Controller pattern:
+1. Tomcat/Server: Receives the HTTP request and routes it to the DispatcherServlet.
+2. Handler Mapping: DispatcherServlet queries HandlerMapping to find the appropriate Controller and method matching the URL route.
+3. Interceptors: The request passes through any configured HandlerInterceptor chains (executing preHandle tasks like auth check or logging).
+4. Handler Adapter: DispatcherServlet uses a HandlerAdapter to dynamically invoke the actual controller method.
+5. Controller Execution: The controller processes the request, calls the service layer, and returns the response payload.
+6. Response Handling: The return value is processed by HttpMessageConverter (e.g., converting a Java object to JSON via Jackson) and sent back through the interceptors (postHandle/afterCompletion) to the consumer.
+
+Q8: What are all the different levels of testing that you have been doing or that you know that are required?
+
+Answer: Enterprise applications require a comprehensive testing pyramid:
+• Unit Testing: Testing isolated blocks of code (individual methods) using mocks (Mockito) for external dependencies.
+• Integration Testing (@SpringBootTest): Verifying the interaction between multiple layers or modules (e.g., testing the Service layer with a real database or an H2 in-memory DB via @DataJpaTest).
+• Component/Contract Testing: Verifying that API endpoints adhere to exact input/output structures (schemas) without testing full end-to-end setups.
+• End-to-End (E2E) Testing: Testing the entire system flow from the frontend/API gateway down to the actual database and third-party systems.
+
+Q9: What is the difference between unit testing and functional or end-to-end testing, and what are developer responsibilities?
+
+Answer:
+• Unit Testing: Focuses on the smallest testable parts of an application (methods/classes) in absolute isolation. It uses mock objects to simulate external systems.
+• Functional / End-to-End Testing: Tests the application from a user's perspective, verifying that business features function correctly across multiple integrated systems (databases, message queues, external APIs).
+• Developer Responsibilities: Developers are directly responsible for writing Unit and Integration tests as part of the CI/CD pipeline. They must ensure high code coverage and block regressions before code reaches QA or user acceptance testing (UAT).
+
+Q10: Do you have experience with Walmart previously?
+
+Answer: (Note: Answer this honestly based on your background. If no, highlight your adaptability to scale.)
+"No, I don't have prior experience working directly with Walmart, but I am deeply familiar with enterprise-grade architectures, microservices patterns, and high-throughput systems typical of scale-intensive retail environments."
+
+Q11: Do you have experience with containers and Docker?
+
+Answer: (Note: Even if you haven't used it recently, express a foundational understanding.)
+"Yes, I have foundational experience with Docker. I understand core container concepts such as writing Dockerfile configurations, creating container images, managing networks and volumes, and utilizing docker-compose to orchestrate multi-container environments locally."
+
+Q12: Other than Singleton, can you give me a design pattern that you've used and explain how it works and its use cases?
+
+Answer:
+• Factory Pattern:
+	• How it works: Defines an interface or abstract class for creating an object, but lets subclasses or a dedicated factory class decide which concrete class to instantiate.
+	• Use Case: Dynamic implementation loading. For example, creating a PaymentFactory that returns either a CreditCardPaymentProcessor or a PayPalPaymentProcessor bean at runtime based on the user's choice.
+• Builder Pattern:
+	• How it works: Separates the construction of a complex object from its representation, allowing step-by-step object creation.
+	• Use Case: Generating immutable DTOs or Entity objects with many fields without creating bloated constructors (frequently achieved using Lombok's @Builder).
+
+Q13: Can you walk me through the repository service controller pattern?
+
+Answer: This is the standard layered architecture pattern designed to enforce separation of concerns:
+• Controller Layer: The entry point. It handles HTTP routing, parameter binding, request validation, and returns the appropriate HTTP status codes and DTO responses. It contains no business logic.
+• Service Layer: The core engine. It implements the actual business logic, orchestrates workflows, manages data transformations, and coordinates transactions (@Transactional).
+• Repository Layer: The data access layer. It abstracts database communication (using frameworks like Spring Data JPA or MyBatis) to execute CRUD operations and complex queries against the underlying database.
+
+Q14: Have you used any ORM frameworks and how does that influence code writing?
+
+Answer: Yes, frameworks like Spring Data JPA (Hibernate) or MyBatis significantly streamline development:
+• Abstraction of SQL: Developers work directly with Java objects (Entities) rather than writing raw, error-prone SQL strings for basic operations.
+• Automated Lifecycle Management: Features like automatic dirty checking, caching, and relationship mapping (@OneToMany, @ManyToOne) reduce boilerplate code.
+• Influence on Code: Code becomes much cleaner, more object-oriented, and less coupled to a specific database vendor (easier database migrations). However, developers must remain mindful of performance traps like the N+1 select problem.
+
+Q15: How do entities and DTOs relate, why is there separation, and would you return raw entities to the response?
+
+Answer:
+• Definitions: Entities map directly to database tables, while DTOs (Data Transfer Objects) map directly to API request and response payloads.
+• Why Separate?
+	1. Security: Entities may contain sensitive fields (e.g., passwords, internal IDs, audit timestamps) that should never be exposed to the client.
+	2. Decoupling: Decouples the database schema from the external API contract. Changes to database tables won't break client applications.
+	3. Performance & Structure: APIs often require data in formats different from how they are stored in a database (e.g., aggregations or flattened fields).
+• Should you return raw entities? No. It is a security risk, creates tight coupling, and often leads to infinite serialization loops if entities have bidirectional relationships.
+
+
+Q16. SOLID Principle 
+Answer: 
+
+1. Single Responsibility Principle (SRP)
+
+A class should have only one reason to change. It should focus on doing exactly one job.
+• ❌ Bad: A class that processes an invoice and saves it to a database. If the database schema changes, or the invoice calculation logic changes, this class breaks.
+• Good: Separate the calculation logic from the database storage logic.
+java
+// Invoice class only handles calculation logic
+class Invoice {
+    public double calculateTotal() { return 100.0; }
+}
+
+// InvoiceRepository only handles saving to the database
+class InvoiceRepository {
+    public void save(Invoice invoice) { /* DB Save Logic */ }
+}
+Use code with caution.
+
+2. Open/Closed Principle (OCP)
+
+Software entities should be open for extension, but closed for modification. You should be able to add new features without changing existing code.
+• ❌ Bad: Using a big if-else or switch block inside a method to handle different payment types. Adding a new payment type means changing the existing class.
+• Good: Use an interface. New payment methods just implement the interface without touching old code.
+java
+interface PaymentProcessor {
+    void process(double amount);
+}
+
+class CreditCardProcessor implements PaymentProcessor {
+    public void process(double amount) { /* Process Credit Card */ }
+}
+
+class PayPalProcessor implements PaymentProcessor {
+    public void process(double amount) { /* Process PayPal */ }
+}
+Use code with caution.
+
+3. Liskov Substitution Principle (LSP)
+
+Subtypes must be substitutable for their base types. A subclass should extend the behavior of a parent class without ruining or breaking its original intent.
+• ❌ Bad: Making a Ostrich class extend a Bird class that has a fly() method. An ostrich cannot fly, so calling fly() would throw an exception, breaking the application.
+• Good: Break behaviors down so classes only inherit what they actually do.
+java
+interface Bird { void eat(); }
+interface FlyingBird extends Bird { void fly(); }
+
+class Sparrow implements FlyingBird {
+    public void eat() {}
+    public void fly() {}
+}
+
+class Ostrich implements Bird {
+    public void eat() {} // No fly() method to break here!
+}
+Use code with caution.
+
+4. Interface Segregation Principle (ISP)
+
+Clients should not be forced to depend on methods they do not use. It is better to have many small, specific interfaces than one large "God" interface.
+• ❌ Bad: A single Worker interface with work() and eatLunch(). If you create a RobotWorker class, it shouldn't be forced to implement an empty eatLunch() method.
+• Good: Split the behaviors into lean, single-purpose interfaces.
+java
+interface Workable { void work(); }
+interface Feedable { void eatLunch(); }
+
+class HumanWorker implements Workable, Feedable {
+    public void work() {}
+    public void eatLunch() {}
+}
+
+class RobotWorker implements Workable {
+    public void work() {} // Doesn't need to implement eatLunch()
+}
+Use code with caution.
+
+5. Dependency Inversion Principle (DIP)
+
+High-level modules should not depend on low-level modules. Both should depend on abstractions. Do not hardcode a specific implementation inside another class.
+• ❌ Bad: A Car class that explicitly initializes a V8Engine inside its constructor using new V8Engine(). The car is now permanently stuck with a V8 engine and cannot use an electric engine.
+• Good: Pass an abstract Engine interface into the Car constructor (Dependency Injection).
+java
+interface Engine { void start(); }
+
+class V8Engine implements Engine { public void start() {} }
+class ElectricEngine implements Engine { public void start() {} }
+
+class Car {
+    private Engine engine;
+
+    // The engine is injected from the outside
+    public Car(Engine engine) {
+        this.engine = engine;
+    }
+}
