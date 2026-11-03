@@ -92,20 +92,24 @@ nav:
               - Logging & Performance: java-patterns-advanced/logging-performance.md
               - Advanced Topics: java-patterns-advanced/advanced.md
       - Spring:
-          - Core Overview: spring-web/index.md
-          - Spring Boot: spring-web/spring-boot.md
-          - Annotations & Components: spring-web/spring-annotations-components.md
-          - Spring Boot Advanced: spring-web/spring-boot-advanced.md
-          - Exception Handling: spring-web/spring-exceptions.md
-          - API Styles & Protocols: spring-web/api-styles.md
-          - Web Services: spring-web/web-services.md
-          - Security & RBAC: spring-web/security.md
-          - JWT & OAuth2: spring-web/jwt-oauth.md
-          - JPA & ORM: spring-web/jpa-orm.md
-          - Circuit Breaker & Resilience: spring-web/spring-boot-circuit-breaker.md
-          - Threading & Async: spring-web/spring-threading.md
-          - WebFlux & Reactive: spring-web/spring-webflux.md
-          - Actuator & Monitoring: spring-web/spring-boot-actuator.md
+          - Overview: spring-web/index.md
+          - Core:
+              - Spring Boot: spring-web/spring-boot.md
+              - Annotations & Components: spring-web/spring-annotations-components.md
+              - Spring Boot Advanced: spring-web/spring-boot-advanced.md
+              - Exception Handling: spring-web/spring-exceptions.md
+          - Web & APIs:
+              - API Styles & Protocols: spring-web/api-styles.md
+              - Web Services: spring-web/web-services.md
+              - WebFlux & Reactive: spring-web/spring-webflux.md
+          - Security:
+              - Security & RBAC: spring-web/security.md
+              - JWT & OAuth2: spring-web/jwt-oauth.md
+          - Data & Production:
+              - JPA & ORM: spring-web/jpa-orm.md
+              - Circuit Breaker & Resilience: spring-web/spring-boot-circuit-breaker.md
+              - Threading & Async: spring-web/spring-threading.md
+              - Actuator & Monitoring: spring-web/spring-boot-actuator.md
       - Databases:
           - Overview (ACID/BASE/CAP): databases/index.md
           - SQL & Relational: databases/sql.md
@@ -131,13 +135,15 @@ nav:
           - AWS: distributed-cloud/aws.md
       - DevOps:
           - Overview: devops/index.md
-          - Git: devops/git.md
-          - Build Tools: devops/build-tools.md
-          - CI/CD: devops/ci-cd.md
-          - Docker & Containers: devops/docker.md
-          - Kubernetes: devops/kubernetes.md
-          - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
-          - Kubernetes Advanced (Helm & Istio): devops/kubernetes-advanced.md
+          - Build & Delivery:
+              - Git: devops/git.md
+              - Build Tools: devops/build-tools.md
+              - CI/CD: devops/ci-cd.md
+          - Containers & Kubernetes:
+              - Docker & Containers: devops/docker.md
+              - Kubernetes: devops/kubernetes.md
+              - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
+              - Kubernetes Advanced (Helm & Istio): devops/kubernetes-advanced.md
           - Observability: devops/observability.md
       - Security & Vulnerabilities: security/index.md
   - Interview Questions:

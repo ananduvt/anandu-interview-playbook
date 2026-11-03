@@ -1,6 +1,6 @@
 # JVM Internals
 
-How Java code runs: the JDK/JRE/JVM split, bytecode and JIT compilation, class loaders, garbage collection, memory areas, and `OutOfMemoryError`.
+How Java code runs: the JDK/JRE/JVM split, bytecode and JIT compilation, class loaders, garbage collection (algorithms and tuning), memory areas, and `OutOfMemoryError`.
 
 **See also:** [Java Basics](basics.md) for language fundamentals, [Versions & Features](versions-features.md) for the Java version timeline.
 
@@ -100,6 +100,8 @@ It automatically identifies and removes objects that are no longer referenced by
 
 Methods like **System.gc() or Runtime.getRuntime().gc()** only request the JVM to run GC. The JVM might decide not to perform collection due to various factors, like ongoing program activity or insufficient memory overhead.
 
+For the collectors (Serial, Parallel, G1, ZGC, Epsilon), metrics, tuning flags and a GC-by-scenario guide, see [Garbage Collection: Algorithms & Tuning](#garbage-collection-algorithms-tuning) below.
+
 #### Working
 
 * **Memory Allocation**: When a Java object is created, memory is allocated for it in the heap, a dedicated memory region managed by the garbage collector.
@@ -188,3 +190,239 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 ```
 
 Open the `.hprof` file in a heap analyzer such as Eclipse MAT or VisualVM and look for the objects with the largest retained size.
+
+---
+
+## Garbage Collection: Algorithms & Tuning
+
+**Garbage Collection** automatically frees memory from objects no longer in use. Different GC algorithms optimize for latency, throughput, or memory.
+
+### Memory Layout
+
+```
+JVM Heap:
+┌─────────────────┐
+│  Young Gen (1)  │ ← New objects created here (fast, frequent GC)
+├─────────────────┤
+│  Old Gen (2)    │ ← Long-lived objects (slow, infrequent GC)
+├─────────────────┤
+│  Metaspace (3)  │ ← Class metadata (not heap, off-heap)
+└─────────────────┘
+
+(1) Young: Minor GC frequent, fast
+(2) Old: Major/Full GC rare, slow
+(3) Metaspace: Class definitions, method data
+```
+
+### Generational Hypothesis
+
+Most objects die young; few survive to old age. GC focuses on Young Generation.
+
+```
+Object lifecycle:
+New Object → [Minor GC] → Old Gen (if survives) → [Full GC if needed] → Freed
+```
+
+### GC Algorithms Comparison
+
+| GC | Latency | Throughput | Memory | Best For | Config |
+|----|---------|-----------|---------|----|---------|
+| **Serial** | High ❌ | Low ❌ | Low ✅ | Single-threaded, embedded | `-XX:+UseSerialGC` |
+| **Parallel** | High ❌ | High ✅ | Low ✅ | Batch processing, high throughput | `-XX:+UseParallelGC` (default Java 8) |
+| **G1GC** | Low ✅ | Medium ✅ | Medium | Heap > 4GB, consistent latency (default Java 9+) | `-XX:+UseG1GC` |
+| **ZGC** | Very Low ✅✅ | Medium ✅ | High | Sub-ms pause times, latency-critical | `-XX:+UseZGC` (Java 11+) |
+| **Epsilon** | Varies | N/A ⚠️ | Grows unbounded | Testing, benchmarking (no GC) | `-XX:+UseEpsilonGC` (Java 11+) |
+| **Shenandoah** | Very Low ✅✅ | Medium | High | Consistent latency (RedHat) | `-XX:+UseShenandoahGC` |
+
+### Serial GC (Legacy)
+
+**Single-threaded; pauses entire application.**
+
+```
+GC Pause Timeline:
+[Running] ███ [PAUSE] ░░░ [Running] ██ [PAUSE] ░░ [Running]
+          Stop    GC      Resume   Stop   GC   Resume
+```
+
+- All threads stop; one thread does GC
+- **Pause time:** 100ms–1000ms (long!)
+- **Use:** Single-core systems, embedded, small heaps only
+- **Config:** `-XX:+UseSerialGC`
+
+### Parallel GC (Throughput-Focused)
+
+**Multiple threads doing GC in parallel; optimized for batch workloads.**
+
+```
+GC Pause Timeline:
+[Running] ███ [PAUSE - Parallel GC] ░░░░ [Running]
+          Multiple threads collect garbage simultaneously
+```
+
+- All threads stop; multiple threads do GC (parallel)
+- **Pause time:** 50ms–500ms
+- **Throughput:** High (more time running vs paused)
+- **Best for:** Batch processing, data pipelines, high throughput
+- **Config:** `-XX:+UseParallelGC` (default Java 8)
+- **Example:** `java -XX:+UseParallelGC -Xmx4G app.jar`
+
+### G1GC (Generational + Regions)
+
+**Divides heap into regions; garbage-first collection; balanced latency/throughput.**
+
+```
+Heap divided into ~2048 regions:
+┌──┬──┬──┬──┬──┐
+│E │S │O │E │F│  E=Eden (Young), O=Old, S=Survivor, F=Free
+├──┼──┼──┼──┼──┤
+│E │O │E │S │O│  Non-contiguous; flexible
+└──┴──┴──┴──┴──┘
+```
+
+- Collects highest-garbage regions first (Garbage-First)
+- Mixed collections: Young + concurrent with Old
+- **Pause time:** 10ms–200ms (predictable)
+- **Default:** Java 9+ (`-XX:+UseG1GC`)
+- **Best for:** Large heaps (> 4GB), consistent latency
+- **Stages:**
+  1. Young collection (concurrent marking happens in background)
+  2. Concurrent marking (marks live objects without stopping app)
+  3. Mixed collection (Young + Old)
+  4. Full GC (if mixed falls behind)
+
+**Example config:**
+```bash
+java -XX:+UseG1GC -Xms4G -Xmx4G -XX:MaxGCPauseMillis=200 app.jar
+# Max pause target: 200ms
+```
+
+**Tuning:**
+```java
+-XX:+UseG1GC                    # Enable G1GC
+-XX:MaxGCPauseMillis=200        # Target max pause (ms)
+-XX:G1HeapRegionSize=8          # Region size (1-32MB)
+-XX:G1ReservePercent=10         # Reserve for humongous objects
+```
+
+### ZGC (Z Garbage Collector)
+
+**Sub-millisecond pause times; concurrent collection; Java 11+.**
+
+```
+ZGC Timeline (Concurrent):
+[Running Ops] [GC Mark] [Running Ops] [GC Relocate] [Running Ops]
+                ↓                            ↓
+              Concurrent                 Concurrent
+            (Pauses < 1ms)             (Pauses < 1ms)
+```
+
+- **Pauses:** < 1ms consistently (even with TB heaps!)
+- **Concurrent:** Marking & relocation happen while app runs
+- **Trade-off:** Higher memory overhead, higher CPU (for concurrency)
+- **Best for:** Latency-critical (trading floors, gaming, real-time)
+- **Config:** `-XX:+UseZGC -Xmx<size>` (Java 11+)
+
+**Example:**
+```bash
+java -XX:+UseZGC -Xms10G -Xmx10G app.jar
+# Even with 10GB heap, GC pauses < 1ms
+```
+
+**When ZGC shines:**
+```
+Latency-critical app (e.g., stock trading):
+- G1GC: 50ms pause → 50ms latency spike (bad!)
+- ZGC: < 1ms pause → imperceptible to users ✅
+```
+
+**Limitations:**
+- Requires >= 2GB heap
+- Higher memory footprint
+- Not default (opt-in)
+
+### Epsilon GC (No-Op)
+
+**For testing/benchmarking; does NO garbage collection (memory fills up).**
+
+```
+Timeline (Epsilon):
+[Running] ███████████ [No GC!]
+Heap fills until OutOfMemoryError
+```
+
+- Useful for: Benchmarking (isolate GC impact), latency measurement
+- **Do NOT use in production**
+- **Config:** `-XX:+UseEpsilonGC -Xmx10G` (Java 11+)
+
+**Use case:**
+```bash
+# Measure how much GC impacts performance
+java -XX:+UseEpsilonGC -Xmx50G benchmark.jar  # No GC baseline
+java -XX:+UseG1GC -Xmx50G benchmark.jar       # With G1GC
+# Compare latencies
+```
+
+### GC Metrics to Monitor
+
+```java
+// Enable GC logging
+-Xlog:gc*:file=gc.log:time,level,tags:filecount=5,filesize=100M
+
+// Parse logs
+Tools: GCViewer, Universal GC Log Analyzer, JProfiler
+
+Key Metrics:
+- Young GC frequency (per minute)
+- Young GC pause time (avg, max, p99)
+- Full GC frequency (should be rare!)
+- Heap usage over time
+- GC throughput (% time paused)
+```
+
+### Choosing a GC
+
+```
+1. Is latency critical? (e.g., trading, gaming, real-time)
+   → YES: Use ZGC (-XX:+UseZGC)
+   → NO: Continue
+
+2. Is throughput the priority? (e.g., batch processing)
+   → YES: Use Parallel GC (-XX:+UseParallelGC)
+   → NO: Continue
+
+3. Is heap size > 4GB?
+   → YES: Use G1GC (-XX:+UseG1GC)
+   → NO: Use Parallel or Serial (smaller heap = simpler)
+
+4. For production systems:
+   Default to G1GC (Java 9+): balanced, predictable
+```
+
+### Java 8 vs Java 11+ GC Defaults
+
+| Version | Default GC | Comment |
+|---------|-----------|---------|
+| Java 8  | Parallel GC | High throughput, higher pause |
+| Java 11 | G1GC | Balanced latency/throughput |
+| Java 17 | G1GC | Same |
+| Java 21 | G1GC | Same (with virtual threads, different scaling model) |
+
+### Real-World Scenario
+
+```bash
+# Microservice: REST API, latency-sensitive
+java -XX:+UseG1GC \
+     -Xms2G -Xmx2G \
+     -XX:MaxGCPauseMillis=100 \
+     api-server.jar
+
+# Batch job: High throughput, can tolerate pauses
+java -XX:+UseParallelGC \
+     -Xms4G -Xmx4G \
+     batch-processor.jar
+
+# Trading system: Sub-ms latencies required
+java -XX:+UseZGC \
+     -Xms10G -Xmx10G \
+     trading-engine.jar
+```

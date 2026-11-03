@@ -4,7 +4,7 @@ Operational practices and tooling for deploying, monitoring, and maintaining sys
 
 ---
 
-## Topics
+## Build & Delivery
 
 ### [Git](git.md)
 **Version Control - Branching - Merging - Rebasing - Conflicts - Remote - Push/Pull**  
@@ -18,6 +18,8 @@ Build automation: Maven (POM, lifecycle, repositories), Gradle (build scripts, t
 **Jenkins - GitLab CI - GitHub Actions - Pipelines - Automated Testing - Deployment Automation**  
 Continuous integration/deployment: automated builds, testing gates, artifact repositories, deployment pipelines, rollback strategies, environment promotion.
 
+## Containers & Kubernetes
+
 ### [Docker & Containers](docker.md)
 **Docker - Images - Containers - Dockerfile - Registry - Networking - Volumes - Best Practices**  
 Containerization: Docker fundamentals, image layers, container lifecycle, multi-stage builds, registry management (Docker Hub, ECR), networking, persistent volumes.
@@ -25,6 +27,16 @@ Containerization: Docker fundamentals, image layers, container lifecycle, multi-
 ### [Kubernetes](kubernetes.md)
 **K8s - Pods - Deployments - Services - ConfigMaps - Secrets - Ingress - Helm - Operators**  
 Kubernetes orchestration: pod management, deployments with rolling updates, service discovery and load balancing, configuration management, storage, networking, package management with Helm.
+
+### [Kubernetes Deployment Strategies](kubernetes-deployment-strategies.md)
+**Rolling Update - Blue-Green - Canary - Shadow - Rollback - Zero Downtime**  
+Deployment strategies in Kubernetes: rolling updates, blue-green cutover, canary traffic shifting, shadow testing, strategy comparison, and rollback scenarios.
+
+### [Kubernetes Advanced (Helm & Istio)](kubernetes-advanced.md)
+**Helm - Charts - Istio - Service Mesh - Advanced Networking - Production Patterns**  
+Package management with Helm charts, service mesh with Istio, advanced networking, production patterns, and best practices.
+
+## Observability
 
 ### [Observability](observability.md)
 **Logging - Monitoring - Metrics - Tracing - Alerting - ELK Stack - Prometheus - Grafana - Jaeger**  

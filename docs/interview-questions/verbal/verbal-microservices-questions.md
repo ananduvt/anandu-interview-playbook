@@ -768,15 +768,4 @@ Read:   Update materialized views
 
 ---
 
-## Additional Topics
-
-- How do you define service boundaries?
-- What's service discovery and why do you need it?
-- How do you monitor and trace requests across services?
-- Explain the bulkhead pattern
-- When should you use RabbitMQ vs Kafka?
-- How do you handle network failures in distributed systems?
-
----
-
 **See also:** [Microservices Principles](../../microservices-distributed/principles.md), [Messaging & Kafka](../../microservices-distributed/messaging.md), [Service Discovery](../../microservices-distributed/service-discovery.md), [Interview Preparation](../index.md)

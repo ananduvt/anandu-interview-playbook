@@ -974,17 +974,4 @@ public class OrderService {
 
 ---
 
-## Additional Topics
-
-- What's the difference between @Component, @Service, @Repository?
-- How does Spring Data JPA repository derivation work?
-- Explain the N+1 query problem and how to solve it
-- Explain Spring Security authentication flow
-- What's AOP and how does Spring implement it?
-- How do you test Spring applications?
-- What are Spring profiles and when to use them?
-- Explain Spring Cloud circuit breaker patterns
-
----
-
 **See also:** [Spring Boot Fundamentals](../../spring-web/spring-boot.md), [Spring Annotations](../../spring-web/spring-annotations-components.md), [Interview Preparation](../index.md)

@@ -610,15 +610,4 @@ CREATE INDEX idx_name ON users(last_name, first_name);
 
 ---
 
-## Additional Topics
-
-- Explain normalization and why it matters
-- When would you denormalize a database?
-- What's the difference between clustering and non-clustering indexes?
-- How do you handle concurrent writes to the same record?
-- How do you optimize a slow query?
-- What's the difference between replication and sharding?
-
----
-
 **See also:** [SQL & Relational Databases](../../databases/sql.md), [Interview Preparation](../index.md)

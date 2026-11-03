@@ -384,7 +384,7 @@ Old Generation (Infrequent GC)
 
 <p>✅ Optimize for young generation garbage collection.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/versions-features/">Learn more: JVM & Garbage Collection</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/jvm-internals/">Learn more: JVM & Garbage Collection</a></p>
 
 </details>
 

@@ -692,17 +692,4 @@ List<Employee> result = employees.parallelStream()
 
 ---
 
-## Additional Topics
-
-- Explain the difference between class and object
-- What are the 4 pillars of OOP?
-- What's the difference between ArrayList and LinkedList?
-- Explain interfaces vs abstract classes
-- How does garbage collection work?
-- What causes a memory leak in Java?
-- Explain method overloading vs overriding
-- When should you use enum?
-
----
-
 **See also:** [Java Core Basics](../../java-core/basics.md), [OOP](../../java-core/oop.md), [Interview Preparation](../index.md)

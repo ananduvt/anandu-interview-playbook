@@ -25,7 +25,7 @@ Language fundamentals: Java SE/EE/ME/JavaFX editions, access modifiers, static, 
 
 ### [JVM Internals](jvm-internals.md)
 **JDK - JRE - JVM - Bytecode - JIT - ClassLoader - Garbage Collection - Heap/Stack - OutOfMemoryError**  
-Platform architecture: JDK/JRE/JVM distinctions, bytecode execution, JIT compilation, ClassLoader delegation, GC algorithms, memory areas (heap, stack, Metaspace), diagnosing `OutOfMemoryError`.
+Platform architecture: JDK/JRE/JVM distinctions, bytecode execution, JIT compilation, ClassLoader delegation, GC algorithms and tuning (Serial, Parallel, G1, ZGC), memory areas (heap, stack, Metaspace), diagnosing `OutOfMemoryError`.
 
 ### [OOP (Object-Oriented Programming)](oop.md)  
 **Classes - Inheritance - Polymorphism - Encapsulation - SOLID - Abstraction**  
@@ -40,8 +40,8 @@ String mechanics: immutability, StringBuilder vs. StringBuffer, wrapper types, a
 Error handling: exception propagation, custom exceptions, try-with-resources (AutoCloseable), stack traces, recovery patterns.
 
 ### [Versions & Features](versions-features.md)  
-**Java 8 - 11 - 17 - 21 - LTS - Feature Timeline - Virtual Threads**  
-Version history: Java 1.0–24 timeline, LTS releases (8/11/17/21), marquee features (lambdas → HTTP/2 → sealed classes → virtual threads), support windows.
+**Java 8 - 11 - 17 - 21 - 25 - LTS - Feature Timeline - Virtual Threads**  
+Version history: Java 1.0–25 timeline, LTS releases (8/11/17/21/25), marquee features (lambdas → HTTP/2 → sealed classes → virtual threads), support windows.
 
 ### [Interface vs Abstract Class](interface-vs-abstract-class.md)  
 **Interfaces - Abstract Classes - Contracts - Hierarchy - Multiple Inheritance - State Management**  
@@ -56,4 +56,4 @@ Design abstractions: when to use interfaces (capabilities, contracts) vs. abstra
 - **OOP**: 4 pillars, SOLID principles, composition over inheritance
 - **Core APIs**: String, Collections (see [Java Collections & Concurrency](../java-collections-concurrency/index.md)), Streams (see [Java Collections & Concurrency](../java-collections-concurrency/index.md))
 - **Exception handling**: Checked vs. unchecked, try-with-resources
-- **LTS versions**: Java 8 (lambdas/streams), 11 (HTTP/2, var), 17 (sealed classes), 21 (virtual threads)
+- **LTS versions**: Java 8 (lambdas/streams), 11 (HTTP/2, var), 17 (sealed classes), 21 (virtual threads), 25 (scoped values, flexible constructor bodies, compact source files)
