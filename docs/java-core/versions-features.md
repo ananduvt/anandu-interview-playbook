@@ -486,3 +486,5 @@ Solution: Add --add-modules java.base, or use --illegal-access flag temporarily
   **17** (sealed classes), **21** (**virtual threads**), **25** (scoped values, flexible constructor bodies, compact source files).
 - Since Java 9, Oracle uses a **6-month cadence** with LTS every few years.
 - Understand the **progression**: 8→11 (functional; JDK cleanup), 11→17 (pattern matching; sealed classes), 17→21 (virtual threads for scale), 21→25 (finalized scoped values and constructor flexibility; leaner runtime).
+
+**Practice questions:** [Java Modern Features and Generics](../interview-questions/verbal/verbal-java-modern-questions.md)

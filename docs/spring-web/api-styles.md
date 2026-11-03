@@ -600,3 +600,5 @@ openapi-generator-cli generate \
 - Don't over-document (brief and clear > verbose)
 - Don't ignore deprecated endpoints (mark with @Deprecated)
 - Don't generate docs manually (use annotations)
+
+**Practice questions:** [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md), [Spring Web & MVC](../interview-questions/verbal/verbal-spring-web-mvc-questions.md), [System Design: Issue Tracker](../interview-questions/verbal/verbal-system-design-issue-tracker-questions.md)

@@ -154,15 +154,40 @@ nav:
           - Stream API Problems: interview-questions/coding/coding-stream-api-problems.md
       - Verbal Questions:
           - Overview: interview-questions/verbal/index.md
-          - Databases: interview-questions/verbal/verbal-db-questions.md
-          - Java Core: interview-questions/verbal/verbal-java-core-questions.md
-          - Java Advanced: interview-questions/verbal/verbal-java-advanced-questions.md
-          - Design Patterns: interview-questions/verbal/verbal-design-patterns-questions.md
-          - Spring Boot: interview-questions/verbal/verbal-spring-boot-questions.md
-          - Microservices: interview-questions/verbal/verbal-microservices-questions.md
-          - System Design: interview-questions/verbal/verbal-system-design-questions.md
-          - DevOps: interview-questions/verbal/verbal-devops-questions.md
-          - ML/AI: interview-questions/verbal/verbal-ml-ai-questions.md
+          - Java:
+              - "Java Core": interview-questions/verbal/verbal-java-core-questions.md
+              - "Java Advanced": interview-questions/verbal/verbal-java-advanced-questions.md
+              - "Java Collections and Streams": interview-questions/verbal/verbal-java-collections-streams-questions.md
+              - "Java Concurrency": interview-questions/verbal/verbal-java-concurrency-questions.md
+              - "Java Modern Features and Generics": interview-questions/verbal/verbal-java-modern-questions.md
+          - Spring Boot & Web:
+              - "Spring Boot": interview-questions/verbal/verbal-spring-boot-questions.md
+              - "Spring Caching": interview-questions/verbal/verbal-spring-caching-questions.md
+              - "Spring Core, DI & AOP": interview-questions/verbal/verbal-spring-core-di-questions.md
+              - "Spring Data & JPA": interview-questions/verbal/verbal-spring-data-jpa-questions.md
+              - "Spring Web & MVC": interview-questions/verbal/verbal-spring-web-mvc-questions.md
+          - Design Patterns & Architecture:
+              - "Design Patterns": interview-questions/verbal/verbal-design-patterns-questions.md
+              - "Distributed Architecture Patterns": interview-questions/verbal/verbal-architecture-distributed-questions.md
+              - "Application Architecture and Maintainability": interview-questions/verbal/verbal-architecture-layered-clean-questions.md
+              - "System Design Case Studies": interview-questions/verbal/verbal-architecture-system-design-cases-questions.md
+              - "Design Principles and Applied Patterns": interview-questions/verbal/verbal-design-patterns-principles-questions.md
+          - Microservices & Messaging:
+              - "Microservices & Distributed Systems": interview-questions/verbal/verbal-microservices-questions.md
+              - "Kafka & Messaging": interview-questions/verbal/verbal-kafka-messaging-questions.md
+              - "Microservices Resilience": interview-questions/verbal/verbal-microservices-resilience-questions.md
+          - System Design:
+              - "System Design": interview-questions/verbal/verbal-system-design-questions.md
+              - "System Design: Issue Tracker": interview-questions/verbal/verbal-system-design-issue-tracker-questions.md
+          - Databases & SQL:
+              - "Databases & SQL": interview-questions/verbal/verbal-db-questions.md
+              - "Database Performance": interview-questions/verbal/verbal-db-performance-questions.md
+              - "Database Scaling and Architecture": interview-questions/verbal/verbal-db-scaling-questions.md
+              - "Database Transactions and Concurrency": interview-questions/verbal/verbal-db-transactions-questions.md
+          - Security: interview-questions/verbal/verbal-security-questions.md
+          - Testing: interview-questions/verbal/verbal-testing-questions.md
+          - DevOps & Cloud: interview-questions/verbal/verbal-devops-questions.md
+          - Machine Learning & AI: interview-questions/verbal/verbal-ml-ai-questions.md
   - Resources:
       - Overview: resources/index.md
       - Java Roadmap: resources/java-roadmap/java-developer-roadmap.md

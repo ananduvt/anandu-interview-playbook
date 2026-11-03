@@ -737,4 +737,629 @@ readinessProbe:     # Ready to serve traffic?
 
 ---
 
+## 9. What is orchestration in software and DevOps?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Orchestration</strong> is the automated coordination of many components (containers, services, infrastructure, pipeline steps) so they are deployed, connected, scaled and healed as one system, driven by a declared desired state instead of manual steps.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li><strong>Container orchestration:</strong> scheduling containers onto nodes, restarting failed ones, scaling, service discovery, rolling updates (Kubernetes, Docker Swarm, Nomad, ECS).</li>
+<li><strong>Infrastructure orchestration:</strong> provisioning resources declaratively (Terraform, CloudFormation).</li>
+<li><strong>Workflow orchestration:</strong> ordering dependent jobs and retries (CI/CD pipelines, Airflow, Step Functions).</li>
+<li><strong>Service orchestration vs choreography:</strong> a central coordinator calls services in order (orchestration) versus services reacting to events on their own (choreography, e.g. saga patterns).</li>
+</ul>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Concept</th><th>Orchestration</th><th>Configuration management</th></tr>
+<tr><td>Focus</td><td>Running and coordinating many units at runtime</td><td>Configuring a single machine (Ansible, Chef)</td></tr>
+<tr><td>Model</td><td>Declarative desired state + reconciliation loop</td><td>Often imperative or idempotent scripts</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+<p>You declare "run 3 replicas of image X". The orchestrator places pods, replaces a crashed one, and rolls out version Y gradually. No human restarts anything.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Many services or replicas, frequent deploys, need for self-healing and scaling.</li>
+<li>Skip it for a single small app on one host; plain Docker Compose or a VM is simpler.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
+
+</details>
+
+---
+
+## 10. How are Kubernetes and Docker related?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Docker builds and runs individual containers; Kubernetes orchestrates many containers across a cluster of machines. They solve different layers, so they are complementary, not competitors.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Docker produces an OCI image (Dockerfile, <code>docker build</code>). Kubernetes pulls that image and runs it in a pod.</li>
+<li>Kubernetes talks to a container runtime through the <strong>CRI</strong> (Container Runtime Interface). Since v1.24 the built-in <code>dockershim</code> was removed, so clusters use <strong>containerd</strong> or <strong>CRI-O</strong> directly.</li>
+<li>Images built with Docker still run unchanged, because they follow the OCI standard.</li>
+<li>Docker Swarm and Docker Compose are Docker's own (simpler) orchestration options.</li>
+</ul>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Aspect</th><th>Docker</th><th>Kubernetes</th></tr>
+<tr><td>Scope</td><td>Build/run containers on one host</td><td>Cluster-wide scheduling and management</td></tr>
+<tr><td>Scaling</td><td>Manual (or Compose/Swarm)</td><td>Built-in, declarative, autoscaling</td></tr>
+<tr><td>Self-healing</td><td>Restart policies only</td><td>Replaces failed pods, reschedules on node loss</td></tr>
+<tr><td>Networking</td><td>Bridge networks, port mapping</td><td>Services, Ingress, DNS, network policies</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+<pre><code>docker build -t registry.example.com/app:1.0 .
+docker push registry.example.com/app:1.0
+kubectl create deployment app --image=registry.example.com/app:1.0 --replicas=3</code></pre>
+
+<h3>When to Use</h3>
+<ul>
+<li>Docker alone: local development, single-host deployments, CI builds.</li>
+<li>Kubernetes: production workloads needing HA, scaling and rolling releases.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
+
+</details>
+
+---
+
+## 11. What is Role-Based Access Control (RBAC) in Kubernetes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>RBAC is the Kubernetes authorization mechanism that decides which <em>subjects</em> (users, groups, service accounts) can perform which <em>verbs</em> (get, list, create, delete...) on which <em>resources</em>, in which namespaces. It is additive only: there are no deny rules.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li><strong>Role</strong>: permissions within one namespace. <strong>ClusterRole</strong>: cluster-wide resources (nodes, PVs) or reusable permission sets.</li>
+<li><strong>RoleBinding</strong> / <strong>ClusterRoleBinding</strong>: attach a role to subjects. A RoleBinding can reference a ClusterRole but only grants it inside its namespace.</li>
+<li>The API server first authenticates (certs, OIDC, tokens), then authorizes via RBAC, then runs admission control.</li>
+<li><strong>ServiceAccounts</strong> give pods an identity; apply least privilege and avoid the default account for workloads that call the API.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata: { name: pod-reader, namespace: dev }
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata: { name: read-pods, namespace: dev }
+subjects:
+- kind: ServiceAccount
+  name: app-sa
+  namespace: dev
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+<p>Check with <code>kubectl auth can-i list pods --as=system:serviceaccount:dev:app-sa -n dev</code>.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Always: separate dev/ops access, restrict CI service accounts, limit access to Secrets.</li>
+<li>Gotcha: <code>cluster-admin</code> bindings and wildcard verbs/resources are a common security hole.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-advanced/">Learn more: Kubernetes Advanced Topics</a></p>
+
+</details>
+
+---
+
+## 12. How does Kubernetes autoscaling work?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Three layers: <strong>HPA</strong> changes the number of pod replicas, <strong>VPA</strong> changes pod CPU/memory requests, and the <strong>Cluster Autoscaler</strong> (or Karpenter on AWS) adds or removes nodes.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Autoscaler</th><th>Scales</th><th>Signal</th><th>Notes</th></tr>
+<tr><td>HPA</td><td>Replicas (horizontal)</td><td>CPU, memory, custom/external metrics</td><td>Needs metrics-server and resource requests; <code>desired = ceil(current * currentMetric / targetMetric)</code></td></tr>
+<tr><td>VPA</td><td>Requests/limits (vertical)</td><td>Historical usage</td><td>Applying changes typically restarts pods; do not combine with HPA on the same CPU/memory metric</td></tr>
+<tr><td>Cluster Autoscaler</td><td>Nodes</td><td>Pending pods that cannot be scheduled; underused nodes</td><td>Reacts in minutes; relies on correct pod requests</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: api }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: api }
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target: { type: Utilization, averageUtilization: 70 }
+```
+
+<p>Utilization is measured against the pod's CPU <em>request</em>, so missing requests break HPA. For Java apps, allow warm-up time (readiness probes, stabilization window) or HPA may over-scale during JVM startup.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>HPA for stateless services; add event-driven scaling (KEDA) for queue-based workloads.</li>
+<li>VPA in recommendation mode to right-size requests.</li>
+<li>Cluster Autoscaler so HPA scale-out does not stall on full nodes.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
+
+</details>
+
+---
+
+## 13. What is the difference between StatefulSets and Deployments?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A <strong>Deployment</strong> manages interchangeable, stateless pods. A <strong>StatefulSet</strong> manages pods that need a stable identity, stable network name and their own persistent storage (databases, Kafka, ZooKeeper).</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Aspect</th><th>Deployment</th><th>StatefulSet</th></tr>
+<tr><td>Pod names</td><td>Random suffix</td><td>Ordered and stable: <code>db-0, db-1, db-2</code></td></tr>
+<tr><td>Storage</td><td>Shared or ephemeral volumes</td><td>One PVC per pod via <code>volumeClaimTemplates</code>, kept across restarts</td></tr>
+<tr><td>Network identity</td><td>Regular Service (load balanced)</td><td>Headless Service gives per-pod DNS: <code>db-0.db.ns.svc</code></td></tr>
+<tr><td>Start/stop order</td><td>Parallel</td><td>Ordered by default (<code>OrderedReady</code>); reverse on scale down</td></tr>
+<tr><td>Updates</td><td>Rolling, any pod</td><td>Rolling in reverse ordinal order; <code>partition</code> for staged rollouts</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: db }
+spec:
+  serviceName: db            # headless Service
+  replicas: 3
+  selector: { matchLabels: { app: db } }
+  template:
+    metadata: { labels: { app: db } }
+    spec:
+      containers:
+      - name: db
+        image: postgres:16
+        volumeMounts: [{ name: data, mountPath: /var/lib/postgresql/data }]
+  volumeClaimTemplates:
+  - metadata: { name: data }
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources: { requests: { storage: 10Gi } }
+```
+
+<h3>When to Use</h3>
+<ul>
+<li>Deployment: web/API services, workers (the default choice).</li>
+<li>StatefulSet: clustered data stores where each member has a role. Gotcha: deleting a StatefulSet does not delete its PVCs, and running a database yourself still needs backup and failover handling (operators help). Often a managed database is simpler.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
+
+</details>
+
+---
+
+## 14. How to manage ConfigMaps and Secrets in Kubernetes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>ConfigMaps</strong> hold non-sensitive configuration; <strong>Secrets</strong> hold sensitive values. Both are injected into pods as environment variables or mounted files, keeping config out of the image.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Secrets are only <strong>base64-encoded</strong> by default, not encrypted. Enable encryption at rest for etcd and restrict access with RBAC.</li>
+<li><strong>Env vars</strong> are read at pod start; changes need a restart. <strong>Mounted volumes</strong> update eventually (not for <code>subPath</code> mounts), but the app must re-read the file.</li>
+<li>Rollout trick: put a hash of the config into a pod annotation (Helm <code>checksum/config</code>) so a change triggers a rolling restart.</li>
+<li><code>immutable: true</code> prevents accidental edits and reduces API server load.</li>
+<li>Do not commit plain Secrets to Git. Use Sealed Secrets, SOPS, or the External Secrets Operator syncing from a vault (AWS Secrets Manager, HashiCorp Vault).</li>
+<li>Size limit is about 1 MiB per object.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+kubectl create configmap app-config --from-literal=LOG_LEVEL=INFO
+kubectl create secret generic db-secret --from-literal=password='change-me'
+```
+
+```yaml
+# in the container spec
+envFrom:
+- configMapRef: { name: app-config }
+env:
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef: { name: db-secret, key: password }
+```
+
+<p>For Spring Boot, env vars like <code>SPRING_DATASOURCE_PASSWORD</code> override properties automatically, or mount <code>application.yaml</code> from a ConfigMap.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>ConfigMap for URLs, feature flags, log levels; Secret for passwords, tokens, TLS keys.</li>
+<li>Prefer mounted files for secrets to reduce leakage through process listings and logs.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
+
+</details>
+
+---
+
+## 15. What are Kubernetes Network Policies and how to implement them?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A <strong>NetworkPolicy</strong> is a namespaced resource that controls which pods can talk to which (ingress and egress) using label selectors, namespaces, and IP blocks, at L3/L4. By default all pod traffic is allowed.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Policies are only <strong>enforced if the CNI plugin supports them</strong> (Calico, Cilium, Antrea). With a CNI that does not, they are silently ignored.</li>
+<li>A pod becomes isolated for a direction once any policy selects it for that direction; then only listed traffic is allowed. Policies are additive (union).</li>
+<li>Typical pattern: default-deny, then allow specific flows.</li>
+<li>Remember to allow DNS egress (port 53) when denying egress.</li>
+<li>Standard NetworkPolicy has no L7 rules (no HTTP paths) or deny rules; CNI-specific or service mesh policies add these.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```yaml
+# 1. Deny all ingress in the namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: default-deny-ingress, namespace: prod }
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+---
+# 2. Only the API pods may reach the database on 5432
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: db-allow-api, namespace: prod }
+spec:
+  podSelector: { matchLabels: { app: db } }
+  policyTypes: [Ingress]
+  ingress:
+  - from:
+    - podSelector: { matchLabels: { app: api } }
+    ports:
+    - { protocol: TCP, port: 5432 }
+```
+
+<h3>When to Use</h3>
+<ul>
+<li>Multi-tenant clusters, compliance zones, limiting blast radius if a pod is compromised.</li>
+<li>Roll out in a test namespace first; verify with a debug pod and <code>curl</code>.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-advanced/">Learn more: Kubernetes Advanced Topics</a></p>
+
+</details>
+
+---
+
+## 16. How to implement service mesh (Istio) in Kubernetes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Install Istio's control plane (<code>istiod</code>), enable sidecar injection for a namespace, restart workloads so each pod gets an Envoy proxy, then configure traffic, security and observability through Istio CRDs.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>The mesh moves cross-cutting concerns out of application code: mTLS, retries, timeouts, circuit breaking, traffic splitting, telemetry.</li>
+<li><strong>Data plane:</strong> Envoy sidecars (or ambient mode with per-node ztunnel, no sidecars). <strong>Control plane:</strong> istiod distributes config and certificates.</li>
+<li>Key resources: <code>VirtualService</code> (routing rules), <code>DestinationRule</code> (subsets, load balancing, circuit breaker), <code>Gateway</code> (edge), <code>PeerAuthentication</code> (mTLS), <code>AuthorizationPolicy</code>.</li>
+<li>Costs: extra CPU/memory per pod, an added latency hop, operational complexity.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+istioctl install --set profile=default
+kubectl label namespace prod istio-injection=enabled
+kubectl rollout restart deployment -n prod
+```
+
+```yaml
+# 90/10 canary split (subsets v1/v2 are defined in a DestinationRule)
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata: { name: api }
+spec:
+  hosts: [api]
+  http:
+  - route:
+    - { destination: { host: api, subset: v1 }, weight: 90 }
+    - { destination: { host: api, subset: v2 }, weight: 10 }
+```
+
+<p>Enforce strict mTLS with a <code>PeerAuthentication</code> of mode <code>STRICT</code>; visualise traffic with Kiali, metrics via Prometheus, traces via Jaeger.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Many microservices needing uniform mTLS, canary releases and per-service telemetry.</li>
+<li>Skip for a few services; an Ingress plus a client library (e.g. Resilience4j) is simpler.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-advanced/">Learn more: Kubernetes Advanced Topics</a></p>
+
+</details>
+
+---
+
+## 17. What are Custom Resource Definitions (CRDs) in Kubernetes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A <strong>CRD</strong> registers a new resource type with the Kubernetes API server, so you can create, store (in etcd) and query your own objects with <code>kubectl</code> like built-in ones. The objects are <strong>Custom Resources (CRs)</strong>.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>A CRD alone only stores data. Behavior comes from a <strong>controller</strong> that watches the CRs and reconciles real state to the desired spec. CRD + controller = <strong>Operator pattern</strong>.</li>
+<li>Schema is defined with OpenAPI v3 for validation; CRDs support versions, a status subresource, and printer columns.</li>
+<li>Examples: Istio <code>VirtualService</code>, cert-manager <code>Certificate</code>, Prometheus Operator <code>ServiceMonitor</code>, Argo CD <code>Application</code>.</li>
+<li>Controllers are written with client-go, Kubebuilder or Operator SDK (Java options: Fabric8, Java Operator SDK).</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata: { name: backups.example.com }
+spec:
+  group: example.com
+  scope: Namespaced
+  names: { kind: Backup, plural: backups, singular: backup }
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              schedule: { type: string }
+```
+
+<p>After applying, <code>kubectl get backups</code> works; a Backup operator would watch these and run the jobs.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Encode domain-specific, declarative workflows (managed databases, certificates, platform APIs).</li>
+<li>Avoid for plain config (use a ConfigMap) or when a Helm chart is enough. Gotcha: deleting a CRD deletes all its custom resources.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-advanced/">Learn more: Kubernetes Advanced Topics</a></p>
+
+</details>
+
+---
+
+## 18. What are commonly used Linux commands and scripting techniques for deploying and maintaining Java applications?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Core toolkit: process and service control (<code>systemctl</code>, <code>ps</code>, <code>kill</code>), log inspection (<code>tail -f</code>, <code>grep</code>, <code>awk</code>, <code>sed</code>, <code>journalctl</code>), resources (<code>top</code>, <code>df</code>, <code>free</code>, <code>ss</code>), JVM tools (<code>jps</code>, <code>jstack</code>, <code>jcmd</code>, <code>jmap</code>), scheduling (<code>cron</code>) and safe Bash scripts.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Task</th><th>Command</th></tr>
+<tr><td>Run app as a service</td><td><code>systemctl start|stop|status|restart app</code>, <code>journalctl -u app -f</code></td></tr>
+<tr><td>Find errors in logs</td><td><code>grep -E "ERROR|Exception" app.log | tail -50</code></td></tr>
+<tr><td>Count by field</td><td><code>awk '{print $9}' access.log | sort | uniq -c | sort -rn</code></td></tr>
+<tr><td>Bulk edit config</td><td><code>sed -i 's/^port=.*/port=8081/' app.properties</code></td></tr>
+<tr><td>Thread dump</td><td><code>jcmd &lt;pid&gt; Thread.print</code> or <code>jstack &lt;pid&gt;</code></td></tr>
+<tr><td>Port/disk checks</td><td><code>ss -tlnp | grep 8080</code>, <code>df -h</code>, <code>du -sh *</code></td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail                     # fail fast on errors, unset vars, pipe failures
+
+APP=app; NEW=/tmp/$APP-1.2.jar; DEST=/opt/$APP
+
+cp "$DEST/$APP.jar" "$DEST/$APP.jar.bak"   # keep rollback copy
+cp "$NEW" "$DEST/$APP.jar"
+sudo systemctl restart "$APP"
+
+for i in {1..30}; do                  # health check with timeout
+  curl -fs http://localhost:8080/actuator/health >/dev/null && { echo "UP"; exit 0; }
+  sleep 2
+done
+echo "Health check failed, rolling back"
+cp "$DEST/$APP.jar.bak" "$DEST/$APP.jar"; sudo systemctl restart "$APP"; exit 1
+```
+
+<p>Minimal <code>systemd</code> unit: <code>ExecStart=/usr/bin/java -Xmx512m -jar /opt/app/app.jar</code>, <code>User=app</code>, <code>Restart=on-failure</code>.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Quote variables, use <code>set -euo pipefail</code>, make scripts idempotent, and never hardcode secrets.</li>
+<li>Beyond a few dozen lines or multiple hosts, prefer CI/CD or Ansible over ad hoc scripts.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/ci-cd/">Learn more: CI/CD</a></p>
+
+</details>
+
+---
+
+## 19. How would you automate log rotation or backups on a Linux server?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Use <strong>logrotate</strong> (run daily by cron or a systemd timer) for logs, and <strong>cron</strong> or systemd timers to run a backup script that archives, ships off-host, prunes old copies, and is verified by test restores.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Prefer logging to stdout and letting journald or the container runtime handle rotation; use logrotate for plain files.</li>
+<li><code>copytruncate</code> avoids restarting the app but can lose a few lines; apps that reopen logs on a signal are cleaner. Logback and Log4j2 can also rotate by size/time internally.</li>
+<li>Backups: the 3-2-1 rule (3 copies, 2 media, 1 off-site), encryption, retention, alerting on job failure, and regular restore tests.</li>
+<li>Databases need consistent dumps (<code>pg_dump</code>, <code>mysqldump --single-transaction</code>), not a raw copy of a live data directory.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+# /etc/logrotate.d/app
+/var/log/app/*.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}
+
+# crontab -e   (02:30 daily; flock prevents overlapping runs)
+30 2 * * * flock -n /var/lock/backup.lock /opt/scripts/backup.sh >> /var/log/backup.log 2>&1
+
+# backup.sh
+set -euo pipefail
+STAMP=$(date +%F)
+pg_dump mydb | gzip > /backups/mydb-$STAMP.sql.gz
+aws s3 cp /backups/mydb-$STAMP.sql.gz s3://my-backup-bucket/db/
+find /backups -name '*.sql.gz' -mtime +7 -delete   # local retention
+```
+
+<p>Test a config with <code>logrotate -d /etc/logrotate.d/app</code> (debug, dry run).</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Single servers and VMs. On Kubernetes or managed databases, use cluster logging, CronJobs, and managed snapshots instead.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/ci-cd/">Learn more: CI/CD</a></p>
+
+</details>
+
+---
+
+## 20. What scripting challenges have you encountered in production?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Frame it as problem, cause, fix, lesson. The recurring production issues with scripts are listed below; pick one or two you have actually lived through.</p>
+
+<h3>Why / Context</h3>
+<table>
+<tr><th>Challenge</th><th>Cause</th><th>Fix</th></tr>
+<tr><td>Script silently continues after a failure</td><td>No error handling</td><td><code>set -euo pipefail</code>, explicit exit codes, <code>trap</code> for cleanup</td></tr>
+<tr><td>Overlapping cron runs corrupt data</td><td>Job takes longer than the interval</td><td><code>flock</code>, lock files, idempotent steps</td></tr>
+<tr><td>Works manually, fails in cron</td><td>Minimal <code>PATH</code>/env, different working dir</td><td>Absolute paths, set env in script, log output</td></tr>
+<tr><td>Deleted wrong files</td><td>Unquoted or empty variable (<code>rm -rf $DIR/*</code>)</td><td>Quote, use <code>${VAR:?}</code>, dry-run first</td></tr>
+<tr><td>Breaks on spaces or special characters</td><td>Word splitting, parsing <code>ls</code> output</td><td>Quote everything, <code>find -print0 | xargs -0</code></td></tr>
+<tr><td>Secrets in scripts or shell history</td><td>Hardcoded credentials</td><td>Secret manager, env injection, restricted permissions</td></tr>
+<tr><td>Flaky deploys</td><td>Not idempotent, no health check, no rollback</td><td>Health-check loop, keep previous artifact, move logic into CI/CD</td></tr>
+<tr><td>Unmaintainable</td><td>Hundreds of lines of Bash</td><td>Switch to Python/Java or Ansible, add ShellCheck and tests</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+TMP=$(mktemp)
+trap 'echo "failed at line $LINENO"; rm -f "$TMP"' ERR EXIT
+: "${DEPLOY_DIR:?DEPLOY_DIR must be set}"   # abort if unset or empty
+```
+
+<h3>When to Use</h3>
+<ul>
+<li>Interview tip: end with what you changed afterward (monitoring, alerting on job failure, code review for scripts, ShellCheck in CI).</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/ci-cd/">Learn more: CI/CD</a></p>
+
+</details>
+
+---
+
+## 21. Which AWS services are commonly used to host and run backend APIs?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Choose by how much infrastructure you want to manage: EC2 (VMs), Elastic Beanstalk or App Runner (managed platform), ECS/Fargate or EKS (containers), or Lambda with API Gateway (serverless). Put a load balancer or API Gateway in front, and RDS/DynamoDB behind.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Service</th><th>Model</th><th>Good for</th><th>Trade-off</th></tr>
+<tr><td>EC2 + ALB + Auto Scaling</td><td>You manage VMs</td><td>Full control, legacy apps</td><td>Patching, capacity management</td></tr>
+<tr><td>Elastic Beanstalk</td><td>PaaS over EC2</td><td>Quick deploy of a Spring Boot jar</td><td>Less flexibility</td></tr>
+<tr><td>ECS on Fargate</td><td>Serverless containers</td><td>Containerized APIs without cluster management</td><td>AWS-specific, per-vCPU cost</td></tr>
+<tr><td>EKS</td><td>Managed Kubernetes</td><td>K8s portability, large microservice estates</td><td>Complexity, control plane cost</td></tr>
+<tr><td>Lambda + API Gateway</td><td>Functions</td><td>Spiky or low traffic, event-driven</td><td>Cold starts (SnapStart helps Java), time limits</td></tr>
+<tr><td>App Runner</td><td>Managed container/source service</td><td>Simplest container-to-URL path</td><td>Fewer knobs</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+<p>Typical production stack: Route 53, CloudFront or API Gateway, ALB, ECS Fargate tasks in private subnets across 2+ AZs, RDS (Multi-AZ) or DynamoDB, ElastiCache, Secrets Manager, IAM task roles, CloudWatch logs/alarms, ECR for images, and CI/CD pushing new task definitions.</p>
+
+<h3>When to Use</h3>
+<ul>
+<li>Start with Fargate or Beanstalk for a typical Spring Boot API; pick Lambda for sporadic traffic; EKS if the team already runs Kubernetes.</li>
+<li>Follow-ups: security groups and VPC design, autoscaling policies, zero-downtime deploys, cost.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/distributed-cloud/aws/">Learn more: AWS</a></p>
+
+</details>
+
+---
+
 **See also:** [Docker & Containers](../../devops/docker.md), [Kubernetes](../../devops/kubernetes.md), [CI/CD](../../devops/ci-cd.md), [Interview Preparation](../index.md)

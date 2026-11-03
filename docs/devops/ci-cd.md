@@ -33,3 +33,4 @@ Declarative desired state in git; a controller (**Argo CD**/Flux) syncs the clus
 
 ![CI/CD](../assets/devops-toolchain.png)
 
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

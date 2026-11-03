@@ -238,3 +238,5 @@ public class Z implements X, Y {
          obj.methodX();
       }
    }
+
+**Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md)

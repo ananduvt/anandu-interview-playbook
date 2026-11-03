@@ -33,3 +33,5 @@ Services register and look each other up dynamically (no hard-coded hosts).
 
 ## Config vs code
 Prefer configuration + conventions; keep services stateless so they scale horizontally.
+
+**Practice questions:** [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md)

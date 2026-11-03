@@ -513,3 +513,5 @@ executor.submit(() -> {
 ---
 
 **See also:** [Concurrency & Threads (Basics)](concurrency.md), [Java Collections & Concurrency Index](index.md)
+
+**Practice questions:** [Java Concurrency](../interview-questions/verbal/verbal-java-concurrency-questions.md), [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md)

@@ -468,3 +468,5 @@ The two fundamental models of Inter Process Communication are:
 
 1. **Shared Memory**
 2. **Message Passing**
+
+**Practice questions:** [Java Concurrency](../interview-questions/verbal/verbal-java-concurrency-questions.md), [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md)

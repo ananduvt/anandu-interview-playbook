@@ -451,3 +451,5 @@ resilience4j:
 - **Thread pool vs. semaphore isolation?** Thread pools (Hystrix): complete isolation but overhead; semaphores (Resilience4j): lower overhead, shared context
 - **Combining patterns?** Use circuit breaker + retry + timeout + bulkhead for comprehensive resilience
 - **Testing circuit breakers?** Mock failures, verify fallback behavior, test state transitions (CLOSED → OPEN → HALF_OPEN)
+
+**Practice questions:** [Microservices Resilience](../interview-questions/verbal/verbal-microservices-resilience-questions.md), [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

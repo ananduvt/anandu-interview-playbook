@@ -527,3 +527,4 @@ public class CacheService {
 
 **See also:** [Caching](caching.md), [AWS ElastiCache](aws.md), [Spring Data Redis](../spring-web/spring-boot-advanced.md)
 
+**Practice questions:** [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md)

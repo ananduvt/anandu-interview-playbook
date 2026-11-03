@@ -23,3 +23,5 @@ The three pillars: **metrics, logs, traces** — to answer *what* broke, *why*, 
 
 ## Health checks
 Liveness (restart), readiness (route traffic), startup — exposed via Spring Boot **Actuator** (`/actuator/health`).
+
+**Practice questions:** [System Design](../interview-questions/verbal/verbal-system-design-questions.md), [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md)

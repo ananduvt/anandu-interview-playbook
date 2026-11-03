@@ -462,3 +462,4 @@ spring:
 
 **See also:** [Spring Boot Advanced](spring-boot-advanced.md), [Spring Threading & Async](spring-threading.md), [API Styles & Protocols](api-styles.md)
 
+**Practice questions:** [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md)

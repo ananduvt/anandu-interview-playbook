@@ -6,81 +6,63 @@ Technical discussion and conceptual understanding across domain areas.
 
 ## Question Categories by Domain
 
-### [Databases & SQL](verbal-db-questions.md)
-Database design, queries, transactions, optimization.
-- Normalization, foreign keys, relationships
-- SQL queries, JOINs, aggregations
-- Transactions & ACID, isolation levels
-- Indexing strategies, query optimization
-- NoSQL databases, CAP theorem
+### Java
 
-### [Java Core](verbal-java-core-questions.md)
-Fundamentals, OOP, memory, concurrency basics.
-- OOP concepts (inheritance, polymorphism)
-- Stack vs heap, garbage collection
-- Strings, primitives, wrapper classes
-- Exception handling
-- Collections, generics
+- [Java Core](verbal-java-core-questions.md): Fundamentals: OOP concepts, memory management, concurrency basics, language features, and best practices.
+- [Java Advanced](verbal-java-advanced-questions.md): Advanced concepts: patterns, performance, frameworks, concurrency, and enterprise design.
+- [Java Collections and Streams](verbal-java-collections-streams-questions.md): HashMap internals, choosing between collection types, and Stream API behavior.
+- [Java Concurrency](verbal-java-concurrency-questions.md): Threads, locks, memory visibility, deadlocks, and asynchronous coordination with Future and CompletableFuture.
+- [Java Modern Features and Generics](verbal-java-modern-questions.md): Language features added since Java 8 (var, records, Optional, java.time, Java 17) plus generics and effectively final variables.
 
-### [Java Advanced](verbal-java-advanced-questions.md)
-Advanced patterns, performance, concurrency.
-- Design patterns (creational, structural, behavioral)
-- Threading, thread pools, virtual threads
-- Performance tuning, JVM optimization
-- Functional programming, streams
-- Advanced collections, reflection
+### Spring Boot & Web
 
-### [Design Patterns](verbal-design-patterns-questions.md)
-Creational, structural, and behavioral patterns with Java examples.
-- Factory vs Abstract Factory, Builder
-- Singleton pitfalls and thread safety
-- Strategy, Observer, Decorator
-- When each pattern fits and its trade-offs
+- [Spring Boot](verbal-spring-boot-questions.md): Spring Framework: dependency injection, Bean management, REST APIs, web development, and Spring ecosystem.
+- [Spring Caching](verbal-spring-caching-questions.md): Caching fundamentals, Spring Cache abstraction with Redis, and consistency pitfalls.
+- [Spring Core, DI & AOP](verbal-spring-core-di-questions.md): Spring container internals, dependency injection, bean registration, and aspect-oriented programming.
+- [Spring Data & JPA](verbal-spring-data-jpa-questions.md): JPA/Hibernate behaviour, Spring Data repositories, fetching strategies, and transaction pitfalls.
+- [Spring Web & MVC](verbal-spring-web-mvc-questions.md): Spring MVC request processing, request binding, and REST exception handling.
 
-### [Spring Boot & Web](verbal-spring-boot-questions.md)
-Spring framework, dependency injection, REST APIs.
-- Dependency injection, bean lifecycle
-- @Component, @Service, @Repository
-- REST APIs, HTTP methods, status codes
-- Spring Data JPA, transactions
-- Spring Security, OAuth2, JWT
-- AOP, testing
+### Design Patterns & Architecture
 
-### [Microservices & Distributed Systems](verbal-microservices-questions.md)
-Architecture patterns, scalability, resilience.
-- Monolith vs microservices
-- Service communication (sync, async)
-- Data management, saga pattern
-- Resilience patterns (circuit breaker, retry)
-- Messaging (Kafka, RabbitMQ)
-- Distributed tracing, monitoring
+- [Design Patterns](verbal-design-patterns-questions.md): Creational, Structural, and Behavioral design patterns - Gang of Four patterns and their real-world applications.
+- [Distributed Architecture Patterns](verbal-architecture-distributed-questions.md): Cross-cutting concerns, MVC vs WebFlux, API evolution, resilience, idempotency, and CQRS.
+- [Application Architecture and Maintainability](verbal-architecture-layered-clean-questions.md): Layered, hexagonal, and clean architecture, repository organization, and keeping Java code maintainable as it grows.
+- [System Design Case Studies](verbal-architecture-system-design-cases-questions.md): Worked design cases: a Jira-like issue tracker and a real-time financial data processing module, with requirements, consistency, recovery, and trade-offs.
+- [Design Principles and Applied Patterns](verbal-design-patterns-principles-questions.md): SOLID, Liskov substitution, interface refactoring, and how design patterns apply in high-stakes financial systems.
 
-### [System Design](verbal-system-design-questions.md)
-Designing scalable, reliable systems.
-- Scalability, availability, consistency
-- Load balancing, caching, databases
-- Sharding, replication, partitioning
-- Real-world system design scenarios
-- Capacity planning, trade-offs
-- Failure scenarios, resilience
+### Microservices & Messaging
 
-### [DevOps & Cloud](verbal-devops-questions.md)
-Infrastructure, deployment, containerization.
-- Cloud platforms (AWS, GCP, Azure)
-- Docker, containers, images
-- Kubernetes, pods, deployments, services
-- CI/CD pipelines, deployment strategies
-- Monitoring, logging, observability
-- Security, secrets management
+- [Microservices & Distributed Systems](verbal-microservices-questions.md): Architecture patterns, scalability, resilience, messaging, and distributed computing principles.
+- [Kafka & Messaging](verbal-kafka-messaging-questions.md): Kafka architecture, consumer groups, reprocessing, delivery guarantees, error handling and choosing a message broker.
+- [Microservices Resilience](verbal-microservices-resilience-questions.md): Resilience patterns for distributed systems: timeouts, retries, circuit breakers, bulkheads and handling network failures.
 
-### [Machine Learning & AI](verbal-ml-ai-questions.md)
-ML concepts, algorithms, deep learning, LLMs.
-- ML fundamentals (supervised, unsupervised)
-- Algorithms (regression, trees, SVM, clustering)
-- Deep learning (CNN, RNN, LSTM, attention)
-- LLMs, transformers, prompt engineering
-- RAG, vector embeddings
-- Model evaluation, deployment
+### System Design
+
+- [System Design](verbal-system-design-questions.md): Designing large-scale systems: scalability, reliability, performance, and trade-offs.
+- [System Design: Issue Tracker](verbal-system-design-issue-tracker-questions.md): Design questions for a Jira-like issue tracking system: scaling, service decomposition, testing and API contracts.
+
+### Databases & SQL
+
+- [Databases & SQL](verbal-db-questions.md): Conceptual questions on database design, SQL queries, transactions, optimization, and best practices.
+- [Database Performance](verbal-db-performance-questions.md): Verbal interview questions on query tuning, connection pooling and diagnosing slow queries.
+- [Database Scaling and Architecture](verbal-db-scaling-questions.md): Verbal interview questions on schema migrations, multi-tenancy, partitioning, replication and sharding.
+- [Database Transactions and Concurrency](verbal-db-transactions-questions.md): Verbal interview questions on transactions, isolation levels, locking and concurrent updates.
+
+### Security
+
+- [Security](verbal-security-questions.md): Verbal interview questions on application security, secrets, rate limiting, compliance and Spring Security.
+
+### Testing
+
+- [Testing](verbal-testing-questions.md): Verbal interview questions on test levels, JUnit and Mockito practices, and keeping test suites reliable.
+
+### DevOps & Cloud
+
+- [DevOps & Cloud](verbal-devops-questions.md): Infrastructure, deployment, containerization, CI/CD, cloud platforms, and operational concerns.
+
+### Machine Learning & AI
+
+- [Machine Learning & AI](verbal-ml-ai-questions.md): ML concepts, algorithms, deep learning, LLMs, and AI application design.
 
 ---
 

@@ -767,6 +767,650 @@ System.out.println("Cost: $" + coffee.getCost());  // Cost: $3.35
 
 ---
 
+## 8. What is the Prototype Design Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Prototype</strong> creates new objects by copying an existing instance (the prototype) instead of building one from scratch. The client asks the object to clone itself, so it does not need to know the concrete class.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Useful when construction is expensive (parsing, DB/network load) and copies differ only slightly.</li>
+<li>Avoids a parallel hierarchy of factories; a registry of ready-made prototypes can be cloned on demand.</li>
+</ul>
+
+<h3>Java Specifics and Gotchas</h3>
+<ul>
+<li><code>Object.clone()</code> with <code>Cloneable</code> is widely considered broken: it is a shallow copy, bypasses constructors, and <code>Cloneable</code> has no <code>clone()</code> method.</li>
+<li><strong>Shallow vs deep copy:</strong> shallow copy shares mutable fields (lists, arrays) between original and clone, so a change in one shows up in the other.</li>
+<li>Prefer a <strong>copy constructor</strong> or copy factory method; records and immutable objects usually need no cloning.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+public class Report {
+    private final String title;
+    private final List<String> sections;
+
+    public Report(String title, List<String> sections) {
+        this.title = title;
+        this.sections = new ArrayList<>(sections);
+    }
+
+    // Copy constructor = deep copy of the mutable list
+    public Report(Report other) {
+        this(other.title, other.sections);
+    }
+}
+
+Report template = loadExpensiveTemplate();
+Report copy = new Report(template);   // cheap, independent copy
+```
+
+<h3>When to Use</h3>
+<p>Costly initialization with many near-identical objects, or when you need a snapshot of an object. Skip it when objects are cheap to create.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 9. Explain the Adapter Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Adapter</strong> converts the interface of an existing class into the interface the client expects, so classes with incompatible interfaces can work together without changing either one.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Typical for legacy code, third-party libraries, or swapping vendors (for example payment gateways) behind your own interface.</li>
+<li><strong>Object adapter</strong> (composition, preferred) wraps the adaptee; <strong>class adapter</strong> (inheritance) extends it and needs multiple inheritance, so it is rare in Java.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+interface PaymentProcessor {
+    void pay(long amountCents);
+}
+
+// Third-party class we cannot change
+class LegacyGateway {
+    void makePayment(double dollars) { /* ... */ }
+}
+
+class LegacyGatewayAdapter implements PaymentProcessor {
+    private final LegacyGateway gateway;
+    LegacyGatewayAdapter(LegacyGateway gateway) { this.gateway = gateway; }
+
+    @Override
+    public void pay(long amountCents) {
+        gateway.makePayment(amountCents / 100.0);
+    }
+}
+```
+
+<h3>JDK Examples</h3>
+<ul>
+<li><code>Arrays.asList()</code> (array to List), <code>InputStreamReader</code> (byte stream to character stream), <code>Collections.enumeration()</code>.</li>
+</ul>
+
+<h3>Comparison</h3>
+<table>
+<tr><th>Pattern</th><th>Intent</th></tr>
+<tr><td>Adapter</td><td>Change an interface to match what the client wants</td></tr>
+<tr><td>Decorator</td><td>Same interface, adds behavior</td></tr>
+<tr><td>Facade</td><td>New simpler interface over many classes</td></tr>
+<tr><td>Proxy</td><td>Same interface, controls access</td></tr>
+</table>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 10. What is the Facade Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Facade</strong> provides one simple, high-level interface over a complex subsystem of several classes. Clients call the facade instead of coordinating many collaborators.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Reduces coupling between clients and the subsystem and gives a single place for the orchestration logic.</li>
+<li>It does not hide the subsystem: advanced users can still use the underlying classes directly.</li>
+<li>A Spring <code>@Service</code> that coordinates several repositories and clients is often a facade in practice.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+class OrderFacade {
+    private final InventoryService inventory;
+    private final PaymentService payment;
+    private final ShippingService shipping;
+
+    OrderFacade(InventoryService i, PaymentService p, ShippingService s) {
+        this.inventory = i; this.payment = p; this.shipping = s;
+    }
+
+    public void placeOrder(Order order) {
+        inventory.reserve(order.items());
+        payment.charge(order.customerId(), order.total());
+        shipping.schedule(order);
+    }
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Avoid a "god facade" that grows into a catch-all class; keep one facade per use-case area.</li>
+<li>Facade vs Adapter: a facade simplifies many classes; an adapter makes one incompatible interface fit.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 11. Explain the Bridge Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Bridge</strong> splits a class into two independent hierarchies, an <em>abstraction</em> and an <em>implementation</em>, connected by composition. Each hierarchy can vary on its own.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Prevents a class explosion: with M abstractions and N implementations, inheritance needs M x N classes, Bridge needs M + N.</li>
+<li>The abstraction holds a reference to an implementor interface and delegates to it. The choice can even change at runtime.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+interface MessageSender {            // implementation side
+    void deliver(String text);
+}
+class EmailSender implements MessageSender { public void deliver(String t) { /* smtp */ } }
+class SmsSender   implements MessageSender { public void deliver(String t) { /* sms  */ } }
+
+abstract class Notification {        // abstraction side
+    protected final MessageSender sender;
+    protected Notification(MessageSender sender) { this.sender = sender; }
+    abstract void notifyUser(String msg);
+}
+class UrgentNotification extends Notification {
+    UrgentNotification(MessageSender s) { super(s); }
+    void notifyUser(String msg) { sender.deliver("[URGENT] " + msg); }
+}
+```
+
+<h3>Bridge vs Adapter vs Strategy</h3>
+<ul>
+<li><strong>Adapter</strong> is applied after the fact to make things fit; <strong>Bridge</strong> is designed up front.</li>
+<li><strong>Strategy</strong> has the same structure but a narrower goal (swap one algorithm); Bridge separates two whole dimensions of a class. JDBC (<code>DriverManager</code> + drivers) is a classic Bridge.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 12. What is the Composite Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Composite</strong> lets you treat individual objects (leaves) and groups of objects (composites) through the same interface, which is natural for tree structures such as file systems, UI components, or org charts.</p>
+
+<h3>Structure</h3>
+<ul>
+<li><strong>Component:</strong> common interface.</li>
+<li><strong>Leaf:</strong> does the real work, has no children.</li>
+<li><strong>Composite:</strong> holds children (as Components) and delegates to them, often aggregating results.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+interface FileNode {
+    long size();
+}
+record FileLeaf(String name, long bytes) implements FileNode {
+    public long size() { return bytes; }
+}
+class Directory implements FileNode {
+    private final List<FileNode> children = new ArrayList<>();
+    void add(FileNode node) { children.add(node); }
+    public long size() {
+        return children.stream().mapToLong(FileNode::size).sum();   // recursion through the tree
+    }
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Where to declare <code>add/remove</code>: on the Component (transparent, but leaves must throw) or only on Composite (safe, but clients need to know the type).</li>
+<li>Deep trees can cause stack overflow with recursion; watch for cycles.</li>
+<li>JDK/Spring examples: Swing <code>Container</code>/<code>Component</code>, JSON tree models.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 13. Explain the Chain of Responsibility Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Chain of Responsibility</strong> passes a request along a chain of handlers. Each handler either processes it, passes it on, or both. The sender does not know which handler will act.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>Decouples sender from receivers and lets you add, remove, or reorder handlers by configuration.</li>
+<li>Variants: first-handler-wins (exception handlers) or all-handlers-run (servlet filters, middleware).</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+abstract class Validator {
+    private Validator next;
+    Validator linkWith(Validator next) { this.next = next; return next; }
+
+    final void validate(Request r) {
+        check(r);                          // throws on failure
+        if (next != null) next.validate(r);
+    }
+    protected abstract void check(Request r);
+}
+
+Validator head = new AuthValidator();
+head.linkWith(new RateLimitValidator()).linkWith(new PayloadValidator());
+head.validate(request);
+```
+
+<h3>Real-World Use</h3>
+<ul>
+<li>Servlet <code>Filter</code> chain, Spring Security filter chain, Spring MVC <code>HandlerInterceptor</code>, logging frameworks' handler levels.</li>
+</ul>
+
+<h3>Gotchas</h3>
+<ul>
+<li>A request might fall off the end unhandled; define a default.</li>
+<li>Long chains are hard to debug; keep handler order explicit and logged.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 14. What is the Command Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Command</strong> turns a request into an object holding the action and its parameters. That lets you queue, log, schedule, undo, or pass requests around like data.</p>
+
+<h3>Structure</h3>
+<ul>
+<li><strong>Command</strong> interface (<code>execute()</code>, optionally <code>undo()</code>), <strong>Receiver</strong> (does the work), <strong>Invoker</strong> (triggers commands), <strong>Client</strong> (wires them).</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+interface Command {
+    void execute();
+    void undo();
+}
+
+class AddTextCommand implements Command {
+    private final StringBuilder doc; private final String text;
+    AddTextCommand(StringBuilder doc, String text) { this.doc = doc; this.text = text; }
+    public void execute() { doc.append(text); }
+    public void undo()    { doc.setLength(doc.length() - text.length()); }
+}
+
+class Editor {
+    private final Deque<Command> history = new ArrayDeque<>();
+    void run(Command c) { c.execute(); history.push(c); }
+    void undoLast()     { if (!history.isEmpty()) history.pop().undo(); }
+}
+```
+
+<h3>Real-World Use</h3>
+<ul>
+<li><code>Runnable</code>/<code>Callable</code> submitted to an <code>ExecutorService</code>, job queues, undo/redo, transactional scripts, event sourcing (commands and events).</li>
+</ul>
+
+<h3>Command vs Strategy</h3>
+<p>Command encapsulates <em>a request</em> (what to do, with its data, often once); Strategy encapsulates <em>an interchangeable algorithm</em> chosen for a context.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 15. Explain the Iterator Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Iterator</strong> gives sequential access to the elements of a collection without exposing its internal structure. In Java this is <code>java.util.Iterator</code> and the <code>Iterable</code> interface behind the for-each loop.</p>
+
+<h3>Example</h3>
+
+```java
+class Range implements Iterable<Integer> {
+    private final int start, end;
+    Range(int start, int end) { this.start = start; this.end = end; }
+
+    @Override
+    public Iterator<Integer> iterator() {
+        return new Iterator<>() {
+            private int current = start;
+            public boolean hasNext() { return current < end; }
+            public Integer next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                return current++;
+            }
+        };
+    }
+}
+
+for (int n : new Range(0, 3)) System.out.println(n);   // 0 1 2
+```
+
+<h3>Gotchas and Follow-ups</h3>
+<ul>
+<li><strong>Fail-fast:</strong> most <code>java.util</code> iterators throw <code>ConcurrentModificationException</code> if the collection is structurally modified during iteration (except through <code>iterator.remove()</code>). Concurrent collections use weakly consistent iterators.</li>
+<li><code>Iterator</code> is single-pass and one-direction; <code>ListIterator</code> adds backward movement and <code>set/add</code>.</li>
+<li><strong>Internal vs external iteration:</strong> the Streams API is internal iteration, where the library drives the loop.</li>
+<li>Each call to <code>iterator()</code> should return an independent iterator.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 16. What is the Mediator Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Mediator</strong> centralizes communication between objects so they no longer reference each other directly. Colleagues talk only to the mediator, which turns many-to-many dependencies into many-to-one.</p>
+
+<h3>Example</h3>
+
+```java
+interface ChatRoom {
+    void send(String from, String message);
+}
+
+class SimpleChatRoom implements ChatRoom {
+    private final List<User> users = new ArrayList<>();
+    void join(User u) { users.add(u); }
+
+    public void send(String from, String message) {
+        for (User u : users) {
+            if (!u.name().equals(from)) u.receive(from, message);
+        }
+    }
+}
+
+record User(String name, ChatRoom room) {
+    void say(String m) { room.send(name, m); }
+    void receive(String from, String m) { System.out.println(name + " got " + m + " from " + from); }
+}
+```
+
+<h3>Mediator vs Observer</h3>
+<table>
+<tr><th>Mediator</th><th>Observer</th></tr>
+<tr><td>Central object coordinates peers</td><td>Subject broadcasts to subscribers</td></tr>
+<tr><td>Knows the colleagues and their logic</td><td>Subject does not know what observers do</td></tr>
+<tr><td>Two-way interaction</td><td>Typically one-way notification</td></tr>
+</table>
+
+<h3>Gotchas</h3>
+<ul>
+<li>The mediator can become a god object that holds all the logic.</li>
+<li>Examples: chat rooms, air-traffic-control analogies, UI dialog controllers, event-bus style components.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 17. Explain the Memento Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Memento</strong> captures an object's internal state in a snapshot so it can be restored later (undo, rollback), without breaking encapsulation.</p>
+
+<h3>Roles</h3>
+<ul>
+<li><strong>Originator:</strong> creates a memento of its state and restores from one.</li>
+<li><strong>Memento:</strong> immutable snapshot, opaque to everyone but the originator.</li>
+<li><strong>Caretaker:</strong> stores mementos (for example in a stack) but never inspects them.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+class TextEditor {
+    private String content = "";
+
+    record Memento(String content) {}          // immutable snapshot
+
+    void type(String s)      { content += s; }
+    Memento save()           { return new Memento(content); }
+    void restore(Memento m)  { content = m.content(); }
+    String content()         { return content; }
+}
+
+TextEditor ed = new TextEditor();
+Deque<TextEditor.Memento> history = new ArrayDeque<>();   // caretaker
+ed.type("Hello"); history.push(ed.save());
+ed.type(" World");
+ed.restore(history.pop());                                // back to "Hello"
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Memory cost grows with snapshot size and count; bound the history or store diffs instead.</li>
+<li>Snapshot mutable fields by deep copy, or the "snapshot" changes along with the object.</li>
+<li>Memento vs Command undo: Memento restores saved state; Command undo reverses the operation. They are often combined.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 18. What is the State Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>State</strong> lets an object change its behavior when its internal state changes, by delegating to a separate state object per state. It replaces large <code>if/switch</code> blocks on a status field.</p>
+
+<h3>Example</h3>
+
+```java
+interface OrderState {
+    OrderState pay();
+    OrderState ship();
+}
+
+class New implements OrderState {
+    public OrderState pay()  { return new Paid(); }
+    public OrderState ship() { throw new IllegalStateException("Pay first"); }
+}
+class Paid implements OrderState {
+    public OrderState pay()  { throw new IllegalStateException("Already paid"); }
+    public OrderState ship() { return new Shipped(); }
+}
+class Shipped implements OrderState {
+    public OrderState pay()  { throw new IllegalStateException("Already paid"); }
+    public OrderState ship() { throw new IllegalStateException("Already shipped"); }
+}
+
+class Order {
+    private OrderState state = new New();
+    void pay()  { state = state.pay(); }
+    void ship() { state = state.ship(); }
+}
+```
+
+<h3>State vs Strategy</h3>
+<ul>
+<li>Same structure, different intent: in State the object <em>transitions itself</em> between states; in Strategy the client picks the algorithm and it does not change on its own.</li>
+</ul>
+
+<h3>When to Use / Alternatives</h3>
+<ul>
+<li>Use when behavior depends on state and there are many states and transitions. Many states mean many classes.</li>
+<li>For simple cases an <code>enum</code> with per-constant behavior is enough; for complex workflows consider Spring Statemachine.</li>
+<li>Stateless state objects can be shared as singletons.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 19. Explain the Template Method Pattern
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Template Method</strong> defines the skeleton of an algorithm in a base class and lets subclasses override specific steps without changing the overall structure. It uses inheritance.</p>
+
+<h3>Example</h3>
+
+```java
+abstract class DataExporter {
+    // The template method: final so subclasses cannot change the order
+    public final void export() {
+        List<String> rows = fetch();
+        String body = format(rows);
+        write(body);
+        afterExport();                 // optional hook
+    }
+
+    protected abstract List<String> fetch();
+    protected abstract String format(List<String> rows);
+    protected void write(String body) { System.out.println(body); }
+    protected void afterExport() { }   // hook with default no-op
+}
+
+class CsvExporter extends DataExporter {
+    protected List<String> fetch() { return List.of("a", "b"); }
+    protected String format(List<String> rows) { return String.join(",", rows); }
+}
+```
+
+<h3>Gotchas and Follow-ups</h3>
+<ul>
+<li>Mark the template method <code>final</code>; distinguish <em>abstract steps</em> (must override) from <em>hooks</em> (may override).</li>
+<li>Inheritance-based, so it is rigid. If you need runtime flexibility, use Strategy (composition) instead.</li>
+<li>Hollywood principle: "don't call us, we'll call you".</li>
+<li>Seen in <code>JdbcTemplate</code>/<code>RestTemplate</code> callbacks (callback variant), <code>AbstractList</code>, <code>HttpServlet.service()</code> calling <code>doGet/doPost</code>.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
+## 20. What is the Proxy Pattern?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>Proxy</strong> is a stand-in object with the same interface as the real object that controls access to it, adding behavior such as lazy loading, caching, security checks, or logging before or after delegating.</p>
+
+<h3>Types</h3>
+<table>
+<tr><th>Type</th><th>Purpose</th></tr>
+<tr><td>Virtual</td><td>Lazy-create an expensive object (Hibernate lazy loading)</td></tr>
+<tr><td>Protection</td><td>Check permissions before delegating</td></tr>
+<tr><td>Remote</td><td>Local stand-in for a remote service (RMI stub, Feign client)</td></tr>
+<tr><td>Caching / logging</td><td>Add cross-cutting behavior</td></tr>
+</table>
+
+<h3>Example: JDK Dynamic Proxy</h3>
+
+```java
+interface Service { String load(String id); }
+
+Service real = id -> "data-" + id;
+
+Service proxy = (Service) Proxy.newProxyInstance(
+    Service.class.getClassLoader(),
+    new Class<?>[] { Service.class },
+    (p, method, args) -> {
+        long start = System.nanoTime();
+        try {
+            return method.invoke(real, args);
+        } finally {
+            System.out.println(method.getName() + " took " + (System.nanoTime() - start) + " ns");
+        }
+    });
+```
+
+<h3>Spring Gotchas</h3>
+<ul>
+<li>Spring AOP (<code>@Transactional</code>, <code>@Cacheable</code>, <code>@Async</code>) works through proxies: JDK proxies for interfaces, CGLIB subclasses otherwise.</li>
+<li><strong>Self-invocation</strong> (calling a proxied method via <code>this</code>) bypasses the proxy, so the annotation is silently ignored.</li>
+<li>CGLIB cannot proxy <code>final</code> classes or methods.</li>
+<li>Proxy vs Decorator: structure is the same; Proxy controls access to its object, Decorator adds responsibilities.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
+
+</details>
+
+---
+
 ## Additional Design Patterns
 
 See [Design Patterns Reference](../../java-patterns-advanced/design-patterns.md) for:

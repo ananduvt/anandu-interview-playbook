@@ -610,4 +610,298 @@ CREATE INDEX idx_name ON users(last_name, first_name);
 
 ---
 
+## 9. What is a primary key and what is its significance?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A primary key is a column (or set of columns) that uniquely identifies each row in a table. It must be unique and <strong>NOT NULL</strong>, and a table can have only one.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li><strong>Uniqueness:</strong> the database rejects duplicate key values.</li>
+<li><strong>Indexing:</strong> a unique index is created automatically; in InnoDB (MySQL) and SQL Server it is usually the clustered index, so rows are stored in key order.</li>
+<li><strong>Referential integrity:</strong> foreign keys in other tables reference it.</li>
+<li><strong>Natural vs surrogate:</strong> natural keys (email, ISBN) can change; surrogate keys (auto-increment, UUID, sequence) are stable and meaningless.</li>
+</ul>
+
+<h3>Example</h3>
+
+```sql
+CREATE TABLE orders (
+    id          BIGINT PRIMARY KEY,
+    customer_id BIGINT NOT NULL REFERENCES customers(id),
+    created_at  TIMESTAMP NOT NULL
+);
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Primary key vs unique key: a table may have many unique keys (NULL handling is vendor-dependent) but only one primary key.</li>
+<li>Random UUID keys cause page splits on clustered indexes; consider sequential or time-ordered IDs.</li>
+<li>Composite primary keys: column order matters for index usage.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 10. What are SQL DML and DDL commands? What is the difference?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><strong>DDL</strong> (Data Definition Language) defines or changes the structure of the database. <strong>DML</strong> (Data Manipulation Language) reads and changes the data inside that structure.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Aspect</th><th>DDL</th><th>DML</th></tr>
+<tr><td>Commands</td><td>CREATE, ALTER, DROP, TRUNCATE, RENAME</td><td>INSERT, UPDATE, DELETE, MERGE (SELECT is often grouped here, sometimes called DQL)</td></tr>
+<tr><td>Acts on</td><td>Schema objects (tables, indexes, views)</td><td>Rows</td></tr>
+<tr><td>Transaction</td><td>Often auto-commits and cannot be rolled back (Oracle, MySQL); PostgreSQL has transactional DDL</td><td>Can be rolled back until COMMIT</td></tr>
+<tr><td>WHERE clause</td><td>No</td><td>Yes</td></tr>
+</table>
+
+<h3>Related Groups</h3>
+<ul>
+<li><strong>DCL:</strong> GRANT, REVOKE (permissions).</li>
+<li><strong>TCL:</strong> COMMIT, ROLLBACK, SAVEPOINT.</li>
+</ul>
+
+<h3>Gotcha</h3>
+<ul>
+<li><strong>DELETE vs TRUNCATE vs DROP:</strong> DELETE removes rows one by one (filterable, logged, rollback-able); TRUNCATE removes all rows quickly (DDL, usually no rollback in Oracle/MySQL); DROP removes the table itself.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 11. What are the distinctions between stored procedures and functions?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A function computes and <strong>returns a value</strong> and can be used inside SQL expressions. A stored procedure performs an <strong>action</strong> (possibly many statements) and is invoked with CALL/EXEC. Exact rules vary by database.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Aspect</th><th>Stored Procedure</th><th>Function</th></tr>
+<tr><td>Return</td><td>Zero or more OUT params / result sets; return optional</td><td>Must return a value (scalar or table)</td></tr>
+<tr><td>Usage in SQL</td><td>Called standalone (CALL / EXEC)</td><td>Callable in SELECT, WHERE, etc.</td></tr>
+<tr><td>Transactions</td><td>Can usually COMMIT/ROLLBACK</td><td>Typically restricted (no transaction control, limited DML)</td></tr>
+<tr><td>Side effects</td><td>Expected (INSERT/UPDATE/DDL)</td><td>Should be side-effect free (enforced in SQL Server)</td></tr>
+</table>
+
+<h3>Pros and Cons of Procedures</h3>
+<ul>
+<li>Pros: fewer network round trips, precompiled plans, centralized logic, permission control.</li>
+<li>Cons: harder to version, test and debug; logic split between app and DB; vendor lock-in.</li>
+</ul>
+
+<h3>Example (Java call)</h3>
+
+```java
+try (CallableStatement cs = conn.prepareCall("{call transfer_funds(?, ?, ?)}")) {
+    cs.setLong(1, fromId);
+    cs.setLong(2, toId);
+    cs.setBigDecimal(3, amount);
+    cs.execute();
+}
+```
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 12. Explain normalization and why it matters
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Normalization organizes tables to remove redundancy and prevent update, insert and delete anomalies. Each fact is stored once, and tables are linked by keys.</p>
+
+<h3>Normal Forms</h3>
+<table>
+<tr><th>Form</th><th>Rule</th></tr>
+<tr><td>1NF</td><td>Atomic values, no repeating groups or comma-separated lists</td></tr>
+<tr><td>2NF</td><td>1NF + no partial dependency on part of a composite key</td></tr>
+<tr><td>3NF</td><td>2NF + no transitive dependency (non-key columns depend only on the key)</td></tr>
+<tr><td>BCNF</td><td>Every determinant is a candidate key (stricter 3NF)</td></tr>
+</table>
+
+<h3>Why It Matters</h3>
+<ul>
+<li><strong>Consistency:</strong> change a customer's address in one place.</li>
+<li><strong>Less storage</strong> and smaller rows.</li>
+<li><strong>Cleaner constraints</strong> and integrity.</li>
+<li><strong>Cost:</strong> more joins, so reads can be slower.</li>
+</ul>
+
+<h3>Example</h3>
+<p>Instead of storing <code>customer_name</code> and <code>customer_city</code> on every order row, keep a <code>customers</code> table and store only <code>customer_id</code> in <code>orders</code>.</p>
+
+<h3>When to Use</h3>
+<p>Aim for 3NF in transactional (OLTP) systems, then denormalize deliberately where measured read performance requires it.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 13. When would you denormalize a database?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Denormalize when joins have become a measured bottleneck on read-heavy paths and the extra redundancy is acceptable. It trades write complexity and consistency risk for read speed.</p>
+
+<h3>Common Techniques</h3>
+<ul>
+<li>Copy a frequently read column into another table (e.g., <code>customer_name</code> on orders).</li>
+<li>Store precomputed aggregates (order totals, counters).</li>
+<li>Materialized views or summary tables for reporting.</li>
+<li>Embed related data in documents (NoSQL).</li>
+</ul>
+
+<h3>Costs</h3>
+<ul>
+<li>Updates must change several places (use transactions, triggers, or async jobs).</li>
+<li>Risk of inconsistent data; more storage.</li>
+</ul>
+
+<h3>Good Candidates</h3>
+<ul>
+<li>Reporting / analytics and data warehouses (star schema).</li>
+<li>Read models in CQRS.</li>
+<li>Historical snapshots, e.g. keep the price and address at the time of an order, which is correct as well as fast.</li>
+</ul>
+
+<h3>Gotcha</h3>
+<p>Profile first: often a missing index or a bad query is the real problem, and caching may be a cheaper fix.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 14. What's the difference between clustering and non-clustering indexes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A <strong>clustered</strong> index defines the physical order of the table rows (the table is the index leaf level). A <strong>non-clustered</strong> (secondary) index is a separate structure whose leaves hold the key plus a pointer to the row.</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Aspect</th><th>Clustered</th><th>Non-clustered</th></tr>
+<tr><td>Per table</td><td>Only one</td><td>Many</td></tr>
+<tr><td>Leaf contents</td><td>The actual row data</td><td>Key + row locator (clustered key or row ID)</td></tr>
+<tr><td>Range scans on key</td><td>Very fast (rows adjacent)</td><td>Needs lookups unless covering</td></tr>
+<tr><td>Write cost</td><td>Inserts in the middle can split pages</td><td>Every index adds write overhead</td></tr>
+</table>
+
+<h3>Notes</h3>
+<ul>
+<li>InnoDB: the primary key is the clustered index; secondary indexes store the primary key value, so a wide PK bloats all indexes.</li>
+<li>SQL Server: you choose the clustered index (default is the PK). PostgreSQL tables are heaps; <code>CLUSTER</code> reorders once and is not maintained.</li>
+<li>A <strong>covering index</strong> (includes all queried columns) avoids the extra lookup.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
+## 15. Would you choose SQL or NoSQL for a payments (financial transaction) system, and why?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Default to a relational (SQL) database for the core ledger and payments: they need ACID transactions, strong consistency, constraints and auditability.</p>
+
+<h3>Why SQL</h3>
+<ul>
+<li>Multi-row atomic transfers (debit and credit succeed together).</li>
+<li>Strong isolation and constraints (unique idempotency keys, foreign keys, CHECK rules).</li>
+<li>Mature tooling for reporting, reconciliation, backups and audit.</li>
+</ul>
+
+<h3>Where NoSQL Fits</h3>
+<ul>
+<li>Caches, sessions, rate counters (Redis).</li>
+<li>Event/audit logs and high-volume read models (document or wide-column stores).</li>
+<li>Search and analytics projections.</li>
+</ul>
+
+<h3>Nuance</h3>
+<ul>
+<li>Some NoSQL stores now offer multi-document transactions, but you give up joins and ad-hoc querying; weigh operational maturity.</li>
+<li>Scale a SQL store first with indexes, read replicas and partitioning before changing the data model.</li>
+<li>Typical answer: SQL as the system of record, NoSQL as a supporting store (polyglot persistence).</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/scaling/">Learn more: Scaling & NoSQL</a></p>
+
+</details>
+
+---
+
+## 16. Which data type would you use in Oracle to store a JSON document?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Oracle 21c and later has a native <strong>JSON</strong> data type (binary storage). On earlier releases (12c+), store JSON in <strong>VARCHAR2</strong>, <strong>CLOB</strong> or <strong>BLOB</strong> with an <code>IS JSON</code> check constraint.</p>
+
+<h3>Choosing the Column Type (pre-21c)</h3>
+<ul>
+<li><strong>VARCHAR2:</strong> small documents (4000 bytes, or 32767 with extended data types).</li>
+<li><strong>CLOB:</strong> large text documents.</li>
+<li><strong>BLOB:</strong> binary storage, generally recommended by Oracle for large JSON because it avoids character-set conversion.</li>
+</ul>
+
+<h3>Example</h3>
+
+```sql
+CREATE TABLE events (
+    id      NUMBER PRIMARY KEY,
+    payload CLOB CHECK (payload IS JSON)
+);
+
+SELECT JSON_VALUE(payload, '$.customer.id') FROM events;
+-- Index a field:
+CREATE INDEX ev_cust_ix ON events (JSON_VALUE(payload, '$.customer.id'));
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Always add the <code>IS JSON</code> constraint to validate on write.</li>
+<li>Query with <code>JSON_VALUE</code>, <code>JSON_QUERY</code>, <code>JSON_TABLE</code>; index frequently filtered paths.</li>
+<li>Do not store everything as JSON: keep relational columns for fields you join, filter and constrain on. (PostgreSQL equivalent: <code>JSONB</code>.)</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/databases/sql/">Learn more: SQL & Relational Databases</a></p>
+
+</details>
+
+---
+
 **See also:** [SQL & Relational Databases](../../databases/sql.md), [Interview Preparation](../index.md)

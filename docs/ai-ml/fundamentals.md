@@ -329,3 +329,5 @@ City: New York → [1,0,0], LA → [0,1,0], Chicago → [0,0,1] (One-Hot)
 ---
 
 **See also:** [ML Algorithms](algorithms.md), [Deep Learning](deep-learning.md), [LLMs & Transformers](llms-transformers.md)
+
+**Practice questions:** [Machine Learning & AI](../interview-questions/verbal/verbal-ml-ai-questions.md)

@@ -316,3 +316,5 @@ public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
     // ...
 }
 ```
+
+**Practice questions:** [Security](../interview-questions/verbal/verbal-security-questions.md), [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

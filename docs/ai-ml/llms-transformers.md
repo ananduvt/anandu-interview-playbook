@@ -364,3 +364,5 @@ Token limits: GPT-4 = 128k tokens (~100k words)
 ---
 
 **See also:** [ML Fundamentals](fundamentals.md), [Deep Learning](deep-learning.md), [RAG & Generative AI](rag-generative.md)
+
+**Practice questions:** [Machine Learning & AI](../interview-questions/verbal/verbal-ml-ai-questions.md)

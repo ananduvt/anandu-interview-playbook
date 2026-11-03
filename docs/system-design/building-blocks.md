@@ -39,3 +39,5 @@ Unique IDs at scale: UUID, **Snowflake** (timestamp + machine + sequence), DB se
 ## Idempotency & retries
 Idempotency keys make retries safe; combine with timeouts, backoff, and circuit breakers
 (see [Scalability & Resilience](scalability-resilience.md)).
+
+**Practice questions:** [System Design Case Studies](../interview-questions/verbal/verbal-architecture-system-design-cases-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [Security](../interview-questions/verbal/verbal-security-questions.md)

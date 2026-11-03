@@ -370,3 +370,4 @@ spring:
 
 Activate: `java -jar app.jar --spring.profiles.active=prod`
 
+**Practice questions:** [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [Spring Data & JPA](../interview-questions/verbal/verbal-spring-data-jpa-questions.md), [Spring Web & MVC](../interview-questions/verbal/verbal-spring-web-mvc-questions.md)

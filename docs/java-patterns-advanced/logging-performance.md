@@ -117,3 +117,5 @@ public void deleteUser(Long id) {
   ```bash
   jstat -gc -h10 <pid> 1s  # GC every 1 second
   ```
+
+**Practice questions:** [Application Architecture and Maintainability](../interview-questions/verbal/verbal-architecture-layered-clean-questions.md), [Database Performance](../interview-questions/verbal/verbal-db-performance-questions.md), [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md), [Security](../interview-questions/verbal/verbal-security-questions.md), [System Design](../interview-questions/verbal/verbal-system-design-questions.md)

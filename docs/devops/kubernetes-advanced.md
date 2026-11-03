@@ -755,3 +755,4 @@ spec:
 
 **See also:** [Kubernetes Fundamentals](kubernetes.md), [Kubernetes Deployment Strategies](kubernetes-deployment-strategies.md), [DevOps Observability](observability.md)
 
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

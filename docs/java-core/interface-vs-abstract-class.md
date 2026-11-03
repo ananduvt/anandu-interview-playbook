@@ -453,3 +453,5 @@ public class UserRepository implements Repository<User> {
 ---
 
 **See also:** [OOP Concepts](oop.md), [Design Patterns](../java-patterns-advanced/design-patterns.md)
+
+**Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md)

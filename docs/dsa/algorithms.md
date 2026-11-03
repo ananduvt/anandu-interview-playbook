@@ -48,3 +48,5 @@ Java `Arrays.sort` = dual-pivot quicksort (primitives) / Timsort (objects, stabl
 
 ## Interview process
 Clarify → example → brute force + Big-O → optimize → clean code → test edges → state complexity.
+
+**Practice questions:** [Java Collections and Streams](../interview-questions/verbal/verbal-java-collections-streams-questions.md)

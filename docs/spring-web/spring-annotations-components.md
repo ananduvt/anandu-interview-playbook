@@ -590,3 +590,5 @@ public class UserController {
 ---
 
 **See also:** [Spring Boot Fundamentals](spring-boot.md), [Spring Boot Advanced](spring-boot-advanced.md)
+
+**Practice questions:** [Spring Core, DI & AOP](../interview-questions/verbal/verbal-spring-core-di-questions.md), [Application Architecture and Maintainability](../interview-questions/verbal/verbal-architecture-layered-clean-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [Spring Web & MVC](../interview-questions/verbal/verbal-spring-web-mvc-questions.md)

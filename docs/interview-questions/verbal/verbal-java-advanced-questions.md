@@ -587,4 +587,147 @@ System.out.println(coffee.cost());         // 2.7
 
 ---
 
+## 9. How do you diagnose and solve an OutOfMemoryError?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>First read the message after <code>OutOfMemoryError</code> to learn which area is exhausted, capture a heap dump, find what is retaining memory, and fix the root cause (leak or sizing). Raising <code>-Xmx</code> is a stopgap, not a fix, unless the workload truly needs more.</p>
+
+<h3>Why / Context</h3>
+<table>
+<tr><th>Message</th><th>Meaning</th><th>Typical fix</th></tr>
+<tr><td>Java heap space</td><td>Heap full of live objects</td><td>Fix leak, reduce data held, raise <code>-Xmx</code></td></tr>
+<tr><td>GC overhead limit exceeded</td><td>GC spending nearly all time reclaiming almost nothing</td><td>Same as heap space</td></tr>
+<tr><td>Metaspace</td><td>Too many loaded classes (often classloader leaks, redeploys)</td><td>Fix classloader leak; <code>-XX:MaxMetaspaceSize</code></td></tr>
+<tr><td>unable to create native thread</td><td>OS thread/native memory limit</td><td>Smaller thread pools, smaller <code>-Xss</code>, virtual threads</td></tr>
+<tr><td>Direct buffer memory</td><td>Off-heap NIO buffers</td><td>Release buffers, <code>-XX:MaxDirectMemorySize</code></td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+# Dump automatically when the error occurs
+java -Xms512m -Xmx2g -XX:+HeapDumpOnOutOfMemoryError \
+     -XX:HeapDumpPath=/var/dumps/ -jar app.jar
+
+# Dump a running process
+jmap -dump:live,format=b,file=heap.hprof <pid>
+```
+
+<ul>
+<li>Open the dump in Eclipse MAT or VisualVM; check the dominator tree and "path to GC roots" for the biggest retainers.</li>
+<li>Typical culprits: unbounded caches or static collections, unclosed resources, large result sets loaded into memory, ThreadLocals in pools, huge request bodies.</li>
+<li>In containers set <code>-XX:MaxRAMPercentage</code> so the heap respects the memory limit; otherwise the OS kills the process (OOMKilled), which is not a Java OOME.</li>
+</ul>
+
+<h3>When to Use</h3>
+<ul>
+<li>Resize the heap only after confirming memory is genuinely needed; set <code>-Xms</code> equal to <code>-Xmx</code> on servers to avoid resizing pauses.</li>
+<li>Prefer streaming/pagination, bounded caches (size or TTL), and fewer retained objects.</li>
+<li>Use GC logs (<code>-Xlog:gc*</code>) to see whether memory grows steadily (leak) or spikes (burst load).</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-core/jvm-internals/">Learn more: JVM Internals</a></p>
+
+</details>
+
+---
+
+## 10. Explain Java's memory management model: heap, stack, garbage collection, and optimization
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Each thread has its own stack (frames with locals and references); all objects live on the shared heap, which the garbage collector reclaims automatically. Class metadata lives in Metaspace (native memory).</p>
+
+<h3>Comparison Table</h3>
+<table>
+<tr><th>Area</th><th>Holds</th><th>Scope</th><th>Failure</th></tr>
+<tr><td>Stack</td><td>Frames, primitives, references</td><td>Per thread, freed on method return</td><td>StackOverflowError</td></tr>
+<tr><td>Heap</td><td>Objects, arrays, String pool</td><td>Shared; young and old generations</td><td>OutOfMemoryError: heap</td></tr>
+<tr><td>Metaspace</td><td>Class metadata (replaced PermGen in Java 8)</td><td>Shared, native memory</td><td>OutOfMemoryError: Metaspace</td></tr>
+</table>
+
+<h3>Why / Context</h3>
+<ul>
+<li><strong>Generational GC:</strong> most objects die young, so new objects go to Eden, survivors move between survivor spaces, and long-lived ones are promoted to the old generation. Minor GCs are cheap; full GCs are expensive.</li>
+<li><strong>Collectors:</strong> G1 (default since Java 9), ZGC and Shenandoah (low pause), Parallel (throughput), Serial (small heaps).</li>
+<li>An object is eligible for GC when it is unreachable from GC roots (thread stacks, statics, JNI refs); reference counting is not used.</li>
+</ul>
+
+<h3>Example / Real-World Use</h3>
+
+```bash
+java -Xms4g -Xmx4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Xlog:gc*:file=gc.log -jar app.jar
+```
+
+<ul>
+<li>Optimization: reduce allocation rate (avoid needless boxing and temporary objects), reuse expensive objects (pools for connections and threads, not for cheap objects since modern allocation is fast), size generations only after measuring.</li>
+<li>Use weak or soft references for caches; always bound caches.</li>
+<li>Escape analysis may allocate short-lived objects on the stack or eliminate them entirely.</li>
+</ul>
+
+<h3>When to Use</h3>
+<ul>
+<li>Latency-sensitive services: G1 or ZGC with a pause target; batch jobs: Parallel GC.</li>
+<li>Tune from GC logs and profiling, not guesses. Default settings are good for most applications.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-core/jvm-internals/">Learn more: JVM Internals</a></p>
+
+</details>
+
+---
+
+## 11. What causes a memory leak in Java?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Despite garbage collection, a leak occurs when objects are no longer needed but remain reachable from a GC root, so they can never be collected. Heap usage keeps growing until <code>OutOfMemoryError</code>.</p>
+
+<h3>Why / Context</h3>
+<table>
+<tr><th>Cause</th><th>Why it leaks</th><th>Fix</th></tr>
+<tr><td>Static or long-lived collections</td><td>Entries added, never removed (caches, registries)</td><td>Bounded cache with eviction (size/TTL), remove on lifecycle end</td></tr>
+<tr><td>Unclosed resources</td><td>Streams, connections, and statements hold native and heap memory</td><td>try-with-resources</td></tr>
+<tr><td>Listeners and callbacks</td><td>Registered but never deregistered</td><td>Unregister, use weak references</td></tr>
+<tr><td>ThreadLocal in thread pools</td><td>Pool threads live forever, so values never go away</td><td><code>remove()</code> in a finally block</td></tr>
+<tr><td>Bad equals/hashCode or mutated keys</td><td>Entries in HashMap/HashSet cannot be found or removed</td><td>Immutable keys, correct contract</td></tr>
+<tr><td>Inner classes and lambdas</td><td>Hold an implicit reference to the outer instance</td><td>Use static nested classes where possible</td></tr>
+<tr><td>Classloader leaks</td><td>Redeployed apps keep old classes (Metaspace growth)</td><td>Clean up threads, drivers, ThreadLocals on undeploy</td></tr>
+</table>
+
+<h3>Example / Real-World Use</h3>
+
+```java
+class Registry {
+    private static final Map<String, Session> SESSIONS = new HashMap<>(); // grows forever
+
+    static void open(String id, Session s) { SESSIONS.put(id, s); }
+    // missing: remove(id) on logout/expiry
+}
+```
+
+<ul>
+<li>Detect: heap usage after full GC trends upward (GC logs, JMX), then compare two heap dumps in MAT or use JFR's old-object sample.</li>
+</ul>
+
+<h3>When to Use</h3>
+<ul>
+<li>Design caches with a maximum size and expiry (for example Caffeine) instead of raw maps.</li>
+<li>Prefer <code>WeakHashMap</code> only when entries should vanish once keys are unreferenced elsewhere.</li>
+<li>Do not blame GC first: most "leaks" are application-held references.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/java-core/jvm-internals/">Learn more: JVM Internals</a></p>
+
+</details>
+
+---
+
 **See also:** [Design Patterns](../../java-patterns-advanced/design-patterns.md), [Concurrency](../../java-collections-concurrency/concurrency.md), [Interview Preparation](../index.md)

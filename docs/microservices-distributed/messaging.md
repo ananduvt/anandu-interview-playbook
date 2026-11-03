@@ -404,3 +404,5 @@ public class KafkaConsumerConfig {
 - **Retention policies?** By time (days), size (bytes), or log compaction (keep latest per key)
 - **When to use Kafka?** High-throughput event streaming, multiple consumers (replay), long retention
 - **When NOT to use?** Complex routing, low latency requirements, RabbitMQ/NATS might be simpler
+
+**Practice questions:** [Kafka & Messaging](../interview-questions/verbal/verbal-kafka-messaging-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md)

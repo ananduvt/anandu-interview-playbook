@@ -287,3 +287,5 @@ Benefits: Faster training, allows higher learning rates, regularization effect
 ---
 
 **See also:** [ML Fundamentals](fundamentals.md), [ML Algorithms](algorithms.md), [LLMs & Transformers](llms-transformers.md)
+
+**Practice questions:** [Machine Learning & AI](../interview-questions/verbal/verbal-ml-ai-questions.md)

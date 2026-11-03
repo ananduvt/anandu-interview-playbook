@@ -768,4 +768,480 @@ Read:   Update materialized views
 
 ---
 
+## 9. What is event-driven microservice architecture?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Services communicate by publishing <strong>events</strong> (facts that already happened, e.g. <code>OrderPlaced</code>) to a broker such as Kafka or RabbitMQ. Interested services subscribe and react on their own, so the publisher does not know or wait for its consumers.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li><strong>Loose coupling:</strong> add a new consumer without changing the producer.</li>
+<li><strong>Resilience:</strong> the broker buffers events while a consumer is down.</li>
+<li><strong>Scalability:</strong> consumers scale independently (consumer groups).</li>
+<li><strong>Cost:</strong> eventual consistency, harder debugging, duplicate and out-of-order delivery.</li>
+</ul>
+
+<h3>Key Building Blocks</h3>
+<ul>
+<li><strong>Event notification:</strong> small event, consumers call back for details.</li>
+<li><strong>Event-carried state transfer:</strong> event holds the data, consumers keep local copies.</li>
+<li><strong>Event sourcing + CQRS:</strong> store events as the source of truth, build read models from them.</li>
+<li><strong>Transactional outbox:</strong> write the event to an outbox table in the same DB transaction as the state change, then relay it. This avoids the dual-write problem (DB commit succeeds, publish fails).</li>
+<li><strong>Idempotent consumers:</strong> delivery is usually at-least-once, so dedupe by event ID.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+// Producer: Order Service
+kafkaTemplate.send("orders.placed", order.getId(), new OrderPlaced(order.getId(), order.getTotal()));
+
+// Consumer: Inventory Service (independent deployment)
+@KafkaListener(topics = "orders.placed", groupId = "inventory")
+public void on(OrderPlaced e) { inventory.reserve(e.orderId()); }
+```
+
+<h3>When to Use</h3>
+<p>Use it for workflows spanning many services, fan-out notifications and audit trails. Prefer synchronous calls when the caller needs an immediate answer. Follow-up: how do you handle failures? Use retries, a dead letter topic and a saga for compensation.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/messaging/">Learn more: Messaging & Kafka</a></p>
+
+</details>
+
+---
+
+## 10. What is a bounded context in microservices?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A bounded context is a Domain-Driven Design concept: an explicit boundary inside which a domain model and its vocabulary have one consistent meaning. The same word can mean different things in different contexts.</p>
+
+<h3>Why / Context</h3>
+<ul>
+<li>"Customer" in Sales (leads, discounts) is not "Customer" in Billing (invoices, tax ID) or Shipping (address).</li>
+<li>Forcing one shared model across the company creates a big ball of mud and tight coupling.</li>
+<li>Each bounded context gets its own model, and often its own database and team. That makes it a natural microservice boundary.</li>
+</ul>
+
+<h3>How Contexts Relate</h3>
+<table>
+<tr><th>Pattern</th><th>Meaning</th></tr>
+<tr><td>Anti-corruption layer</td><td>Translates another context's model so it does not leak into yours</td></tr>
+<tr><td>Published language / events</td><td>Shared, versioned contract between contexts</td></tr>
+<tr><td>Shared kernel</td><td>Small model owned jointly (use sparingly, it couples teams)</td></tr>
+<tr><td>Context map</td><td>Diagram of contexts and their relationships</td></tr>
+</table>
+
+<h3>Example</h3>
+<p>Ordering owns <code>Order</code> and <code>OrderLine</code>. Payment holds only <code>orderId</code> and <code>amount</code>. They exchange <code>OrderPlaced</code> and <code>PaymentCompleted</code> events and never share tables.</p>
+
+<h3>Gotchas</h3>
+<ul>
+<li>A bounded context is not always one microservice: one context can contain a few services, but one service should not span contexts.</li>
+<li>Find boundaries with event storming and by watching where terminology changes.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Principles</a></p>
+
+</details>
+
+---
+
+## 11. How do you define service boundaries?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Split by <strong>business capability / bounded context</strong>, not by technical layer. A good boundary gives high cohesion inside the service, low coupling between services, and lets one team own and deploy it independently.</p>
+
+<h3>Heuristics</h3>
+<ul>
+<li><strong>Business capability:</strong> Orders, Payments, Catalog, not "DAO service" or "UI service".</li>
+<li><strong>Data ownership:</strong> each service owns its data. If two services constantly join the same tables, the boundary is wrong.</li>
+<li><strong>Change together, stay together:</strong> features that always change in the same release belong in one service.</li>
+<li><strong>Team ownership:</strong> one team per service (Conway's law).</li>
+<li><strong>Different scaling or availability needs</strong> can justify separating a component.</li>
+<li><strong>Transaction boundaries:</strong> if an operation needs a strong ACID guarantee, keep it inside one service.</li>
+</ul>
+
+<h3>Warning Signs of Bad Boundaries</h3>
+<ul>
+<li>Chatty synchronous calls between two services for every request.</li>
+<li>Lock-step deployments, where service A cannot release without B.</li>
+<li>A shared database or shared library holding domain logic.</li>
+<li>Distributed monolith: all the costs of microservices with none of the independence.</li>
+</ul>
+
+<h3>When to Use</h3>
+<p>Start with a well-structured modular monolith if the domain is unclear, then extract services along proven seams (strangler fig approach). Splitting too early is the common mistake, and wrong boundaries are costly to fix.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Principles</a></p>
+
+</details>
+
+---
+
+## 12. How do you handle configuration in microservices?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Externalize configuration from the build artifact (12-factor: config in the environment) so one immutable image runs in every environment. Use environment variables, Kubernetes ConfigMaps/Secrets, or a central config server such as Spring Cloud Config.</p>
+
+<h3>Options</h3>
+<table>
+<tr><th>Option</th><th>Strength</th><th>Weakness</th></tr>
+<tr><td>Env variables / ConfigMap</td><td>Simple, platform-native</td><td>Needs restart or rollout to change</td></tr>
+<tr><td>Spring Cloud Config (Git-backed)</td><td>Central, versioned, audited, per-profile</td><td>Extra component to run and secure</td></tr>
+<tr><td>Vault / cloud secret managers</td><td>Secrets, rotation, access control</td><td>Operational complexity</td></tr>
+</table>
+
+<h3>Example</h3>
+
+```yaml
+# client service application.yml
+spring:
+  application:
+    name: order-service
+  config:
+    import: "optional:configserver:http://config-server:8888"
+  profiles:
+    active: prod
+```
+
+<h3>Gotchas and Follow-ups</h3>
+<ul>
+<li>Never store secrets in Git in plain text. Use encryption or a secrets manager.</li>
+<li>Runtime refresh: <code>@RefreshScope</code> with <code>/actuator/refresh</code>, or Spring Cloud Bus to broadcast to all instances.</li>
+<li>The config server is a dependency: make it highly available and let clients fall back to local defaults or cached values.</li>
+<li>Feature flags are a separate concern from static config.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/spring-cloud/">Learn more: Spring Cloud & Microservices</a></p>
+
+</details>
+
+---
+
+## 13. What is service discovery and why do you need it?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Service discovery lets services find each other's current network locations at runtime through a <strong>service registry</strong>, instead of using fixed hosts and ports. It is needed because instances are dynamic: autoscaling, crashes and redeployments change IPs constantly.</p>
+
+<h3>How It Works</h3>
+<ul>
+<li><strong>Register:</strong> an instance registers its name and address on startup.</li>
+<li><strong>Heartbeat / health check:</strong> the registry removes instances that stop responding.</li>
+<li><strong>Lookup:</strong> callers resolve a logical name (<code>payment-service</code>) to healthy instances and load balance.</li>
+</ul>
+
+<h3>Client-Side vs Server-Side</h3>
+<table>
+<tr><th>Style</th><th>Who picks the instance</th><th>Example</th></tr>
+<tr><td>Client-side</td><td>Caller queries the registry and balances</td><td>Eureka + Spring Cloud LoadBalancer</td></tr>
+<tr><td>Server-side</td><td>A router or proxy does it</td><td>Kubernetes Service (DNS + kube-proxy), cloud load balancers</td></tr>
+</table>
+
+<h3>Tools</h3>
+<ul>
+<li><strong>Eureka:</strong> Netflix OSS, AP-leaning, client-side, common in Spring Cloud.</li>
+<li><strong>Consul:</strong> registry + health checks + KV store, DNS and HTTP APIs.</li>
+<li><strong>Kubernetes:</strong> built in via Services and DNS. No separate registry is needed on K8s.</li>
+</ul>
+
+<h3>Gotchas</h3>
+<p>The registry must be highly available. Clients should cache the registry data so a registry outage does not stop traffic. Stale entries can send calls to dead instances, so combine discovery with retries and circuit breakers.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/service-discovery/">Learn more: Service Discovery</a></p>
+
+</details>
+
+---
+
+## 14. How does service discovery work compared with hardcoded service URLs, including in containerized environments?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Hardcoded URLs bind a caller to one address, which breaks as soon as instances scale, move or restart. With discovery the caller uses a stable logical name and the platform resolves it to healthy instances at call time.</p>
+
+<h3>Comparison</h3>
+<table>
+<tr><th>Aspect</th><th>Hardcoded URL</th><th>Service discovery</th></tr>
+<tr><td>Scaling</td><td>Manual config per new instance</td><td>Automatic registration</td></tr>
+<tr><td>Failure handling</td><td>Calls keep hitting a dead host</td><td>Unhealthy instances removed</td></tr>
+<tr><td>Load balancing</td><td>External, manual</td><td>Built in</td></tr>
+<tr><td>Environments</td><td>URL differs per env</td><td>Same logical name everywhere</td></tr>
+<tr><td>Complexity</td><td>None</td><td>Registry or platform needed</td></tr>
+</table>
+
+<h3>In Containers and Kubernetes</h3>
+<p>Container IPs are ephemeral, so hardcoding is unworkable. Kubernetes gives each Service a stable virtual IP and DNS name that fronts the pod set, selected by labels and filtered by readiness probes.</p>
+
+```yaml
+# Caller config: stable DNS name, not an IP
+payment:
+  base-url: http://payment-service.shop.svc.cluster.local:8080
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Only <strong>ready</strong> pods receive traffic, so define a proper readiness probe.</li>
+<li>Client DNS or connection caching can keep stale endpoints. Use sane TTLs and connection pool eviction.</li>
+<li>A hardcoded URL pointing at a stable DNS name or gateway is fine. The problem is hardcoding instance addresses.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/service-discovery/">Learn more: Service Discovery</a></p>
+
+</details>
+
+---
+
+## 15. How do you use microservices patterns in system design?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Pick patterns that answer a specific problem in the design, rather than adding all of them. Name the problem, the pattern, and its trade-off.</p>
+
+<h3>Pattern Map</h3>
+<table>
+<tr><th>Problem</th><th>Pattern</th><th>Trade-off</th></tr>
+<tr><td>Many clients, many services</td><td>API Gateway (routing, auth, rate limit, aggregation)</td><td>Extra hop, can become a bottleneck or SPOF</td></tr>
+<tr><td>Cross-cutting network concerns (mTLS, retries, telemetry)</td><td>Service mesh (sidecar proxies)</td><td>Operational complexity, latency overhead</td></tr>
+<tr><td>Cross-service data consistency</td><td>Saga + transactional outbox</td><td>Eventual consistency, compensation logic</td></tr>
+<tr><td>Audit trail, replay, temporal queries</td><td>Event sourcing</td><td>Complex queries, event schema evolution</td></tr>
+<tr><td>Read and write loads differ</td><td>CQRS (separate read models)</td><td>Stale reads, more moving parts</td></tr>
+<tr><td>Cascading failures</td><td>Circuit breaker, bulkhead, timeouts</td><td>Needs tuning and fallbacks</td></tr>
+<tr><td>Migrating from a monolith</td><td>Strangler fig</td><td>Two systems run side by side for a while</td></tr>
+</table>
+
+<h3>How to Present It</h3>
+<ul>
+<li>Start from requirements (scale, latency, consistency), then add patterns.</li>
+<li>Each service owns its data (database per service). Services talk through sync APIs for queries and events for state changes.</li>
+<li>Put observability in from day one: correlation IDs, metrics, centralized logs.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Principles</a></p>
+
+</details>
+
+---
+
+## 16. How do you maintain unique identifiers across pods in microservices?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Do not rely on a single database auto-increment, because many instances create IDs concurrently. Use a distributed ID strategy that needs no coordination on each call: UUID, Snowflake-style IDs, or ID ranges.</p>
+
+<h3>Options</h3>
+<table>
+<tr><th>Approach</th><th>Pros</th><th>Cons</th></tr>
+<tr><td>UUID v4</td><td>No coordination, trivially unique</td><td>128-bit, random order hurts B-tree index locality</td></tr>
+<tr><td>UUID v7 / ULID</td><td>Time-ordered, index friendly</td><td>Larger than a long</td></tr>
+<tr><td>Snowflake (64-bit)</td><td>Compact, sortable, high throughput</td><td>Needs unique worker IDs, depends on clock</td></tr>
+<tr><td>DB sequence / ticket server</td><td>Simple, ordered</td><td>Bottleneck and SPOF, network hop</td></tr>
+<tr><td>Segment / range allocation</td><td>Few DB calls</td><td>Gaps, not strictly ordered across nodes</td></tr>
+</table>
+
+<h3>Snowflake Layout</h3>
+<p>Typically about 41 bits of timestamp, 10 bits of worker/machine ID and 12 bits of per-millisecond sequence (roughly 4096 IDs per ms per worker). Worker IDs can come from a StatefulSet ordinal, a registry like ZooKeeper or etcd, or config.</p>
+
+```java
+UUID id = UUID.randomUUID(); // v4, fine for most services
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Clock moving backwards can create duplicates in Snowflake. Detect it and wait or fail.</li>
+<li>Two pods with the same worker ID will collide.</li>
+<li>Do not use sequential public IDs if enumeration is a security concern.</li>
+<li>Time-ordered IDs make inserts faster than random UUIDs on clustered indexes.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/system-design/building-blocks/">Learn more: System Design Building Blocks</a></p>
+
+</details>
+
+---
+
+## 17. What challenges arise in microservices testing?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Services depend on each other, the network and shared infrastructure, so end-to-end tests become slow, flaky and hard to set up. The strategy is to push most confidence into fast, isolated tests and use contract tests to verify the integration points.</p>
+
+<h3>Challenges</h3>
+<ul>
+<li><strong>Service dependencies:</strong> running dozens of services for one test is costly.</li>
+<li><strong>Flaky E2E tests:</strong> network, timing, shared test data.</li>
+<li><strong>Integration drift:</strong> a provider changes its API and breaks consumers unnoticed.</li>
+<li><strong>Async flows:</strong> events and eventual consistency need polling or awaiting.</li>
+<li><strong>Environment parity</strong> and test data management.</li>
+</ul>
+
+<h3>Test Layers</h3>
+<table>
+<tr><th>Layer</th><th>Scope</th><th>Tools</th></tr>
+<tr><td>Unit</td><td>Class or domain logic</td><td>JUnit 5, Mockito</td></tr>
+<tr><td>Component / integration</td><td>One service with real DB or broker</td><td>Spring Boot Test, Testcontainers, WireMock</td></tr>
+<tr><td>Contract</td><td>Consumer and provider agree on API or event schema</td><td>Pact, Spring Cloud Contract</td></tr>
+<tr><td>E2E</td><td>A few critical user journeys</td><td>Deployed staging environment</td></tr>
+</table>
+
+<h3>Contract Testing</h3>
+<p>The consumer publishes the requests and responses it expects. The provider build verifies them, so breaking changes fail in CI without deploying both services together.</p>
+
+<h3>Tips</h3>
+<ul>
+<li>Follow the test pyramid: many unit tests, some component and contract tests, few E2E tests.</li>
+<li>Use Testcontainers for real databases and Kafka instead of mocks that drift.</li>
+<li>In production, rely on canary releases, feature flags and observability as a safety net.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/foundations/testing/">Learn more: Testing / QA</a></p>
+
+</details>
+
+---
+
+## 18. How do you monitor and trace requests across services?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Use the three pillars together: <strong>metrics</strong> (what is wrong), <strong>logs</strong> (details) and <strong>distributed traces</strong> (where in the call chain). A trace ID is generated at the edge and propagated through every call so one request can be followed across services.</p>
+
+<h3>How Tracing Works</h3>
+<ul>
+<li>A <strong>trace</strong> is the whole request. A <strong>span</strong> is one unit of work (an HTTP call, a DB query).</li>
+<li>The trace ID travels in headers, such as W3C <code>traceparent</code>, and in Kafka message headers for async hops.</li>
+<li>Put the trace ID in every log line (MDC) so you can pivot from a trace to the logs.</li>
+</ul>
+
+<h3>Typical Stack</h3>
+<table>
+<tr><th>Concern</th><th>Tooling</th></tr>
+<tr><td>Instrumentation</td><td>Micrometer Tracing (Spring Boot 3), OpenTelemetry</td></tr>
+<tr><td>Trace backend</td><td>Zipkin, Jaeger, Tempo</td></tr>
+<tr><td>Metrics</td><td>Micrometer with Prometheus and Grafana</td></tr>
+<tr><td>Logs</td><td>ELK or Loki with centralized, structured JSON logs</td></tr>
+<tr><td>Health</td><td>Actuator health, liveness and readiness probes</td></tr>
+</table>
+
+<h3>What to Watch</h3>
+<ul>
+<li>RED metrics per service: Rate, Errors, Duration (use p95 and p99, not averages).</li>
+<li>Saturation: thread pools, connection pools, queue depth, consumer lag.</li>
+<li>Alert on SLOs and symptoms, not on every metric.</li>
+</ul>
+
+<h3>Gotchas</h3>
+<p>Sampling reduces cost but can drop the one trace you need, so consider tail-based sampling. Context propagation breaks across thread pools and async boundaries unless instrumented.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/devops/observability/">Learn more: Observability</a></p>
+
+</details>
+
+---
+
+## 19. How do you wrap legacy SOAP services with a REST API and aggregate or transform their data?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Build a thin <strong>adapter (facade) service</strong>, also called an anti-corruption layer, that exposes a clean REST/JSON API. Internally it calls the SOAP service through a generated client and maps the SOAP model to your own domain DTOs, so legacy structures do not leak out.</p>
+
+<h3>Steps</h3>
+<ul>
+<li>Generate a client from the WSDL (JAX-WS <code>wsimport</code>, Apache CXF, or Spring Web Services <code>WebServiceTemplate</code>).</li>
+<li>Define REST resources and DTOs around consumer needs, not the SOAP schema.</li>
+<li>Map with MapStruct or manual mappers (dates, enums, nulls, SOAP faults to HTTP status codes).</li>
+<li>Aggregate: call several SOAP operations or other services (in parallel where independent) and compose one response.</li>
+<li>Add resilience: timeouts, retries for idempotent calls, circuit breaker, caching of slow-changing data.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+@GetMapping("/customers/{id}")
+public CustomerDto get(@PathVariable String id) {
+    GetCustomerResponse r = soapClient.getCustomer(new GetCustomerRequest(id)); // generated client
+    return mapper.toDto(r.getCustomer());   // legacy model stays behind the adapter
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>SOAP calls are often slow: set short timeouts and use a bulkhead so they cannot exhaust your threads.</li>
+<li>Translate SOAP faults to meaningful HTTP errors (4xx vs 502/503).</li>
+<li>Handle WS-Security and large XML payloads (use streaming if needed).</li>
+<li>Use the strangler fig approach to retire the legacy service gradually.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/web-services/">Learn more: Web Services (SOAP vs REST)</a></p>
+
+</details>
+
+---
+
+## 20. What is a Two-Phase Commit (2PC) in distributed systems?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>2PC is an atomic commit protocol where a <strong>coordinator</strong> makes all participants (databases or services) either commit or abort a distributed transaction together.</p>
+
+<h3>The Two Phases</h3>
+<ul>
+<li><strong>Phase 1, prepare (voting):</strong> the coordinator asks each participant to prepare. Each one locks resources, writes to its log and votes yes or no.</li>
+<li><strong>Phase 2, commit or abort:</strong> if all voted yes, the coordinator tells everyone to commit. Any no (or timeout) means abort for everyone.</li>
+</ul>
+
+<h3>Problems</h3>
+<ul>
+<li><strong>Blocking:</strong> if the coordinator crashes after prepare, participants hold locks until it recovers.</li>
+<li><strong>Latency and low throughput:</strong> locks are held across network round trips.</li>
+<li><strong>Availability:</strong> every participant must be up (CAP trade-off favors consistency).</li>
+<li>Not supported by many NoSQL stores, message brokers and REST services.</li>
+</ul>
+
+<h3>2PC vs Saga</h3>
+<table>
+<tr><th>Aspect</th><th>2PC</th><th>Saga</th></tr>
+<tr><td>Consistency</td><td>Strong (atomic)</td><td>Eventual</td></tr>
+<tr><td>Locking</td><td>Held during the protocol</td><td>No cross-service locks</td></tr>
+<tr><td>Failure handling</td><td>Rollback by protocol</td><td>Compensating transactions</td></tr>
+<tr><td>Fit</td><td>Few DBs in one trust domain (XA/JTA)</td><td>Microservices</td></tr>
+</table>
+
+<h3>When to Use</h3>
+<p>Occasionally for a small number of XA-capable resources in one system. In microservices prefer sagas and the outbox pattern. A variant, 3PC, reduces blocking but is rarely used in practice.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Distributed Patterns</a></p>
+
+</details>
+
+---
+
 **See also:** [Microservices Principles](../../microservices-distributed/principles.md), [Messaging & Kafka](../../microservices-distributed/messaging.md), [Service Discovery](../../microservices-distributed/service-discovery.md), [Interview Preparation](../index.md)

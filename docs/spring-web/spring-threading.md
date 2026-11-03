@@ -488,3 +488,5 @@ public CompletableFuture<OrderConfirmation> processOrderResilient(Order order) {
 ---
 
 **See also:** [Threading Deep-Dive & Virtual Threads](../java-collections-concurrency/threading.md), [Spring Boot Advanced](spring-boot-advanced.md)
+
+**Practice questions:** [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

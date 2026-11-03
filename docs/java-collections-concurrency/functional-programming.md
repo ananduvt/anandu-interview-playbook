@@ -509,3 +509,5 @@ interface Good<T> {
 3. [Baeldung - Java BiFunction Interface](https://www.baeldung.com/java-bifunction-interface)
 
 **Related**: See [Streams](streams.md) for data processing with functional interfaces using Stream API.
+
+**Practice questions:** [Java Modern Features and Generics](../interview-questions/verbal/verbal-java-modern-questions.md), [Java Core](../interview-questions/verbal/verbal-java-core-questions.md)

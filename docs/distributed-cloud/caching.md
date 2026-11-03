@@ -485,3 +485,5 @@ public class UserService {
 | **Survives restart** | No | Yes |
 | **Serialization** | Not needed | Needed (JSON/binary) |
 | **Best for** | High-traffic local ops | Multi-instance, consistency-critical |
+
+**Practice questions:** [Spring Caching](../interview-questions/verbal/verbal-spring-caching-questions.md), [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md)

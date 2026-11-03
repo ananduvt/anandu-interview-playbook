@@ -397,3 +397,5 @@ Separates algorithms from object structures. Allows adding new operations withou
 [https://www.geeksforgeeks.org/dependency-injection-di-design-pattern/](https://www.geeksforgeeks.org/dependency-injection-di-design-pattern/)
 
 [https://medium.com/groupon-eng/dependency-injection-in-java-9e9438aa55ae](https://medium.com/groupon-eng/dependency-injection-in-java-9e9438aa55ae)
+
+**Practice questions:** [Design Patterns](../interview-questions/verbal/verbal-design-patterns-questions.md), [Design Principles and Applied Patterns](../interview-questions/verbal/verbal-design-patterns-principles-questions.md), [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md), [Application Architecture and Maintainability](../interview-questions/verbal/verbal-architecture-layered-clean-questions.md)

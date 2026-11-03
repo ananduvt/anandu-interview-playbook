@@ -738,3 +738,5 @@ VPC A (10.0.0.0/16) ←→ VPC B (10.1.0.0/16)
 ---
 
 ## EC2 – Instance Storage
+
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

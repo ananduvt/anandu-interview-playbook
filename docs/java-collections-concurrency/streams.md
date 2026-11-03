@@ -445,3 +445,5 @@ List<Integer> squares = numbers.stream()
 [https://medium.com/@javageeksociety/arrays-stream-vs-stream-of-in-java-8-be7d6b757e4e](https://medium.com/@javageeksociety/arrays-stream-vs-stream-of-in-java-8-be7d6b757e4e)
 
 **Related**: See [Functional Programming](functional-programming.md) for lambdas, method references, and functional interfaces used in Stream operations.
+
+**Practice questions:** [Java Collections and Streams](../interview-questions/verbal/verbal-java-collections-streams-questions.md)

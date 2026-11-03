@@ -464,3 +464,5 @@ kubectl rollout resume deployment/app
 ---
 
 **See also:** [Kubernetes Fundamentals](kubernetes.md), [DevOps Overview](index.md)
+
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

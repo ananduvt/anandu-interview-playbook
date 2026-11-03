@@ -67,3 +67,5 @@ This principle says a Class should not be fused with the tool it uses to execute
 It also says that both the Class and the interface should not know how the tool works. However, the tool needs to meet the specification of the interface.
 
 *Goal: This principle aims at reducing the dependency of a high-level Class on the low-level Class by introducing an interface.*
+
+**Practice questions:** [Design Principles and Applied Patterns](../interview-questions/verbal/verbal-design-patterns-principles-questions.md), [Application Architecture and Maintainability](../interview-questions/verbal/verbal-architecture-layered-clean-questions.md)

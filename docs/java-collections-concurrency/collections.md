@@ -338,3 +338,5 @@ Heap DS
 clob , blob
 Hashing
 tokenization
+
+**Practice questions:** [Java Collections and Streams](../interview-questions/verbal/verbal-java-collections-streams-questions.md), [Java Core](../interview-questions/verbal/verbal-java-core-questions.md), [Stream API Coding Problems](../interview-questions/coding/coding-stream-api-problems.md), [Coding Problems & Solutions](../interview-questions/coding/coding-problems.md)

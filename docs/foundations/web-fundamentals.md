@@ -292,3 +292,4 @@ All share same Trace ID
 
 **See also:** [REST API Best Practices](../spring-web/api-styles.md), [HTTP Security](../spring-web/security.md), [Web Services](../spring-web/web-services.md)
 
+**Practice questions:** [Distributed Architecture Patterns](../interview-questions/verbal/verbal-architecture-distributed-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

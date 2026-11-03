@@ -30,3 +30,5 @@ data → scale → resilience → trade-offs.
 ## Tips
 State assumptions and numbers out loud, justify each component, and call out trade-offs — the reasoning
 matters more than a "correct" answer.
+
+**Practice questions:** [System Design Case Studies](../interview-questions/verbal/verbal-architecture-system-design-cases-questions.md), [System Design: Issue Tracker](../interview-questions/verbal/verbal-system-design-issue-tracker-questions.md), [System Design](../interview-questions/verbal/verbal-system-design-questions.md)

@@ -437,3 +437,5 @@ public class ResilientPaymentClient {
 ---
 
 **See also:** [Spring Cloud Implementation](spring-cloud.md), [Microservices Principles](principles.md)
+
+**Practice questions:** [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md)

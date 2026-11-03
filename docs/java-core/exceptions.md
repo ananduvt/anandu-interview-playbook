@@ -271,3 +271,5 @@ For Spring-specific exception handling with `@ControllerAdvice` and global error
 ---
 
 **See also:** [Spring Exception Handling](../spring-web/spring-exceptions.md), [Java Core Basics](basics.md)
+
+**Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md)

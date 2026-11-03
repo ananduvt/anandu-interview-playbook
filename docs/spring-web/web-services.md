@@ -440,3 +440,5 @@ scope=read:users,write:posts
 ---
 
 **See also:** [Web Fundamentals - Security](../foundations/web-fundamentals.md), [Spring Security & RBAC](security.md), [JWT & OAuth2](jwt-oauth.md)
+
+**Practice questions:** [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md)

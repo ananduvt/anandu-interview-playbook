@@ -134,7 +134,7 @@ When splitting, add "See also" cross-references between the resulting files and 
 5. Check the size limits; split if needed.
 6. Make the follow-on updates in [Keep the Site Working](#keep-the-site-working) (nav, index pages, links).
 7. Link related interview questions to the new content (and vice versa).
-8. If the topic is tracked in `todo/queue/` (a `content-*.md` file), tick it there and note the page (`-> page`).
+8. If the topic is tracked in `todo/queue/` (a `content-*.md` file), remove its line from the queue file once the page is written.
 9. Run `mkdocs build --strict` and check the page renders correctly with `mkdocs serve`.
 
 ### Adding Interview Questions
@@ -143,7 +143,7 @@ When splitting, add "See also" cross-references between the resulting files and 
 3. **Append** new questions at the end with the next number. Don't renumber existing questions — other pages may link to them.
 4. Use the matching [question template](#interview-question-templates).
 5. Add a "📚 Learn more" link to the related learning page. If no learning page covers the concept, add the concept to that page (or add it to the matching `content-*.md` file in `todo/queue/`).
-6. If the question came from `todo/queue/`, tick it there and note where it went (`-> file#N`).
+6. If the question came from `todo/queue/`, remove its line from the queue file once published (or found to be a duplicate).
 
 ### Tracking Work: internal task list and `feedback.md`
 - [`todo/TASKS.md`](todo/TASKS.md) holds pending **action items**: fixes, refactors, splits, navigation changes. Tick items off when done.

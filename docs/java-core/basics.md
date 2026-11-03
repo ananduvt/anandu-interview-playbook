@@ -686,3 +686,5 @@ public class StudentEJB {
    }
 }
 ```
+
+**Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md), [Java Modern Features and Generics](../interview-questions/verbal/verbal-java-modern-questions.md), [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md), [Coding Problems & Solutions](../interview-questions/coding/coding-problems.md)

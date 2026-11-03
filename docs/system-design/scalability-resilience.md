@@ -508,3 +508,5 @@ Is your app slow?
       ├─ YES: Horizontal scale + load balancer
       └─ NO: Vertical scale sufficient
 ```
+
+**Practice questions:** [System Design Case Studies](../interview-questions/verbal/verbal-architecture-system-design-cases-questions.md), [Microservices Resilience](../interview-questions/verbal/verbal-microservices-resilience-questions.md), [System Design: Issue Tracker](../interview-questions/verbal/verbal-system-design-issue-tracker-questions.md), [System Design](../interview-questions/verbal/verbal-system-design-questions.md)

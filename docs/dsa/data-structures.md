@@ -30,3 +30,5 @@
 
 ## Choosing
 - Need order + range queries → TreeMap. Fast lookup → HashMap. FIFO → Queue. Top-k → Heap. Prefixes → Trie.
+
+**Practice questions:** [Coding Problems & Solutions](../interview-questions/coding/coding-problems.md)

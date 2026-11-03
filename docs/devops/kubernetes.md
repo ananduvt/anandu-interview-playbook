@@ -411,3 +411,5 @@ kubectl top pod                         # Pod resource usage
 ---
 
 **See also:** [Kubernetes Deployment Strategies](kubernetes-deployment-strategies.md), [DevOps Overview](index.md), [Docker & Containers](docker.md), [CI/CD](ci-cd.md)
+
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

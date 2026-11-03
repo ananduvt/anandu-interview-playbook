@@ -489,3 +489,5 @@ public class UserServiceIntegrationTest {
 - Don't verify details that shouldn't matter
 - Don't use real objects when mocks make sense
 - Don't forget to verify void method calls
+
+**Practice questions:** [Testing](../interview-questions/verbal/verbal-testing-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [System Design: Issue Tracker](../interview-questions/verbal/verbal-system-design-issue-tracker-questions.md)

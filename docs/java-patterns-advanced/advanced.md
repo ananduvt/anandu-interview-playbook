@@ -102,3 +102,5 @@ jstat -gc -h10 <pid> 1s
 - **equals/hashCode** contract; **immutability** as a design + concurrency tool.
 - **Serialization** — `Serializable`, `serialVersionUID`; prefer JSON for interop.
 - **Atomic reference**, `ThreadLocal`, **Cleaner** (replaces finalize).
+
+**Practice questions:** [Java Modern Features and Generics](../interview-questions/verbal/verbal-java-modern-questions.md)

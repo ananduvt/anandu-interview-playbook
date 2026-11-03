@@ -753,3 +753,5 @@ public void createUserAndGetId() {
     // ID is available immediately after save() for IDENTITY strategy
 }
 ```
+
+**Practice questions:** [Spring Data & JPA](../interview-questions/verbal/verbal-spring-data-jpa-questions.md), [Database Transactions and Concurrency](../interview-questions/verbal/verbal-db-transactions-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

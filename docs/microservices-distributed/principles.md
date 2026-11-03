@@ -451,3 +451,5 @@ spec:
 
 [https://www.geeksforgeeks.org/challenges-and-solutions-of-microservices-architecture/](https://www.geeksforgeeks.org/challenges-and-solutions-of-microservices-architecture/)
 [https://rathod-ajay.medium.com/top-20-java-spring-boot-microservice-developer-interview-questions-3-7-experience-afb67b2e0725](https://rathod-ajay.medium.com/top-20-java-spring-boot-microservice-developer-interview-questions-3-7-experience-afb67b2e0725)
+
+**Practice questions:** [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [Microservices Resilience](../interview-questions/verbal/verbal-microservices-resilience-questions.md), [Application Architecture and Maintainability](../interview-questions/verbal/verbal-architecture-layered-clean-questions.md)

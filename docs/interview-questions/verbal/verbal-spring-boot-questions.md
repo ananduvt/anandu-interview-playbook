@@ -974,4 +974,553 @@ public class OrderService {
 
 ---
 
+## 12. What happens when SpringApplication.run() is called?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><code>SpringApplication.run()</code> builds the environment, creates and refreshes the <code>ApplicationContext</code> (the IoC container), starts the embedded web server, and finally runs <code>CommandLineRunner</code>/<code>ApplicationRunner</code> beans before the app is "ready".</p>
+
+<h3>Startup Steps</h3>
+<ol>
+<li><strong>Bootstrap:</strong> create the <code>SpringApplication</code>, detect app type (servlet, reactive, none), load <code>ApplicationContextInitializer</code>s and listeners from <code>META-INF/spring</code>.</li>
+<li><strong>Environment:</strong> load <code>application.yml/properties</code>, env vars, command-line args, activate profiles.</li>
+<li><strong>Create context:</strong> e.g. <code>AnnotationConfigServletWebServerApplicationContext</code>; print banner.</li>
+<li><strong>Prepare:</strong> register the main class as a configuration source.</li>
+<li><strong>Refresh:</strong> component scan, process auto-configuration imports, register bean definitions, apply <code>BeanFactoryPostProcessor</code>s, instantiate singletons (running <code>BeanPostProcessor</code>s, <code>@PostConstruct</code>), start embedded Tomcat/Jetty/Netty.</li>
+<li><strong>After refresh:</strong> publish <code>ApplicationStartedEvent</code>, call runners, then <code>ApplicationReadyEvent</code> (AvailabilityState becomes ready).</li>
+</ol>
+
+<h3>Example: Code Running After Startup</h3>
+
+```java
+@Component
+public class CacheWarmer implements ApplicationRunner {
+    @Override
+    public void run(ApplicationArguments args) {
+        // runs once after the context is refreshed, before ApplicationReadyEvent
+    }
+}
+```
+
+<h3>Gotchas / Follow-ups</h3>
+<ul>
+<li>An exception in a runner fails the startup; keep them fast or move work to an <code>ApplicationReadyEvent</code> listener.</li>
+<li>Singletons are eager by default, so misconfigured beans fail at startup (fail fast), not on first request.</li>
+<li><code>spring.main.lazy-initialization=true</code> speeds startup but moves failures to runtime.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-advanced/">Learn more: Spring Boot Advanced</a></p>
+
+</details>
+
+---
+
+## 13. What is the purpose of @Scheduled in Spring Boot?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><code>@Scheduled</code> runs a method periodically (fixed rate, fixed delay, or cron). It needs <code>@EnableScheduling</code> on a configuration class, and the method must be <code>void</code> with no arguments.</p>
+
+<h3>Options</h3>
+<table>
+<tr><th>Attribute</th><th>Meaning</th></tr>
+<tr><td><code>fixedRate</code></td><td>Start every N ms regardless of previous run's duration</td></tr>
+<tr><td><code>fixedDelay</code></td><td>Wait N ms after the previous run finishes</td></tr>
+<tr><td><code>initialDelay</code></td><td>Delay before first execution</td></tr>
+<tr><td><code>cron</code></td><td>Six fields: second minute hour day month weekday; optional <code>zone</code></td></tr>
+</table>
+
+```java
+@Configuration
+@EnableScheduling
+class SchedulingConfig {}
+
+@Component
+class ReportJob {
+    @Scheduled(cron = "0 0 2 * * *", zone = "UTC")   // every day at 02:00 UTC
+    void nightlyReport() { /* ... */ }
+
+    @Scheduled(fixedDelayString = "${jobs.cleanup.delay-ms:60000}")
+    void cleanup() { /* ... */ }
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>The default scheduler has <strong>one thread</strong>, so a slow job delays others; set <code>spring.task.scheduling.pool.size</code>.</li>
+<li>In a cluster every instance runs the job. Use a distributed lock (e.g. ShedLock) or Quartz with a JDBC store to run it once.</li>
+<li>Exceptions are logged and the schedule continues; handle errors explicitly.</li>
+<li>Do not confuse with <code>@Async</code>: scheduling decides <em>when</em>, async decides <em>which thread</em>.</li>
+</ul>
+
+<h3>When to Use</h3>
+<p>Cleanup, report generation, polling, cache refresh. For durable, dynamic, or clustered jobs prefer Quartz or an external scheduler.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot/">Learn more: Spring Boot</a></p>
+
+</details>
+
+---
+
+## 14. What is the purpose of @Value and @Configuration?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><code>@Configuration</code> marks a class that declares beans via <code>@Bean</code> methods (Java-based config). <code>@Value</code> injects a single property or SpEL expression into a field, parameter, or constructor argument.</p>
+
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    public RestClient paymentClient(@Value("${payment.base-url}") String baseUrl) {
+        return RestClient.builder().baseUrl(baseUrl).build();
+    }
+}
+
+@Service
+class Mailer {
+    private final int retries;
+    Mailer(@Value("${mail.retries:3}") int retries) { this.retries = retries; } // default 3
+}
+```
+
+<h3>Key Points</h3>
+<ul>
+<li><code>${...}</code> is a property placeholder (supports defaults after <code>:</code>); <code>#{...}</code> is SpEL.</li>
+<li><code>@Configuration</code> classes are CGLIB-proxied, so calling one <code>@Bean</code> method from another returns the same singleton. With <code>proxyBeanMethods = false</code> (or <code>@Component</code>), you get plain method calls and a new instance each time.</li>
+<li>A missing placeholder without a default fails startup.</li>
+</ul>
+
+<h3>@Value vs @ConfigurationProperties</h3>
+<table>
+<tr><th></th><th>@Value</th><th>@ConfigurationProperties</th></tr>
+<tr><td>Best for</td><td>One or two values</td><td>Groups of related properties</td></tr>
+<tr><td>Binding</td><td>Exact key, SpEL allowed</td><td>Relaxed binding, nested objects, lists</td></tr>
+<tr><td>Validation</td><td>None built in</td><td>Works with <code>@Validated</code></td></tr>
+</table>
+
+<h3>When to Use</h3>
+<p>Prefer <code>@ConfigurationProperties</code> for structured config; keep <code>@Value</code> for simple cases. Never put secrets in plain property files.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot/">Learn more: Spring Boot</a></p>
+
+</details>
+
+---
+
+## 15. What are the commonly used Spring Boot annotations and their purposes?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p><code>@SpringBootApplication</code> bootstraps the app; stereotypes (<code>@Component</code>, <code>@Service</code>, <code>@Repository</code>, <code>@Controller</code>/<code>@RestController</code>) register beans; <code>@Autowired</code>, <code>@Value</code>, <code>@Bean</code> wire and configure them; web annotations map requests.</p>
+
+<table>
+<tr><th>Annotation</th><th>Purpose</th></tr>
+<tr><td><code>@SpringBootApplication</code></td><td>= <code>@Configuration</code> + <code>@EnableAutoConfiguration</code> + <code>@ComponentScan</code></td></tr>
+<tr><td><code>@Component</code></td><td>Generic managed bean</td></tr>
+<tr><td><code>@Service</code></td><td>Business logic (semantic marker)</td></tr>
+<tr><td><code>@Repository</code></td><td>Data access; enables persistence exception translation</td></tr>
+<tr><td><code>@RestController</code></td><td><code>@Controller</code> + <code>@ResponseBody</code>; returns JSON</td></tr>
+<tr><td><code>@RequestMapping</code>, <code>@GetMapping</code>, ...</td><td>Map HTTP requests to handlers</td></tr>
+<tr><td><code>@PathVariable</code>, <code>@RequestParam</code>, <code>@RequestBody</code></td><td>Bind request data</td></tr>
+<tr><td><code>@Bean</code> / <code>@Configuration</code></td><td>Declare beans in Java config</td></tr>
+<tr><td><code>@Value</code>, <code>@ConfigurationProperties</code></td><td>Externalised configuration</td></tr>
+<tr><td><code>@Transactional</code></td><td>Declarative transactions</td></tr>
+<tr><td><code>@ConditionalOnProperty</code>, <code>@Profile</code></td><td>Conditional bean registration</td></tr>
+<tr><td><code>@ControllerAdvice</code>, <code>@ExceptionHandler</code></td><td>Central exception handling</td></tr>
+</table>
+
+<h3>Follow-ups</h3>
+<ul>
+<li>Which annotation inside <code>@SpringBootApplication</code> triggers scanning? <code>@ComponentScan</code>, starting at the main class's package.</li>
+<li>Prefer constructor injection; <code>@Autowired</code> is optional on a single constructor.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-annotations-components/">Learn more: Spring Annotations & Components</a></p>
+
+</details>
+
+---
+
+## 16. What does @EnableAutoConfiguration do?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>It tells Spring Boot to register beans automatically based on what is on the classpath, existing beans, and properties. It imports the auto-configuration classes listed in <code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code> (Spring Boot 2.7+/3; earlier versions used <code>spring.factories</code>).</p>
+
+<h3>How It Works</h3>
+<ul>
+<li>Each auto-configuration class is guarded by conditions such as <code>@ConditionalOnClass</code>, <code>@ConditionalOnMissingBean</code>, <code>@ConditionalOnProperty</code>.</li>
+<li>Example: with <code>spring-boot-starter-web</code> on the classpath and no <code>DataSource</code> beans defined, Boot configures Tomcat and Spring MVC; with H2 plus JPA it configures an embedded <code>DataSource</code>.</li>
+<li><code>@ConditionalOnMissingBean</code> makes auto-config <strong>back off</strong> when you define your own bean.</li>
+</ul>
+
+```java
+@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+public class App { }
+```
+
+<h3>Debugging</h3>
+<ul>
+<li>Run with <code>--debug</code> or <code>debug=true</code> to print the conditions evaluation report (positive and negative matches).</li>
+<li>Actuator <code>/actuator/conditions</code> shows the same data.</li>
+<li>Exclude via <code>exclude</code> or <code>spring.autoconfigure.exclude</code>.</li>
+</ul>
+
+<h3>Follow-up</h3>
+<p>Custom starter: write an <code>@AutoConfiguration</code> class with conditions and list it in the <code>.imports</code> file.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot/">Learn more: Spring Boot</a></p>
+
+</details>
+
+---
+
+## 17. What is a Spring Profile and how is it used?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>A profile is a named group of configuration and beans that is active only in certain environments (dev, test, prod). It lets one artifact run with different settings.</p>
+
+<h3>Usage</h3>
+<ul>
+<li><strong>Activate:</strong> <code>spring.profiles.active=prod</code>, env var <code>SPRING_PROFILES_ACTIVE</code>, or <code>--spring.profiles.active=prod</code>.</li>
+<li><strong>Profile files:</strong> <code>application-dev.yml</code> overrides values in <code>application.yml</code>.</li>
+<li><strong>Beans:</strong> <code>@Profile("dev")</code> on a <code>@Component</code> or <code>@Bean</code> (supports <code>!prod</code> and expressions).</li>
+<li><strong>Groups (Boot 2.4+):</strong> <code>spring.profiles.group.prod=proddb,prodmq</code>.</li>
+<li><strong>Tests:</strong> <code>@ActiveProfiles("test")</code>.</li>
+</ul>
+
+```java
+@Configuration
+class MailConfig {
+    @Bean @Profile("prod")  MailSender smtpSender() { return new SmtpSender(); }
+    @Bean @Profile("!prod") MailSender logSender()  { return new LoggingSender(); }
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Command-line and env values override file values; profile-specific files override the base file.</li>
+<li>Do not store production secrets in <code>application-prod.yml</code> in the repo; use env vars or a secrets manager.</li>
+<li>Too many profiles make behaviour hard to reason about; prefer externalised config over profile-per-customer.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-advanced/">Learn more: Spring Boot Advanced</a></p>
+
+</details>
+
+---
+
+## 18. How do you increase memory and CPU resources for a Spring Boot application?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Spring Boot does not manage resources itself. You size the JVM and the container/host, then tune thread pools and connection pools to match.</p>
+
+<h3>Memory</h3>
+<ul>
+<li>Heap: <code>-Xms</code>/<code>-Xmx</code>, or in containers <code>-XX:MaxRAMPercentage=75</code> (container-aware since Java 10; use a modern LTS such as 17, 21, or 25).</li>
+<li>Remember non-heap: metaspace, thread stacks, direct buffers, code cache. Heap should not equal container limit.</li>
+<li>Set it via <code>JAVA_TOOL_OPTIONS</code> or <code>java -jar app.jar</code> flags; choose GC (G1 default, ZGC for low latency).</li>
+</ul>
+
+<h3>CPU</h3>
+<ul>
+<li>Raise cores on the host or container (<code>resources.limits.cpu</code> in Kubernetes). The JVM sizes GC and common pool threads from visible CPUs.</li>
+<li>Tune <code>server.tomcat.threads.max</code> (default 200), the HikariCP <code>maximum-pool-size</code>, and async/scheduler executors.</li>
+<li>Virtual threads (Java 21+, <code>spring.threads.virtual.enabled=true</code> in Boot 3.2+) help I/O-bound workloads.</li>
+</ul>
+
+<h3>Process</h3>
+<ol>
+<li>Measure first: Actuator metrics, GC logs, profiler (JFR).</li>
+<li>Change one thing at a time and load test.</li>
+<li>Consider horizontal scaling before giant heaps (long GC pauses).</li>
+</ol>
+
+<p>📚 <a href="/anandu-interview-playbook/java-core/jvm-internals/">Learn more: JVM Internals</a></p>
+
+</details>
+
+---
+
+## 19. How would you use Spring Boot to create and deploy microservices?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Each service is a small Spring Boot app that owns its data, exposes a REST/messaging API, runs on an embedded server as a single executable jar, and is packaged as a container image and deployed by CI/CD.</p>
+
+<h3>Build</h3>
+<ul>
+<li>Starters + auto-configuration for web, data, security, actuator.</li>
+<li>Externalised config (profiles, env vars, Config Server or Kubernetes ConfigMaps/Secrets).</li>
+<li>Service-to-service calls with <code>RestClient</code>/<code>WebClient</code> or OpenFeign; resilience with Resilience4j (timeouts, retry, circuit breaker).</li>
+<li>Service discovery and gateway via Spring Cloud, or leave both to Kubernetes and an ingress/gateway.</li>
+<li>Observability: Actuator health probes, Micrometer metrics, distributed tracing, structured logs.</li>
+</ul>
+
+<h3>Deploy</h3>
+<ol>
+<li>Build image: <code>mvn spring-boot:build-image</code> (Buildpacks) or a multi-stage Dockerfile.</li>
+<li>CI pipeline: test, scan, build, push image.</li>
+<li>Kubernetes Deployment with liveness/readiness probes (<code>/actuator/health/liveness</code>, <code>/readiness</code>), resource limits, rolling updates.</li>
+</ol>
+
+<h3>Pitfalls</h3>
+<ul>
+<li>Shared database between services destroys independence.</li>
+<li>Distributed transactions: use sagas/outbox rather than 2PC.</li>
+<li>Do not start with microservices if a modular monolith meets the need.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/spring-cloud/">Learn more: Spring Cloud & Microservices</a></p>
+
+</details>
+
+---
+
+## 20. How do you test Spring applications?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Follow the test pyramid: many fast unit tests without Spring, fewer slice tests that load part of the context, and a few full integration tests.</p>
+
+<table>
+<tr><th>Level</th><th>Tool</th><th>Notes</th></tr>
+<tr><td>Unit</td><td>JUnit 5 + Mockito (<code>@ExtendWith(MockitoExtension.class)</code>)</td><td>No Spring context; constructor injection makes this easy</td></tr>
+<tr><td>Web slice</td><td><code>@WebMvcTest</code> + <code>MockMvc</code></td><td>Controllers only; mock services with <code>@MockitoBean</code> (Boot 3.4+; earlier <code>@MockBean</code>)</td></tr>
+<tr><td>Data slice</td><td><code>@DataJpaTest</code></td><td>Repositories with embedded DB, rolled back per test</td></tr>
+<tr><td>Full</td><td><code>@SpringBootTest</code> (+ <code>TestRestTemplate</code>/<code>WebTestClient</code>)</td><td>Whole context; slowest</td></tr>
+<tr><td>Real dependencies</td><td>Testcontainers (<code>@ServiceConnection</code> in Boot 3.1+)</td><td>Real Postgres/Kafka in Docker instead of H2</td></tr>
+</table>
+
+```java
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+    @Autowired MockMvc mvc;
+    @MockitoBean UserService service;
+
+    @Test
+    void returns404WhenMissing() throws Exception {
+        when(service.find(1L)).thenThrow(new NotFoundException());
+        mvc.perform(get("/users/1")).andExpect(status().isNotFound());
+    }
+}
+```
+
+<h3>Tips</h3>
+<ul>
+<li>Spring caches contexts between tests with identical config; avoid needless <code>@DirtiesContext</code>.</li>
+<li>Use <code>@ActiveProfiles("test")</code> and test properties for config.</li>
+<li>H2 can behave differently from production DBs; Testcontainers is more faithful.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/foundations/testing/">Learn more: Testing / QA</a></p>
+
+</details>
+
+---
+
+## 21. What is a Feign client?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>OpenFeign (Spring Cloud OpenFeign) is a declarative HTTP client: you write an interface with Spring MVC annotations and Spring generates the implementation that calls the remote service.</p>
+
+```java
+@EnableFeignClients            // on a configuration class
+public class App { }
+
+@FeignClient(name = "inventory", url = "${inventory.url}", fallbackFactory = InventoryFallback.class)
+public interface InventoryClient {
+    @GetMapping("/items/{id}")
+    ItemDto getItem(@PathVariable("id") long id);
+
+    @PostMapping("/items")
+    ItemDto create(@RequestBody ItemDto item);
+}
+```
+
+<h3>Why / Context</h3>
+<ul>
+<li>Removes boilerplate compared with hand-written <code>RestTemplate</code> code.</li>
+<li>Integrates with service discovery and load balancing (Spring Cloud LoadBalancer) and Resilience4j circuit breakers/fallbacks.</li>
+<li>Supports request interceptors (auth headers), custom encoders/decoders, and error decoders.</li>
+</ul>
+
+<h3>Gotchas</h3>
+<ul>
+<li>Set connect/read timeouts explicitly; defaults can be too generous.</li>
+<li>Non-2xx responses throw <code>FeignException</code>; map them with an <code>ErrorDecoder</code>.</li>
+<li>Retries on non-idempotent calls can duplicate side effects.</li>
+<li>Alternatives in current Spring: <code>RestClient</code> (6.1+) with HTTP interface clients (<code>@HttpExchange</code>), which are the built-in declarative option.</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/spring-cloud/">Learn more: Spring Cloud & Microservices</a></p>
+
+</details>
+
+---
+
+## 22. Explain Spring Cloud circuit breaker patterns
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Spring Cloud Circuit Breaker is an abstraction over circuit-breaker libraries (Resilience4j is the standard; Hystrix is retired). A breaker wraps a remote call and, after too many failures, opens to fail fast instead of piling up on a sick dependency.</p>
+
+<h3>States</h3>
+<ul>
+<li><strong>Closed:</strong> calls pass; failures are counted in a sliding window.</li>
+<li><strong>Open:</strong> failure or slow-call rate exceeded the threshold; calls are rejected immediately (fallback).</li>
+<li><strong>Half-open:</strong> after a wait duration, a few trial calls decide whether to close or re-open.</li>
+</ul>
+
+<h3>Example</h3>
+
+```java
+@Service
+class QuoteService {
+    private final CircuitBreakerFactory<?, ?> factory;
+    private final QuoteClient client;
+
+    QuoteService(CircuitBreakerFactory<?, ?> factory, QuoteClient client) {
+        this.factory = factory; this.client = client;
+    }
+
+    Quote quote(String id) {
+        return factory.create("quotes")
+                .run(() -> client.fetch(id), t -> Quote.cached(id)); // fallback
+    }
+}
+```
+
+<h3>Related Patterns</h3>
+<ul>
+<li><strong>Timeout, Retry (with backoff), Bulkhead, Rate limiter</strong> from Resilience4j; combine them (order matters: retry wraps the breaker or vice versa deliberately).</li>
+<li>Fallback must be cheap and safe (cache, default, degraded response).</li>
+</ul>
+
+<h3>Gotchas</h3>
+<p>Tune thresholds from real traffic; count slow calls as failures; expose breaker state through Actuator and metrics.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-circuit-breaker/">Learn more: Spring Boot Circuit Breaker</a></p>
+
+</details>
+
+---
+
+## 23. How do you handle multithreading in Spring Boot applications?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Each web request already runs on a container thread (Tomcat pool, 200 by default). For extra concurrency use managed executors: <code>@Async</code>, a <code>TaskExecutor</code>/<code>ExecutorService</code> bean, <code>CompletableFuture</code>, or virtual threads on Java 21+.</p>
+
+<h3>Options</h3>
+<ul>
+<li><strong>@Async</strong> with a named <code>ThreadPoolTaskExecutor</code> (core/max/queue sizes, thread name prefix, rejection policy).</li>
+<li><strong>CompletableFuture</strong> with your executor passed explicitly (avoid the common ForkJoin pool for blocking I/O).</li>
+<li><strong>Virtual threads:</strong> <code>spring.threads.virtual.enabled=true</code> (Boot 3.2+, Java 21+) runs request handling and <code>@Async</code>/scheduling on virtual threads.</li>
+<li><strong>Reactive</strong> (WebFlux) for event-loop style non-blocking I/O.</li>
+</ul>
+
+```java
+@Bean("ioExecutor")
+ThreadPoolTaskExecutor ioExecutor() {
+    var ex = new ThreadPoolTaskExecutor();
+    ex.setCorePoolSize(8);
+    ex.setMaxPoolSize(16);
+    ex.setQueueCapacity(200);
+    ex.setThreadNamePrefix("io-");
+    ex.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    return ex;
+}
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Singleton beans are shared across threads: keep them stateless or thread-safe.</li>
+<li>Thread-locals (security context, MDC, transaction) do not propagate to new threads automatically.</li>
+<li>Unbounded queues hide overload; size pools from workload (CPU-bound about cores, I/O-bound more).</li>
+</ul>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-threading/">Learn more: Spring Threading & Async Patterns</a></p>
+
+</details>
+
+---
+
+## 24. What is the difference between async and sync execution in Spring?
+
+<details>
+<summary>View Answer</summary>
+
+<h3>Direct Answer</h3>
+<p>Sync: the caller thread waits until the method returns. Async (<code>@Async</code>): Spring runs the method on a task-executor thread and the caller continues, optionally holding a <code>Future</code>/<code>CompletableFuture</code>.</p>
+
+<table>
+<tr><th></th><th>Sync</th><th>@Async</th></tr>
+<tr><td>Thread</td><td>Caller's</td><td>Executor thread</td></tr>
+<tr><td>Return type</td><td>Any</td><td><code>void</code>, <code>Future</code>, <code>CompletableFuture</code></td></tr>
+<tr><td>Exceptions</td><td>Propagate to caller</td><td>Lost for <code>void</code> unless an <code>AsyncUncaughtExceptionHandler</code> is set; carried in the future otherwise</td></tr>
+<tr><td>Transaction / security context</td><td>Shared with caller</td><td>Not propagated</td></tr>
+</table>
+
+```java
+@EnableAsync @Configuration class AsyncConfig {}
+
+@Service
+class ReportService {
+    @Async("ioExecutor")
+    public CompletableFuture<Report> build(long id) {
+        return CompletableFuture.completedFuture(generate(id));
+    }
+}
+
+// caller
+var a = reports.build(1);
+var b = reports.build(2);
+CompletableFuture.allOf(a, b).join();   // run in parallel, then wait
+```
+
+<h3>Gotchas</h3>
+<ul>
+<li>Works through a proxy: calling an <code>@Async</code> method from the same class (self-invocation) or on a private method runs synchronously.</li>
+<li>Without <code>@EnableAsync</code> nothing happens; the default executor config matters (name your own).</li>
+<li>Plain <code>Future.get()</code> blocks; prefer <code>CompletableFuture</code> composition.</li>
+</ul>
+
+<h3>When to Use</h3>
+<p>Fire-and-forget side effects (emails, audit) and parallel independent I/O. Not for work that must be part of the caller's transaction.</p>
+
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-threading/">Learn more: Spring Threading & Async Patterns</a></p>
+
+</details>
+
+---
+
 **See also:** [Spring Boot Fundamentals](../../spring-web/spring-boot.md), [Spring Annotations](../../spring-web/spring-annotations-components.md), [Interview Preparation](../index.md)

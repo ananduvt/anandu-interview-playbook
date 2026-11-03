@@ -27,3 +27,5 @@
 
 ## Scaling axes
 Vertical (bigger box) vs **horizontal** (more boxes). Prefer horizontal + stateless behind a load balancer.
+
+**Practice questions:** [System Design Case Studies](../interview-questions/verbal/verbal-architecture-system-design-cases-questions.md), [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md), [Microservices & Distributed Systems](../interview-questions/verbal/verbal-microservices-questions.md), [System Design](../interview-questions/verbal/verbal-system-design-questions.md)

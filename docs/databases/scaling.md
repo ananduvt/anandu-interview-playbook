@@ -34,3 +34,5 @@ Split data across nodes for **write scaling** + larger datasets.
 
 ## Caching in front of the DB
 Cache hot reads (Redis) to offload the database — see [Caching](../distributed-cloud/caching.md).
+
+**Practice questions:** [Database Scaling and Architecture](../interview-questions/verbal/verbal-db-scaling-questions.md), [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md)

@@ -323,3 +323,5 @@ FROM distroless/java21       | 50-80MB ✅
 ```
 
 **Best practice:** Use distroless + multi-stage for production.
+
+**Practice questions:** [DevOps & Cloud](../interview-questions/verbal/verbal-devops-questions.md)

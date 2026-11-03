@@ -441,3 +441,4 @@ server:
 
 **See also:** [Spring Security](security.md), [Spring Annotations](spring-annotations-components.md), [Spring Boot Advanced](spring-boot-advanced.md)
 
+**Practice questions:** [Security](../interview-questions/verbal/verbal-security-questions.md)

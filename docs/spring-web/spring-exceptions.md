@@ -364,3 +364,5 @@ public class AsyncController {
 ---
 
 **See also:** [Java Exception Handling](../java-core/exceptions.md), [Spring Boot Fundamentals](spring-boot.md), [Security & Validation](security.md)
+
+**Practice questions:** [Spring Web & MVC](../interview-questions/verbal/verbal-spring-web-mvc-questions.md)

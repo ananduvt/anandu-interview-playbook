@@ -732,3 +732,5 @@ public class UserService {
 - Don't use setter injection to mask circular dependencies
 - Don't create tightly coupled services
 - Don't ignore Spring's circular dependency warnings
+
+**Practice questions:** [Spring Core, DI & AOP](../interview-questions/verbal/verbal-spring-core-di-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md), [Spring Web & MVC](../interview-questions/verbal/verbal-spring-web-mvc-questions.md)

@@ -426,3 +426,5 @@ java -XX:+UseZGC \
      -Xms10G -Xmx10G \
      trading-engine.jar
 ```
+
+**Practice questions:** [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)

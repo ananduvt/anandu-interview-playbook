@@ -103,3 +103,5 @@ When an int variable is declared, the memory is allocated directly on the stack.
 1. If you need to manipulate strings dynamically and thread safety is not a concern, **StringBuilder** is the preferred choice due to its efficiency.
 2. If you require thread safety, especially in a multi-threaded environment, use **StringBuffer**.
 3. Use **String** when you need an immutable string, and you don't anticipate frequent modifications.
+
+**Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md), [Coding Problems & Solutions](../interview-questions/coding/coding-problems.md)

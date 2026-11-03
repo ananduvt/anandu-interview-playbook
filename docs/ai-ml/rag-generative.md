@@ -376,3 +376,5 @@ LLM generates: Blog post, multiple angles, cited sources
 ---
 
 **See also:** [LLMs & Transformers](llms-transformers.md), [AI & Java Integration](ai-java.md)
+
+**Practice questions:** [Machine Learning & AI](../interview-questions/verbal/verbal-ml-ai-questions.md)

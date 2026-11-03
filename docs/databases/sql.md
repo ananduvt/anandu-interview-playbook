@@ -722,3 +722,5 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
 ---
 
 **See also:** [Databases Overview](index.md), [Scaling & NoSQL](scaling.md)
+
+**Practice questions:** [Databases & SQL](../interview-questions/verbal/verbal-db-questions.md), [Database Performance](../interview-questions/verbal/verbal-db-performance-questions.md), [Database Transactions and Concurrency](../interview-questions/verbal/verbal-db-transactions-questions.md), [Database Scaling and Architecture](../interview-questions/verbal/verbal-db-scaling-questions.md)
