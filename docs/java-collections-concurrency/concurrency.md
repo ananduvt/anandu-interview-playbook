@@ -1,5 +1,7 @@
 # Concurrency & Threads
 
+**See also:** [Threading Deep-Dive & Virtual Threads](threading.md) for synchronization primitives, thread pools, virtual threads and concurrency patterns, and [Spring Threading & Async](../spring-web/spring-threading.md) for `@Async`.
+
 
 [https://www.simplilearn.com/tutorials/java-tutorial/thread-in-java](https://www.simplilearn.com/tutorials/java-tutorial/thread-in-java)
 [https://medium.com/@AlexanderObregon/beginners-guide-to-java-threads-80ee370b3cb5](https://medium.com/@AlexanderObregon/beginners-guide-to-java-threads-80ee370b3cb5)
@@ -47,51 +49,9 @@
 
 ## Thread Creation
 
-1. ### Extending the Thread Class
+There are two basic ways to create a thread: extend `Thread` and override `run()`, or implement `Runnable` and pass it to a `Thread` (preferred, because the class can still extend another class and the task can be reused with thread pools). In practice, submit tasks to an `ExecutorService` instead of creating threads by hand.
 
-   The first method to create a thread is by extending the Thread class. This approach is very direct; your class becomes a thread by inheritance and must override the run method, where you define the code that constitutes the thread's task
-
-   class MyThread extends Thread {
-      @Override
-      public void run() {
-          // Code that runs in the new thread
-          System.out.println("The thread is running.");
-      }
-   }
-
-   public class ThreadExample {
-      public static void main(String[] args) {
-          MyThread myThread = new MyThread();
-          myThread.start(); // Start the thread
-      }
-   }
-
-2. ### Implementing the Runnable Interface
-
-   The Runnable interface provides an alternative way to define a thread. Instead of extending Thread, your class implements Runnable and its single method, run. This approach allows your class to extend another class if needed. The Runnable object is then passed to a Thread constructor, and the thread is started in the same way as before.
-
-   class MyRunnable implements Runnable {
-      @Override
-      public void run() {
-          // Code that will run in the new thread
-          System.out.println("The thread is running.");
-      }
-   }
-
-   public class RunnableExample {
-      public static void main(String[] args) {
-          Thread thread = new Thread(new MyRunnable());
-          thread.start(); // Start the thread
-      }
-   }
-
-| Feature | Thread | Runnable |
-| :---- | :---- | :---- |
-| **Type** | Class | Interface |
-| **Inheritance** | Extends Thread class; limits further extension | Implements Runnable interface; allows extending another class |
-| **Object Creation** | New object per thread | Single object shared among threads |
-| **Flexibility** | Less flexible | More flexible |
-| **Reusability** | Limited | Enhanced |
+Code and a full comparison table are in [Threading Deep-Dive: Thread vs Runnable](threading.md#thread-vs-runnable).
 
 ## Starting and Managing Threads
 
@@ -116,33 +76,9 @@ Imagine a scenario where two threads are attempting to update the same bank acco
 
 Java provides several mechanisms for synchronization, including synchronized methods, synchronized blocks, and special concurrent classes from the java.util.concurrent package.
 
-### Synchronized Methods
+### Synchronized Methods and Blocks
 
-The simplest way to synchronize access to an instance method of an object is to use the synchronized keyword in the method declaration. This ensures that only one thread can execute the method at a time for a given instance of the class.
-
-public class Counter {
-   private int count = 0;
-
-   public synchronized void increment() {
-       count++; // Only one thread can execute this at a time per instance
-   }
-
-   public int getCount() {
-       return count;
-   }
-}
-
-### Synchronized Blocks
-
-For finer control over synchronization, Java allows the use of synchronized blocks within methods. This allows you to synchronize only the critical section of code that accesses the shared resource, reducing the scope of synchronization to minimize performance overhead.
-
-public void increment() {
-   synchronized(this) {
-       count++;
-   }
-}
-
-In this example, the synchronized block ensures that only one thread can execute the increment within the block, even if multiple threads are accessing the same object’s increment method.
+The `synchronized` keyword (on a method or on a block around the critical section), plus `volatile`, atomic variables and `Lock`s, are covered with code in [Threading Deep-Dive: Thread Synchronization](threading.md#thread-synchronization).
 
 ## Best Practices for Synchronizing Threads
 
@@ -319,7 +255,7 @@ class FutureTaskExample {
 | **Return Value** | void (nothing) | Returns a value of type V |
 | **Exceptions** | Cannot throw checked exceptions | Can throw checked exceptions |
 | **Usage** | Simple tasks, no return needed | Tasks requiring a return value or exception handling |
-| **Execution** | Can be run by Thread or ExecutorService | Can only be executed by ExecutorService |
+| **Execution** | Can be run by Thread or ExecutorService | Needs an ExecutorService (or wrap it in a `FutureTask` to run on a `Thread`) |
 
 ---
 
@@ -502,41 +438,14 @@ UserProfile profile = userService.getUserProfile(123).get();
 
 ### Thread Pool
 
+Prefer a thread pool over creating many `Thread` objects: a fixed number of reusable threads takes tasks from a queue, which avoids the cost of constantly creating and destroying threads.
+
+Pool types, a worked example, `shutdown()` handling and the risks (pool deadlock, thread leakage, resource thrashing) are in [Threading Deep-Dive: Thread Pools & ExecutorService](threading.md#thread-pools-executorservice).
+
 [https://jenkov.com/tutorials/java-util-concurrent/executorservice.html](https://jenkov.com/tutorials/java-util-concurrent/executorservice.html)
 [https://www.geeksforgeeks.org/thread-pools-java/](https://www.geeksforgeeks.org/thread-pools-java/)
-[https://dev.to/danielrendox/thread-runnable-callable-executorservice-and-future-all-the-ways-to-create-threads-in-java-2o86](https://dev.to/danielrendox/thread-runnable-callable-executorservice-and-future-all-the-ways-to-create-threads-in-java-2o86)
 
 ![](../assets/thread-pool.png)
-
-Creating too many threads, for example, 100, is not efficient because only some of them will be scheduled. The rest will wait until the ones that are executing finish their work and die. Only then will they take their place. In addition, many threads consume lots of time and resources being born and dying.
-
-That’s why, you should prefer thread pools over multiple instances of Thread. This way allows us to create a reasonable number of threads that will not die as long as they have done an operation, they will switch to another one instead. And this is how to do it
-
-**Types**
-ExecutorService executorService1 = Executors.newSingleThreadExecutor();
-
-ExecutorService executorService2 = Executors.newFixedThreadPool(10);
-
-ExecutorService executorService3 = Executors.newScheduledThreadPool(10);
-
-**Example**
-ExecutorService executorService = Executors.newFixedThreadPool(threadsNumber);
-for (int i = 0; i < 20; i++) {
-   executorService.submit(() -> System.out.println("Hello from: " + Thread.currentThread().getName()));
-}
-executorService.submit(() -> System.out.println("Another task executed by " + Thread.currentThread().getName()));
-executorService.shutdown();
-
-One of the main advantages of using this approach is when you want to process 100 requests at a time, but do not want to create 100 Threads for the same, so as to reduce JVM overload. You can use this approach to create a ThreadPool of 10 Threads and you can submit 100 requests to this ThreadPool.
-ThreadPool will create maximum of 10 threads to process 10 requests at a time.  After process completion of any single Thread,
-ThreadPool will internally allocate the 11th request to this Thread
-and will keep on doing the same to all the remaining requests.
-
-**Risks in using Thread Pools**
-
-1. **Deadlock** : While deadlock can occur in any multi-threaded program, thread pools introduce another case of deadlock, one in which all the executing threads are waiting for the results from the blocked threads waiting in the queue due to the unavailability of threads for execution.
-2. **Thread Leakage** :Thread Leakage occurs if a thread is removed from the pool to execute a task but not returned to it when the task completed. As an example, if the thread throws an exception and pool class does not catch this exception, then the thread will simply exit, reducing the size of the thread pool by one. If this repeats many times, then the pool would eventually become empty and no threads would be available to execute other requests.
-3. **Resource Thrashing** :If the thread pool size is very large then time is wasted in context switching between threads. Having more threads than the optimal number may cause starvation problem leading to resource thrashing as explained.
 
 ## IPC - Inter-Process Communication
 

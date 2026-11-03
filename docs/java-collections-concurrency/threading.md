@@ -2,6 +2,9 @@
 
 Advanced threading concepts: thread synchronization, thread pools, and Java 21's virtual threads that revolutionize concurrent programming.
 
+**See also:** [Concurrency & Threads](concurrency.md) for thread basics, lifecycle, `Callable`/`Future`, `CompletableFuture` and IPC, and [Spring Threading & Async](../spring-web/spring-threading.md).
+
+
 ---
 
 ## Thread vs Runnable
@@ -74,6 +77,7 @@ executor.submit(new MyRunnable());  // Runnable submitted to pool
 | **Flexibility** | Low; tied to Thread | High; composable |
 | **Thread Management** | Manual `new Thread(...)` | Use ExecutorService (cleaner) |
 | **Reusability** | Single-use object | Reusable across threads |
+| **Object creation** | New object per thread | One Runnable can be shared across threads |
 | **Best For** | Simple one-off threads | Thread pools, enterprise apps |
 
 ### Best Practice: Runnable + ExecutorService
@@ -111,69 +115,7 @@ public class TaskProcessor {
 
 ## Runnable vs Callable
 
-### Runnable (No Return Value)
-
-```java
-class PrintTask implements Runnable {
-    @Override
-    public void run() {
-        // No return value
-        System.out.println("Task executing...");
-    }
-}
-
-Thread thread = new Thread(new PrintTask());
-thread.start();  // Fire and forget
-```
-
-### Callable (Returns Result)
-
-```java
-class ComputeTask implements Callable<Integer> {
-    @Override
-    public Integer call() throws Exception {
-        // Can return value, throw checked exceptions
-        return 42;
-    }
-}
-
-ExecutorService executor = Executors.newFixedThreadPool(5);
-Future<Integer> future = executor.submit(new ComputeTask());
-
-Integer result = future.get();  // Waits for task completion, gets result
-```
-
-### Comparison
-
-| Aspect | Runnable | Callable |
-|--------|----------|----------|
-| **Return Type** | void | Generic `<V>` |
-| **Exception Handling** | Can't throw checked exceptions | Can throw checked exceptions |
-| **Usage** | Fire-and-forget tasks | Tasks needing result/status |
-| **With Executor** | `executor.submit(runnable)` → Future | `executor.submit(callable)` → Future<Result> |
-
-### Practical Example: Runnable vs Callable
-
-```java
-// Runnable: Logging (side effect only)
-Runnable logTask = () -> {
-    System.out.println("Logging event");
-};
-
-// Callable: Computation (returns value)
-Callable<String> fetchTask = () -> {
-    Thread.sleep(1000);
-    return "Data fetched";
-};
-
-ExecutorService executor = Executors.newFixedThreadPool(2);
-
-// Submit both
-executor.submit(logTask);           // Returns Future<Void>
-Future<String> result = executor.submit(fetchTask);  // Returns Future<String>
-
-System.out.println(result.get());   // "Data fetched"
-```
+The comparison table and `Callable` / `Future` examples are in [Concurrency & Threads: Runnable vs Callable](concurrency.md#runnable-vs-callable). In short: `Runnable.run()` returns nothing and can't throw checked exceptions; `Callable.call()` returns a value and can throw. Submit either to an `ExecutorService` to get a `Future`.
 
 ---
 
@@ -357,7 +299,7 @@ for (int i = 0; i < 100; i++) {
 executor.shutdown();  // No new tasks accepted
 executor.awaitTermination(1, TimeUnit.MINUTES);  // Wait for completion
 
-// Better: try-with-resources (Java 7+)
+// Better: try-with-resources (Java 19+, ExecutorService is AutoCloseable)
 try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
     IntStream.range(0, 100).forEach(i ->
         executor.submit(() -> doWork(i))
@@ -370,6 +312,11 @@ try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
 - `newCachedThreadPool()`: Creates threads as needed; reuses idle threads
 - `newSingleThreadExecutor()`: One thread; tasks run sequentially
 - `newScheduledThreadPool(n)`: For delayed/periodic tasks
+
+**Risks of thread pools:**
+- **Pool deadlock:** every pool thread waits for a result from a task still queued because no thread is free.
+- **Thread leakage:** a thread leaves the pool to run a task and isn't returned (for example an uncaught exception kills it), so the pool slowly shrinks.
+- **Resource thrashing:** too many threads waste time on context switching and can starve each other. Size pools to the workload (CPU-bound: about the core count; I/O-bound: larger).
 
 ---
 

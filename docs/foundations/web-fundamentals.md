@@ -20,6 +20,8 @@ Core web concepts, HTTP, REST principles, API design, and communication protocol
 | **HEAD** | Like GET, no body | ✅ | ✅ | ✅ | Check if exists |
 | **OPTIONS** | Describe communication | ✅ | ✅ | ❌ | CORS preflight |
 
+Per-method examples and gotchas: [API Styles: HTTP Methods Deep-Dive](../spring-web/api-styles.md#http-methods-deep-dive).
+
 ### HTTP Status Codes
 
 **2xx Success**
@@ -132,85 +134,21 @@ Server: If key seen before, return cached response
 
 ### REST Best Practices
 
-**Versioning**
-```
-URL path:   GET /api/v1/users (explicit)
-Header:     GET /api/users + Accept: application/vnd.company.v1+json
-Query:      GET /api/users?version=1
-```
-
-**Pagination**
-```
-GET /api/users?page=0&size=20&sort=id,desc
-
-Response:
-{
-  "content": [...],
-  "totalElements": 150,
-  "totalPages": 8,
-  "currentPage": 0,
-  "pageSize": 20,
-  "isLast": false
-}
-```
-
-**Filtering & Searching**
-```
-GET /api/users?role=ADMIN&status=active
-GET /api/users?search=john&createdAfter=2024-01-01
-GET /api/invoices?minAmount=1000&maxAmount=5000
-```
-
-**HATEOAS (Hypermedia As The Engine Of Application State)**
-Include links to related resources:
-```json
-{
-  "id": 1,
-  "name": "John Doe",
-  "email": "john@example.com",
-  "_links": {
-    "self": { "href": "/api/users/1", "method": "GET" },
-    "all": { "href": "/api/users", "method": "GET" },
-    "update": { "href": "/api/users/1", "method": "PUT" },
-    "delete": { "href": "/api/users/1", "method": "DELETE" }
-  }
-}
-```
+Versioning, pagination, filtering and HATEOAS (with Spring code) are covered in [API Styles: REST Best Practices](../spring-web/api-styles.md#rest-best-practices).
 
 ---
 
 ## Web Services Architecture
 
-### SOAP (Simple Object Access Protocol)
-- **Protocol**: XML-based messaging over HTTP/SMTP
-- **Contract**: WSDL (Web Services Description Language)
-- **Pros**: Standardized (WS-* specs), platform-independent, strict contracts
-- **Cons**: Verbose (XML), complex, slower than REST
-- **Use**: Enterprise integrations, legacy systems, security-critical transactions
+| Style | One-liner | Details |
+|-------|-----------|---------|
+| **REST** | Resources over HTTP methods, stateless, cacheable | [API Styles](../spring-web/api-styles.md#rest-representational-state-transfer) |
+| **SOAP** | XML messaging with WSDL contracts and WS-* standards | [Web Services: SOAP vs REST](../spring-web/web-services.md#soap-vs-rest) |
+| **GraphQL** | Client chooses exact fields from a single endpoint | [Web Services: GraphQL](../spring-web/web-services.md#graphql) |
+| **gRPC** | HTTP/2 + Protocol Buffers, fast service-to-service RPC and streaming | [API Styles: gRPC](../spring-web/api-styles.md#grpc) |
+| **WebSocket** | Full-duplex persistent connection for real-time push | [API Styles: WebSocket](../spring-web/api-styles.md#websocket) |
 
-### REST
-- **Simplicity**: HTTP methods, JSON/XML
-- **Stateless**: Each request independent
-- **Cache-friendly**: Built-in HTTP caching
-- **Use**: Web APIs, mobile apps, microservices
-
-### GraphQL
-- **Query Language**: Clients request exactly the fields they need
-- **Single Endpoint**: POST /graphql
-- **Strongly Typed**: Schema defines all possible queries
-- **Avoids**: Over-fetching (unnecessary data), under-fetching (multiple requests)
-- **Use**: Complex/nested data needs, frontend-driven queries
-
-### gRPC
-- **Protocol**: HTTP/2 + Protocol Buffers (binary)
-- **Performance**: High-speed, low-latency, bidirectional streaming
-- **Type Safety**: Strongly typed with .proto IDL
-- **Use**: Internal service-to-service communication, high-performance needs
-
-### WebSocket
-- **Connection**: Full-duplex, persistent TCP connection
-- **Real-time**: Push data without polling
-- **Use**: Chat, live dashboards, real-time notifications, online gaming
+Which style to pick: see the [Quick Chooser](../spring-web/api-styles.md#quick-chooser).
 
 ---
 
@@ -295,6 +233,8 @@ Response Header: Deprecation: true
 - Role-Based (RBAC): Users have roles with permissions
 - Attribute-Based (ABAC): Fine-grained policies
 - **Never** trust client-provided authorization data
+
+Authentication and authorization methods in detail: [Web Services: API Authentication & Authorization Methods](../spring-web/web-services.md#api-authentication-authorization-methods) and [Security](../spring-web/security.md).
 
 ### Input Validation
 - Validate all input (size, type, format)

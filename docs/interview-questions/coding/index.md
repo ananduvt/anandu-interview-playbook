@@ -75,40 +75,12 @@ Programming problems: algorithms, data structures, implementation, optimization.
 
 ---
 
-## Complexity Cheat Sheet
+## Reference: Complexity & Techniques
 
-### Time Complexity (Best to Worst)
-- O(1) - Constant
-- O(log n) - Binary search
-- O(n) - Linear scan
-- O(n log n) - Merge sort, quick sort, heap operations
-- O(n²) - Nested loops, bubble sort
-- O(n³) - Triple nested loops
-- O(2ⁿ) - Exponential (subsets, backtracking)
-- O(n!) - Factorial (permutations)
+The complexity cheat sheet and the common-techniques table live in the DSA section so they stay in one place:
 
-### Space Complexity
-- O(1) - No extra space
-- O(log n) - Recursion depth
-- O(n) - Extra array, hash map
-- O(n²) - 2D array
-
----
-
-## Common Techniques
-
-| Technique | Use Case | Example |
-|-----------|----------|---------|
-| **Two Pointers** | Sorted array, palindrome, container | Reverse string, merge sorted arrays |
-| **Sliding Window** | Substring, subarray, fixed/variable window | Longest substring without repeats |
-| **Binary Search** | Sorted, searching, finding position | Find target in rotated array |
-| **Hash Map** | Counting, storing relationships | Group anagrams, find pairs with sum |
-| **Heap** | K largest/smallest, min/max tracking | Top K frequent elements |
-| **Stack** | LIFO, matching, ordering | Valid parentheses, next greater element |
-| **DFS/BFS** | Graph, tree, connected components | Number of islands, word ladder |
-| **DP** | Overlapping subproblems, optimization | Fibonacci, coin change, longest subsequence |
-| **Backtracking** | Combinations, permutations, constraints | N-Queens, word search |
-| **Greedy** | Optimal local choice leads to global | Activity selection, huffman coding |
+- [Algorithms: complexity, sorting, searching, core techniques](../../dsa/algorithms.md)
+- [Data structures: operation costs and when to use each](../../dsa/data-structures.md)
 
 ---
 

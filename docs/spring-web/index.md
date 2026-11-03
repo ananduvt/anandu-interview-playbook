@@ -27,12 +27,20 @@ Fault tolerance patterns: circuit breaker states (CLOSED/OPEN/HALF_OPEN), Resili
 Asynchronous processing: @Async annotation with TaskExecutor configuration, CompletableFuture composition and chaining, REST endpoints returning futures, Java 21 virtual threads integration, comparison with WebFlux, production patterns.
 
 ### [Web Services](web-services.md)
-**SOAP - WSDL - REST Principles - Web Services Standards - XML/JSON Serialization**  
-Web service architectures: SOAP vs. REST trade-offs, WSDL contracts, RESTful resource design, content negotiation, versioning strategies.
+**SOAP vs REST - GraphQL - Authentication Methods - SSO - RBAC/ABAC - OAuth2 Scopes**  
+Web service protocols and access control: SOAP vs. REST trade-offs, authentication vs. authorization, GraphQL (queries, mutations, subscriptions, Spring Boot integration), API authentication mechanisms (Basic, API keys, JWT, OAuth 2.0, OIDC, mTLS, sessions), SSO, and authorization strategies.
 
 ### [API Styles & Protocols](api-styles.md)
-**REST - GraphQL - gRPC - OpenAPI/Swagger - HATEOAS - Versioning - Status Codes**  
-API design paradigms: REST conventions (GET/POST/PUT/DELETE/PATCH), GraphQL query language, gRPC binary protocol, API documentation with Swagger/OpenAPI, deprecation strategies.
+**REST - GraphQL - gRPC - WebSocket - Webhooks - HTTP Methods - Versioning - HATEOAS - OpenAPI/Swagger**  
+API design: a quick chooser across API styles, HTTP methods deep-dive (GET/POST/PUT/PATCH/DELETE), status codes, REST best practices (versioning, pagination, filtering, HATEOAS), and API documentation with Swagger/OpenAPI.
+
+### [WebFlux & Reactive](spring-webflux.md)
+**WebFlux - Reactor (Mono/Flux) - WebClient - Reactive Data Access - WebFlux vs MVC - Testing**  
+Non-blocking web stack: reactive programming fundamentals, WebFlux architecture and controllers, reactive data access, WebClient, error handling, WebFlux vs. Spring MVC, testing reactive code, performance and troubleshooting.
+
+### [Actuator & Monitoring](spring-boot-actuator.md)
+**Actuator - Health Checks - Metrics - Liveness/Readiness Probes - Prometheus/Grafana - Endpoint Security**  
+Production monitoring: built-in endpoints, configuration, Kubernetes liveness and readiness probes, Prometheus and Grafana integration, securing actuator endpoints, best practices.
 
 ### [Exception Handling](spring-exceptions.md)
 **@ControllerAdvice - @ExceptionHandler - Global Error Handling - Validation Errors - HTTP Status Codes - Error Response DTO**  

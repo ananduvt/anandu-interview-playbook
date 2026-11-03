@@ -1,7 +1,20 @@
 # Algorithms
 
 ## Complexity
-O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!). State **time and space** for every solution.
+O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(n³) < O(2ⁿ) < O(n!). State **time and space** for every solution.
+
+| Complexity | Typical source |
+|------------|----------------|
+| O(1) | Constant: array index, hash lookup |
+| O(log n) | Binary search, balanced tree operations |
+| O(n) | Linear scan |
+| O(n log n) | Merge sort, quicksort (avg), heap sort |
+| O(n²) | Nested loops, bubble/insertion sort |
+| O(n³) | Triple nested loops |
+| O(2ⁿ) | Subsets, naive recursion, backtracking |
+| O(n!) | Permutations |
+
+**Space:** O(1) = no extra space · O(log n) = recursion depth · O(n) = extra array or hash map · O(n²) = 2D array.
 
 ## Sorting
 | Algorithm | Time (avg) | Space | Stable |
@@ -16,12 +29,18 @@ Java `Arrays.sort` = dual-pivot quicksort (primitives) / Timsort (objects, stabl
 - **Binary search** — sorted input, O(log n). Variants: first/last occurrence, rotated array, search on answer space.
 
 ## Core patterns
-- **Two pointers** — pairs in sorted arrays, palindrome, dedup.
-- **Sliding window** — longest substring, max sum of size k.
-- **Recursion / backtracking** — subsets, permutations, combinations, N-queens.
-- **BFS/DFS** — trees/graphs; BFS = shortest path (unweighted); topological sort for DAGs.
-- **Dynamic programming** — overlapping subproblems + optimal substructure (memoize / tabulate).
-- **Greedy** — locally optimal choice (intervals, Huffman); prove correctness.
+| Technique | Use case | Example |
+|-----------|----------|---------|
+| **Two pointers** | Pairs in sorted arrays, palindrome, dedup, container | Reverse string, merge sorted arrays |
+| **Sliding window** | Substring or subarray, fixed/variable window | Longest substring without repeats, max sum of size k |
+| **Binary search** | Sorted input, search on answer space | Find target in rotated array |
+| **Hash map** | Counting, storing relationships | Group anagrams, find pairs with sum |
+| **Heap** | K largest/smallest, min/max tracking | Top K frequent elements |
+| **Stack** | LIFO, matching, ordering | Valid parentheses, next greater element |
+| **BFS/DFS** | Trees/graphs, connected components; BFS = shortest path (unweighted); topological sort for DAGs | Number of islands, word ladder |
+| **Dynamic programming** | Overlapping subproblems + optimal substructure (memoize / tabulate) | Fibonacci, coin change, longest subsequence |
+| **Recursion / backtracking** | Subsets, permutations, combinations, constraints | N-Queens, word search |
+| **Greedy** | Locally optimal choice; prove correctness | Activity selection, Huffman coding |
 
 ## Must-know examples
 - **Kadane's algorithm** (max subarray sum) — see [Coding Problems](coding-problems.md).

@@ -1,6 +1,8 @@
 # Web Services
 
-## WebServices
+## Overview
+
+SOAP vs REST, GraphQL (with Spring Boot), API authentication and authorization methods, SSO and access-control strategies. For the comparison of API styles see [API Styles & Protocols](api-styles.md); for HTTP and REST basics see [Web Fundamentals](../foundations/web-fundamentals.md).
 
 [https://blog.postman.com/soap-vs-rest/](https://blog.postman.com/soap-vs-rest/)
 
@@ -11,7 +13,7 @@
 | Stands for  | Simple Object Access Protocol | Representational State Transfer |
 | What is it? | SOAP is a protocol for communication between applications | REST is an architecture style for designing communication interfaces. |
 | Design | SOAP API exposes the operation. | REST API exposes the data. |
-| Transport Protocol | SOAP is independent and can work with any transport protocol. | REST works only with HTTPS. |
+| Transport Protocol | SOAP is independent and can work with any transport protocol. | REST is most commonly used over HTTP(S). |
 | Data format | SOAP supports only XML data exchange. | REST supports XML, JSON, plain text, HTML. |
 | Performance | SOAP messages are larger, which makes communication slower. | REST has faster performance due to smaller messages and caching support. |
 | Scalability | SOAP is difficult to scale. The server maintains state by storing all previous messages exchanged with a client. | REST is easy to scale. It’s stateless, so every message is processed independently of previous messages. |
@@ -52,17 +54,14 @@
    JSON (JavaScript object notation) is an open standard file format used to transmit data objects between many applications. It is a lightweight format to store and transfer data and is often used when sending data from a server to a web page. The simplicity and speedy transmission of JSON make it a viable alternative in many situations.
 
 2. **gRPC**
-   gRPC (remote procedure call or RPC) is an open-source system developed by Google that uses [HTTP/2](https://www.upwork.com/resources/what-is-http2). It is commonly used to provide a connection to different applications in a microservices architecture, and it allows mobile devices to communicate with backend services.
-   The advantages of gRPC include more lightweight messages than JSON, high performance, built-in code generation, and support for more connection options such as streaming data.
+   Open-source RPC system from Google over [HTTP/2](https://www.upwork.com/resources/what-is-http2): lightweight binary messages, high performance, built-in code generation and streaming, commonly used between microservices. See [API Styles: gRPC](api-styles.md#grpc).
 
 3. **Falcor**
    Developed by Netflix, [Falcor](https://netflix.github.io/falcor/) is a JavaScript library that assists in data fetching. It allows you to retrieve data from different sources and combine it into a single model. As a result, you can more easily pass data through different UI components and display it to users.
    Falcor also supports client-side caching, meaning you can retrieve values from the local storage instead of making random network calls—which can otherwise be time-consuming and resource-intensive.
 
 4. **GraphQL**
-   GraphQL is a query language used to efficiently load data from a server to a client. Created by Facebook, this relatively new technology supports reading, writing, and subscribing to changes to data, and GraphQL servers are available for languages like JavaScript, Python, C++, and more.
-   Just like REST, GraphQL communicates using HTTP and uses the JSON data format. One of the key differences and benefits is the possibility to specify the data you want to be returned from the server in one API call.
-   For example, if we want to fetch a customer, a customer order, and the order’s shipment status using REST, we would have to conduct separate HTTP requests for each piece of data. With GraphQL, we can fetch everything using one request, which eliminates the HTTP overhead for each call.
+   Query language where the client specifies exactly the data it needs in one request, avoiding the several round trips REST needs for related data (for example a customer, their order, and the shipment status). Details and Spring integration: [GraphQL](#graphql) below.
 
 ## Authentication vs Authorization
 

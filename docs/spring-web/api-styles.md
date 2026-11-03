@@ -5,7 +5,7 @@ A quick comparison of the common ways services talk to each other.
 ## REST (Representational State Transfer)
 - Architectural style over HTTP: **stateless**, client-server, cacheable, uniform interface, layered.
 - Resources identified by URLs; manipulated via representations (JSON/XML); optional HATEOAS links.
-- **Use for**: web/mobile APIs, cloud services — the default for CRUD-style resource APIs.
+- **Use for**: web/mobile APIs, cloud services — the default for CRUD-style resource APIs. HTTP and REST principles: [Web Fundamentals](../foundations/web-fundamentals.md).
 
 ## Webhooks
 - **Reverse API**: the server pushes an HTTP POST to a client-registered URL when an event occurs (no polling).
@@ -15,12 +15,12 @@ A quick comparison of the common ways services talk to each other.
 ## GraphQL
 - Query language + runtime; clients request **exactly** the fields they need from a **single endpoint**.
 - Strongly-typed schema; avoids over-/under-fetching.
-- **Use for**: complex/nested data needs, mobile/front-end-driven data fetching.
+- **Use for**: complex/nested data needs, mobile/front-end-driven data fetching. Deep-dive and Spring integration: [Web Services: GraphQL](web-services.md#graphql).
 
 ## SOAP (Simple Object Access Protocol)
 - XML-based messaging protocol over HTTP/SMTP; standardized, with WS-* specs (security, transactions).
 - Platform/language independent, contract-first (WSDL).
-- **Use for**: enterprise/legacy integrations, strict contracts, security-sensitive transactions.
+- **Use for**: enterprise/legacy integrations, strict contracts, security-sensitive transactions. Detail and SOAP vs REST: [Web Services](web-services.md#soap-vs-rest).
 
 ## WebSocket
 - **Full-duplex**, persistent connection over a single TCP connection; low latency.
@@ -209,30 +209,11 @@ OPTIONS /users/1
 
 ## REST Status Codes Cheat Sheet
 
-| Code | Meaning | Use |
-|------|---------|-----|
-| **2xx Success** |
-| 200 | OK | Request succeeded, body included |
-| 201 | Created | Resource created, Location header + body |
-| 204 | No Content | Request succeeded, no body (often DELETE) |
-| 206 | Partial Content | Partial response (pagination, ranges) |
-| **3xx Redirection** |
-| 301 | Moved Permanently | Resource moved to new URL (cache it) |
-| 302 | Found | Temporary redirect (don't cache) |
-| 304 | Not Modified | Cached version is current (no body) |
-| **4xx Client Error** |
-| 400 | Bad Request | Invalid input (malformed JSON, missing field) |
-| 401 | Unauthorized | Authentication required (missing JWT token) |
-| 403 | Forbidden | Authenticated but no permission (insufficient role) |
-| 404 | Not Found | Resource doesn't exist |
-| 409 | Conflict | Request conflicts (duplicate key, pre-condition failed) |
-| 422 | Unprocessable Entity | Valid format but semantic error (e.g., invalid email) |
-| 429 | Too Many Requests | Rate limit exceeded |
-| **5xx Server Error** |
-| 500 | Internal Server Error | Unexpected error (exception) |
-| 502 | Bad Gateway | Upstream service unavailable |
-| 503 | Service Unavailable | Server temporarily down (maintenance) |
-| 504 | Gateway Timeout | Upstream service timeout |
+The full status-code list (2xx to 5xx, including 202, 307 and 431) is in [Web Fundamentals: HTTP Status Codes](../foundations/web-fundamentals.md#http-status-codes). The ones asked about most in API design:
+
+- **201** Created (with `Location`) · **204** No Content (typical DELETE) · **202** Accepted (async work)
+- **400** invalid input · **401** not authenticated · **403** authenticated but not allowed · **404** not found · **409** conflict · **422** semantic validation error · **429** rate limited
+- **502/503/504** upstream or availability problems
 
 ---
 

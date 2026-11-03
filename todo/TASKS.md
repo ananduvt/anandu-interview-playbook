@@ -43,10 +43,10 @@ Questions to add live in `todo/to-process/QUESTIONS_TODO.json`.
   - [x] Bare one-liners with no content: "Java out of memory, heap memory issue", "Annotations, custom annotations", "Immutable class implementation", "Java Casting" (also filled in the bare "Marker interface", "Java autoboxing", "Wrapper class" entries)
   - [x] Inconsistent heading levels (`**bold**` used as headings alongside `####`)
   - [x] Malformed Baeldung marker-interface link (trailing backslash)
-- [ ] Consolidate overlapping threading pages: `java-collections-concurrency/concurrency.md` and `threading.md` both cover Runnable vs Callable, synchronization, and thread pools. Keep each topic in one place and cross-link (`threading.md` uniquely has virtual threads and concurrency patterns; `concurrency.md` has CompletableFuture and IPC)
-- [ ] Consolidate overlapping web/API pages: SOAP, REST, GraphQL, and gRPC appear in `foundations/web-fundamentals.md`, `spring-web/api-styles.md`, and `spring-web/web-services.md`. Pick one home per topic and cross-link. `web-services.md` uniquely has the authentication methods section
-- [ ] Consolidate the DSA reference in `interview-questions/coding/index.md`: its complexity cheat sheet and common-techniques table overlap `dsa/algorithms.md` and `dsa/data-structures.md`. Keep the reference in `dsa/`, and leave the coding overview with the interview approach plus links
-- [ ] `docs/spring-web/index.md`: the Web Services description (WSDL, content negotiation, versioning) doesn't match the page (SOAP vs REST, GraphQL, authentication methods); rewrite it. Also missing entries for WebFlux and Actuator, which are in the nav
+- [x] Consolidate overlapping threading pages: `java-collections-concurrency/concurrency.md` and `threading.md` both cover Runnable vs Callable, synchronization, and thread pools. Keep each topic in one place and cross-link (`threading.md` uniquely has virtual threads and concurrency patterns; `concurrency.md` has CompletableFuture and IPC)
+- [x] Consolidate overlapping web/API pages: SOAP, REST, GraphQL, and gRPC appear in `foundations/web-fundamentals.md`, `spring-web/api-styles.md`, and `spring-web/web-services.md`. Pick one home per topic and cross-link. `web-services.md` uniquely has the authentication methods section
+- [x] Consolidate the DSA reference in `interview-questions/coding/index.md`: its complexity cheat sheet and common-techniques table overlap `dsa/algorithms.md` and `dsa/data-structures.md`. Keep the reference in `dsa/`, and leave the coding overview with the interview approach plus links
+- [x] `docs/spring-web/index.md`: the Web Services description (WSDL, content negotiation, versioning) doesn't match the page (SOAP vs REST, GraphQL, authentication methods); rewrite it. Also missing entries for WebFlux and Actuator, which are in the nav
 
 ## Batch 5 — Split oversized files (limits in CONTRIBUTING.md → Size Limits)
 
