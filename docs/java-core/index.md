@@ -20,8 +20,12 @@ Foundational Java concepts: the platform (JVM/JRE/JDK), language semantics, obje
 
 ---
 ### [Basics](basics.md)
-**JDK - JRE - JVM - Bytecode - ClassLoader - Editions**  
-Platform architecture: JDK/JRE/JVM distinctions, bytecode execution, ClassLoader lifecycle, Java SE/EE/ME/JavaFX editions, JIT compilation.
+**Editions - Modifiers - Static - var - Switch - Records - Immutability - equals/hashCode - Casting**  
+Language fundamentals: Java SE/EE/ME/JavaFX editions, access modifiers, static, `var`, switch forms (classic to pattern matching), abstract classes and interfaces, annotations, immutable classes, autoboxing, casting, `==` vs `equals()`, Comparable vs Comparator, JavaBeans/POJO/EJB.
+
+### [JVM Internals](jvm-internals.md)
+**JDK - JRE - JVM - Bytecode - JIT - ClassLoader - Garbage Collection - Heap/Stack - OutOfMemoryError**  
+Platform architecture: JDK/JRE/JVM distinctions, bytecode execution, JIT compilation, ClassLoader delegation, GC algorithms, memory areas (heap, stack, Metaspace), diagnosing `OutOfMemoryError`.
 
 ### [OOP (Object-Oriented Programming)](oop.md)  
 **Classes - Inheritance - Polymorphism - Encapsulation - SOLID - Abstraction**  
@@ -48,7 +52,7 @@ Design abstractions: when to use interfaces (capabilities, contracts) vs. abstra
 ## Quick Interview Prep
 
 **Know these for any Java role:**
-- **JVM basics**: Bytecode, ClassLoader phases, garbage collection (see [Java Patterns & Advanced](../java-patterns-advanced/index.md))
+- **JVM basics**: Bytecode, ClassLoader phases, garbage collection (see [JVM Internals](jvm-internals.md) and [Java Patterns & Advanced](../java-patterns-advanced/index.md))
 - **OOP**: 4 pillars, SOLID principles, composition over inheritance
 - **Core APIs**: String, Collections (see [Java Collections & Concurrency](../java-collections-concurrency/index.md)), Streams (see [Java Collections & Concurrency](../java-collections-concurrency/index.md))
 - **Exception handling**: Checked vs. unchecked, try-with-resources

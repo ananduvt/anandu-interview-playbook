@@ -46,7 +46,7 @@ Designing large-scale systems: scalability, reliability, performance, and trade-
 
 <h3>Recommendation: Start monolithic, scale when needed</h3>
 
-<p>📚 <a href="/anandu-interview-playbook/system-design/worked-examples.md">Learn more: System Design Examples</a></p>
+<p>📚 <a href="/anandu-interview-playbook/system-design/worked-examples/">Learn more: System Design Examples</a></p>
 
 </details>
 

@@ -1,7 +1,6 @@
 # Java Basics
 
-
-### Java Editions
+## Java Editions
 
 Java has several editions, each catering to different platforms and use cases
 
@@ -29,167 +28,13 @@ Java has several editions, each catering to different platforms and use cases
 
 **For Java versions and feature timeline**, see [Versions & Features](versions-features.md).
 
-### JDK, JRE, JVM
+**For the JDK/JRE/JVM, class loaders, garbage collection and memory areas**, see [JVM Internals](jvm-internals.md).
 
-![](../assets/jdk-jre-jvm.png)
+## Java Core
 
-| JVM - Java Virtual Machine | JRE - Java Runtime Environment | JDK - Java Development Kit |
-| :---- | :---- | :---- |
-| A virtual machine that enables a computer to run Java programs as well as programs written in other languages that are also compiled to Java bytecode Its implementation is known as JRE JVM is Machine/OS-specific  | A software layer that runs on top of a computer’s operating system software and provides the class libraries and other resources that a specific Java program needs to run. Java Class Libraries: These are pre-written classes that provide a wide range of functionalities for developers. They cover areas like I/O operations, networking, data structures, user interface components, and more. These libraries simplify development by offering pre-built solutions for common tasks.  | A cross-platform software development environment that offers a collection of tools and libraries necessary for developing Java-based software applications and applets. It is a core package used in Java, along with the JVM (Java Virtual Machine) and the JRE (Java Runtime Environment).  JDK contains Java Runtime Environment (JRE), An interpreter/loader (Java), A compiler (javac), An archiver (jar) and many more. |
+### Access modifiers
 
-1. **ByteCode**
-   The Java bytecode is the intermediate representation of Java source code after it has been compiled by the Java compiler (javac). Instead of compiling directly to machine code, Java source code is compiled into bytecode, which is a platform-independent binary format.
-
-   Java bytecode is executed by the Java Virtual Machine (JVM), which is part of the Java Runtime Environment (JRE). The JVM is responsible for interpreting or just-in-time (JIT) compiling bytecode into machine code that can be executed by the underlying hardware.
-
-2. **ClassLoader**
-   The Java ClassLoader dynamically loads all classes necessary to run a Java program. Since Java classes are only loaded into memory when they're required, the JRE uses ClassLoaders to automate this process on demand.
-
-3. **Bytecode verifier**
-   The bytecode verifier ensures the format and accuracy of Java code before it passes to the interpreter. In the event that the code violates system integrity or access rights, the class will be considered corrupted and won't be loaded.
-
-4. **Interpreter**
-   After the bytecode successfully loads, the Java interpreter creates an instance of the JVM that allows the Java program to be executed natively on the underlying machine.
-
-5. **javac**
-   The Java Compiler (javac) is a command-line tool that compiles Java source code files (.java) into bytecode files (.class) that can be executed by the Java Virtual Machine (JVM).
-
-6. **JShell**
-   Introduced in Java 9, JShell is an interactive Read-Eval-Print Loop (REPL) tool that allows developers to experiment with Java code snippets and immediately see the results. It's particularly useful for testing small code fragments, exploring APIs, and learning Java syntax.
-
-7. **Javadoc**
-   The Javadoc tool (javadoc) generates HTML documentation from Java source code files. It extracts specially formatted comments (JavaDoc comments) from the source code and formats them into HTML pages, providing an easy-to-read reference for APIs.
-
-8. **Java Debugger (jdb)**: The Java Debugger (jdb) is a command-line debugging tool that allows developers to debug Java programs interactively. It provides features such as setting breakpoints, stepping through code, inspecting variables, and evaluating expressions.
-
-9. **Java Archive Tool (jar)**
-   The Java Archive tool (jar) is used to package Java classes and resources into a single compressed file called a JAR (Java Archive). JAR files are commonly used to distribute libraries, applications, or Java applets.
-
-10. **Javap**
-    Javap is a command-line tool in the Java Development Kit (JDK) used to disassemble compiled Java class files. It displays information about the class's bytecode instructions, constant pool, fields, and methods in a human-readable format. Developers use javap for debugging, analyzing bytecode, and understanding the structure of compiled Java classes.
-
-11. **JIT**
-    [https://www.baeldung.com/graal-java-jit-compiler](https://www.baeldung.com/graal-java-jit-compiler)
-
-    JIT (Just-In-Time) compilation in Java dynamically translates Java bytecode into native machine code during runtime, optimizing performance by executing compiled code directly. By identifying hot spots in the code and compiling frequently executed portions, JIT compilation enhances the execution speed of Java applications. This adaptive optimization process allows the JVM to balance between compilation overhead and runtime performance, achieving efficient execution on diverse hardware architectures.
-
-    The JDK implementation by Oracle is based on the open-source OpenJDK project. This includes the HotSpot virtual machine, available since Java version 1.3. It contains two conventional JIT-compilers: the client compiler, also called C1 and the server compiler, called opto or C2.
-
-    C1 is designed to run faster and produce less optimized code, while C2, on the other hand, takes a little more time to run but produces a better-optimized code. The client compiler is a better fit for desktop applications since we don’t want to have long pauses for the JIT-compilation. The server compiler is better for long-running server applications that can spend more time on the compilation.
-
-![](../assets/jit-compiler.png)
-
-![](../assets/class-loaders.png)
-**Class Loaders**
-[https://www.baeldung.com/java-classloaders](https://www.baeldung.com/java-classloaders)
-
-In Java, class loaders are a fundamental part of the runtime environment. They are responsible for dynamically loading Java classes into the Java Virtual Machine (JVM) on demand.
-
-**What they do**
-
-* Class loaders handle loading \`.class\` files (containing bytecode) from various sources like the file system, network, or even custom locations depending on the implementation.
-* They ensure that only required classes are loaded when needed, optimizing memory usage by avoiding upfront loading of all classes.
-* They maintain class visibility and uniqueness within the JVM.
-
-**Key principles**
-
-* **Delegation Model**: Class loaders follow a parent-child hierarchy. When a class needs to be loaded, the request is delegated to the parent class loader first. The parent attempts to load the class, and if unsuccessful, the child class loader takes over. This ensures a standard search path and avoids conflicts.
-* **Visibility**: A child class loader can see all classes loaded by its parent and ancestors. This allows for classes in different parts of the application to access commonly used classes loaded by the parent class loader. However, the reverse is not true – a parent class loader cannot see classes loaded by its child.
-* **Uniqueness**: Class loaders guarantee that a class is loaded only once within the JVM, even if requested multiple times or from different sources. This prevents conflicts arising from duplicate class definitions.
-
-**Types of Class Loaders in Java**
-
-* **Bootstrap Class Loader (Primitive Bootstrap Loader):** This is the root of the hierarchy and is responsible for loading core JDK classes like \`java.lang.Object\`. It's written in native code and not accessible from Java code.
-* **Extension Class Loader:** Loads classes from the \`$JAVA_HOME/lib/ext\` directory, typically containing extension libraries.
-* **System Class Loader:** Loads classes from the system classpath, which is usually defined by the \`CLASSPATH\` environment variable. This is the class loader used for most user-written classes.
-* **Application Class Loaders (Custom):** Developers can create custom class loaders to load classes from specific locations or implement custom loading logic.
-
-**Benefits of Class Loaders**
-
-* **Security**: By controlling class loading, the JVM can enforce security restrictions on where classes can be loaded from.
-* **Flexibility**: Class loaders allow for modularity and customization of how classes are loaded.
-* **Memory Efficiency**: Loading classes on demand helps optimize memory usage by avoiding unnecessary loading of unused classes.
-
-### Java Memory Management
-
-**Garbage Collector**
-Java garbage collection (GC) is an automatic process that manages memory allocation and reclaims memory occupied by unused objects in the Java heap.
-
-A core feature of the Java Runtime Environment (JRE) that eliminates the need for manual memory management (unlike languages like C++).
-It automatically identifies and removes objects that are no longer referenced by the program, freeing up memory for new object creation.
-
-Methods like **System.gc() or Runtime.getRuntime().gc()** only request the JVM to run GC. The JVM might decide not to perform collection due to various factors, like ongoing program activity or insufficient memory overhead.
-
-**Working**
-
-* **Memory Allocation**: When a Java object is created, memory is allocated for it in the heap, a dedicated memory region managed by the garbage collector.
-* **Object Reachability**: The garbage collector determines if an object is still reachable or "live." An object is considered live if it's referenced by a variable or another object that's still in use by the program.
-* **Garbage Collection Cycle**: The GC runs periodically or when memory usage reaches a certain threshold. It uses algorithms to identify unreachable objects (garbage) and removes them from the heap.
-
-**Common GC Algorithms**
-
-* **Mark-Sweep**: This is a basic algorithm that identifies reachable objects by marking them and then sweeping the heap to reclaim unmarked objects (garbage).
-* **Mark-Compac**t: Similar to mark-sweep, but after marking live objects, it compacts them into a contiguous memory space, reducing memory fragmentation and potentially improving performance.
-* **Generational Garbage Collection**: This is a more complex approach that divides the heap into generations based on object lifetimes. Younger generations (where objects are more likely to become garbage) are collected more frequently than older generations (where objects tend to have longer lifespans).
-
-**Impact on Application Performance:**
-
-* While GC automates memory management, it can sometimes cause pauses in program execution during collection cycles, especially for large heaps or complex object structures.
-* Understanding GC behavior and tuning GC parameters can help optimize application performance and minimize GC pauses.
-
-**Key Points to Remember:**
-
-* You don't explicitly call GC in most cases. The JVM manages the GC process automatically.
-* However, you can use the System.gc() method as a suggestion to the JVM to run garbage collection, but there's no guarantee it will happen immediately.
-* Proper object management practices like avoiding memory leaks (holding references to unused objects) can improve GC efficiency.
-
-**Java Memory Structure**
-[https://freedium.cfd/https://dip-mazumder.medium.com/java-memory-model-a-comprehensive-guide-ba9643b839e](https://freedium.cfd/https://dip-mazumder.medium.com/java-memory-model-a-comprehensive-guide-ba9643b839e)
-
-**![](../assets/java-memory-structure.png)**
-
-* **Heap Memory**
-  * The heap is the primary memory area where objects are allocated. It's a shared resource among all threads in a Java application.
-  * The heap is divided into two main generations: the Young Generation and the Old Generation.
-  * The Young Generation further consists of Eden space and Survivor spaces (S0 and S1).
-  * Objects are initially allocated in the Eden space. Surviving objects are promoted to Survivor spaces during garbage collection.
-
-* **Stack Memory**
-  * Each thread in a Java application has its own stack memory.
-  * The stack memory stores method invocations and local variables for each thread.
-  * It operates in a Last-In-First-Out (LIFO) manner, with method calls and local variables pushed onto the stack as methods are invoked and popped off when methods return.
-
-| Feature | Heap | Stack |
-| :---- | :---- | :---- |
-| **Functionality** | Stores all objects created during program execution. Objects reside in the heap until the garbage collector identifies them as unused and reclaims the memory. | Manages method calls, local variables, and frames (activation records) for each thread. The stack follows a Last-In-First-Out (LIFO) approach, where the most recently called method is at the top. |
-| **Memory Allocation** | Uses dynamic memory allocation. The size of the heap can be adjusted while the program runs. | Uses static memory allocation. The stack size is typically predefined and limited, and it grows or shrinks as methods are called and return. |
-| **Lifetime** | Objects in the heap can persist throughout the program's execution as long as they are referenced. The garbage collector determines when to remove them. | Data on the stack is temporary and specific to the current method execution. Once the method call finishes, the associated frame and variables are removed from the stack. |
-| **Thread Visibility** | Objects in the heap are generally accessible by all threads in the program, although proper synchronization mechanisms are needed to avoid data races | Each thread has its own separate stack, and data on the stack is not directly accessible by other threads |
-| **Management** | Managed by the garbage collector (GC). The GC automatically identifies and removes unused objects from the heap | Managed automatically by the JVM. When a stack overflow occurs (running out of stack space), a StackOverflowError exception is thrown. |
-
-* **Method Area (PermGen/Metaspace)**
-  * The method area stores class metadata, static fields, and method bytecode.
-  * In older versions of Java (up to Java 7), the method area was known as PermGen (Permanent Generation). It stored metadata related to classes and methods.
-  * In Java 8 and later versions, PermGen was replaced by Metaspace, which stores class metadata and other related information.
-
-* **Native Memory**
-  * Native memory is memory outside the JVM managed by the operating system.
-  * It includes memory used by the JVM itself, as well as native libraries and resources accessed by Java applications.
-
-* **Code Cache**
-  * The code cache stores compiled native code generated by the Just-In-Time (JIT) compiler.
-  * It helps improve the performance of Java applications by storing frequently executed bytecode as compiled native code.
-
-* **Program Counter (PC)**
-  * Tracks the currently executing instruction within a method.
-
-Java out of memory , heap memory issue
-
-### Java Core
-
-#### Access modifiers
-
-**![](../assets/access-modifiers.png)**
+![](../assets/access-modifiers.png)
 
 1. **public**
 2. **private**
@@ -215,8 +60,8 @@ Java out of memory , heap memory issue
 * synchronized keyword on different levels: Instance methods, Static methods & Code blocks
 
 7. **abstract**
-* Static methods can be inherited, but can’t be override
 * can have both concrete and abstract methods
+* see [Abstract](#abstract) below
 
 8. **native**
 * A non-access modifier that is used to access methods implemented in a language other than Java like C/C++
@@ -231,7 +76,7 @@ Java out of memory , heap memory issue
 11. **volatile**
 * To ensure that updates to variables propagate predictably to other threads(multi threading, synchronization)
 
-#### Static
+### Static
 
 In Java, the static keyword is a non-access modifier used for memory management. It associates a variable, method, block, or nested class with the class itself rather than with specific instances (objects) of the class. This means that only one copy of a static member exists, regardless of how many objects of the class are created.
 
@@ -239,7 +84,7 @@ In Java, the static keyword is a non-access modifier used for memory management.
    Static variables are class-level variables shared among all instances of the class. They are declared using the static keyword before the variable type.
 
 2. **Static Methods**
-   Static methods belong to the class and can be called without creating an object of the class. They are declared using the static keyword before the return type. Static methods can only access static variables and other static methods.
+   Static methods belong to the class and can be called without creating an object of the class. They are declared using the static keyword before the return type. Static methods can only access static variables and other static methods. Static methods can be inherited, but can’t be overridden (a subclass method with the same signature *hides* it).
 
 3. **Static Blocks**
    Static blocks are used to initialize static variables or perform other static initialization tasks. They are executed only once when the class is loaded into memory.
@@ -247,7 +92,7 @@ In Java, the static keyword is a non-access modifier used for memory management.
 4. **Static Nested Classes**
    Nested classes can be declared as static, in which case they do not have access to the instance members of the outer class. They are accessed using the outer class name.
 
-**Java Variable (Instance Variable) vs Static Variable (Class Variable)**
+#### Java Variable (Instance Variable) vs Static Variable (Class Variable)
 
 The primary difference between a Java variable and a static variable lies in their scope, lifetime, and how they are accessed.
 
@@ -259,7 +104,8 @@ The primary difference between a Java variable and a static variable lies in the
 | **Memory Allocation** | Memory is allocated for each instance variable when an object is created. | Memory is allocated only once for a static variable, regardless of the number of objects created. |
 | **Use Cases** | Represents attributes or states specific to an object. | Represents data or behavior shared among all objects of a class, like constants or counters. |
 
-**Method (Instance Method) vs Static Method**
+#### Method (Instance Method) vs Static Method
+
 The core difference between a Java method and a static method lies in their association and accessibility. A regular method, also known as an instance method, is tied to a specific object (instance) of a class. To call an instance method, one must first create an object of that class. On the other hand, a static method belongs to the class itself, not to any specific instance. It can be called directly using the class name, without needing to create an object
 
 | Feature | Method (Instance Method) | Static Method |
@@ -271,7 +117,7 @@ The core difference between a Java method and a static method lies in their asso
 | **Memory** | Multiple copies exist, one for each instance | Only one copy exists, shared by all instances |
 | **Use Cases** | Operations that depend on the state of a specific object | Utility functions, operations that don't depend on object state |
 
-#### Java main() Method
+### Java main() Method
 
 [https://www.geeksforgeeks.org/java-main-method-public-static-void-main-string-args/](https://www.geeksforgeeks.org/java-main-method-public-static-void-main-string-args/)
 
@@ -285,28 +131,33 @@ The execution of the Java program, the java.exe is called. The Java.exe in turn 
 
 ![](../assets/java-main-method.png)
 
-**public**
+#### public
+
 It is an Access modifier, which specifies from where and who can access the method. Making the main() method public makes it globally available. It is made public so that JVM can invoke it from outside the class as it is not present in the current class.
 
-**static**
+#### static
+
 It is a keyword that is associated with a method, making it a class-related method. The main() method is static so that JVM can invoke it without instantiating the class. This also saves the unnecessary wastage of memory which would have been used by the object declared only for calling the main() method by the JVM.
 
-**void**
+#### void
+
 It is a keyword and is used to specify that a method doesn’t return anything. As the main() method doesn’t return anything, its return type is void. As soon as the main() method terminates, the Java program terminates too. Hence, it doesn’t make any sense to return from the main() method as JVM can’t do anything with its return value.
 
-**main**
+#### main
+
 It is the name of the Java main method. It is the identifier that the JVM looks for as the starting point of the Java program. It’s not a keyword.
 
-#### **var**
+### var
 
 * ***var is a reserved type name, not a keyword***. We can still use it as a class name and also as the name of our variables.
 * Packaged as part of the 2018 version 10 release, the Java var reserved word introduced type inference to the strongly typed Java programming language.
 * Type inference in Java happens when the JDK’s compiler, rather than the developer, assigns a data-type to a variable.
 
-Eg:
+```java
 var x = 5.5;                        // double is inferred
 var y = System.currentTimeMillis(); // long is inferred
 var z = new ArrayList<Double>();    // ArrayList is inferred
+```
 
 Limits and restrictions to the use of var in Java include the following:
 
@@ -323,9 +174,9 @@ Limits and restrictions to the use of var in Java include the following:
 | Enhanced ease of development for methods and local blocks of code. | Readability: Overuse of 'var' can potentially reduce code readability, especially for newcomers to the codebase who might not be familiar with the context of the variable. |
 | It encourages developers to write more descriptive variable names; |  |
 
-   [https://www.geeksforgeeks.org/var-keyword-in-java/](https://www.geeksforgeeks.org/var-keyword-in-java/)
+[https://www.geeksforgeeks.org/var-keyword-in-java/](https://www.geeksforgeeks.org/var-keyword-in-java/)
 
-#### Switch Statements
+### Switch Statements
 
 Java's `switch` has grown from a C-style jump table into a full pattern-matching construct. There are five forms to know:
 
@@ -337,7 +188,7 @@ Java's `switch` has grown from a C-style jump table into a full pattern-matching
 | 4 | Pattern matching switch | Java 21 | Either | No | `case Type t when cond ->` |
 | 5 | Record pattern switch | Java 21 | Either | No | `case Point(int x, int y) ->` |
 
-**1. Classic switch statement (colon form)**
+#### 1. Classic switch statement (colon form)
 
 * Execution jumps to the matching `case` and **falls through** to the next cases until a `break`.
 * Supported selector types: `byte`, `short`, `char`, `int`, their wrappers, `enum` (Java 5), `String` (Java 7).
@@ -357,7 +208,7 @@ switch (day) {
 }
 ```
 
-**2. Arrow switch statement (Java 14)**
+#### 2. Arrow switch statement (Java 14)
 
 * `case X ->` runs only the code on the right; **no fall-through, no `break` needed**.
 * Multiple labels separated by commas.
@@ -370,7 +221,7 @@ switch (day) {
 }
 ```
 
-**3. Switch expression (Java 14)**
+#### 3. Switch expression (Java 14)
 
 * `switch` produces a value, so it can be assigned, returned or passed as an argument.
 * Must be **exhaustive**: every possible input needs a case (or a `default`). For an `enum`, covering all constants is enough.
@@ -398,7 +249,7 @@ String type = switch (code) {
 };
 ```
 
-**4. Pattern matching switch (Java 21)**
+#### 4. Pattern matching switch (Java 21)
 
 * The selector can be **any reference type**; cases match on type and bind a variable (no manual cast).
 * **Guards** (`when`) add conditions to a case.
@@ -435,7 +286,7 @@ double area(Shape shape) {
 }
 ```
 
-**5. Record pattern switch (Java 21)**
+#### 5. Record pattern switch (Java 21)
 
 * Destructures a record's components straight in the `case` label, and patterns can be nested.
 
@@ -452,7 +303,7 @@ String locate(Object obj) {
 }
 ```
 
-**Classic vs modern switch**
+#### Classic vs modern switch
 
 | Aspect | Classic (`:`) | Modern (`->` / expression / patterns) |
 | :---- | :---- | :---- |
@@ -463,14 +314,14 @@ String locate(Object obj) {
 | Selector types | Primitives (int-compatible), wrappers, enum, String | Any reference type |
 | Variable scope | Shared across the whole switch block | Scoped to each case |
 
-**Under the hood**
+#### Under the hood
 
 * Dense `int` cases compile to a `tableswitch` bytecode (O(1) jump table); sparse cases compile to `lookupswitch` (binary search).
 * A `String` switch switches on `hashCode()` first, then checks `equals()` to rule out collisions.
 * An `enum` switch uses the constant's `ordinal()`.
 * Pattern switches are compiled using `invokedynamic` (`SwitchBootstraps.typeSwitch`).
 
-**Common interview questions**
+#### Common interview questions
 
 * *Can you switch on a `long`?* No. Only int-compatible primitives, their wrappers, enum, String, and any reference type with pattern matching.
 * *Difference between `return` and `yield`?* `yield` exits the switch with a value; `return` exits the whole method and isn't allowed inside a switch expression.
@@ -482,32 +333,55 @@ String locate(Object obj) {
 [https://www.baeldung.com/java-yield-switch](https://www.baeldung.com/java-yield-switch)
 [https://openjdk.org/jeps/441](https://openjdk.org/jeps/441)
 
-**Static**
-
-**Interface**
+### Interface
 
 * methods are by default abstract and public
 * attributes are by default public, static and final
-* no concrete implementations
-* Can have default concrete implementations (e.g., default methods in Java 8+)
+* abstract methods have no implementation
+* Can have default concrete implementations (e.g., default methods in Java 8+), static methods (Java 8) and private methods (Java 9)
 
-**Abstract**
+### Abstract
 
-*
+An **abstract class** is declared with the `abstract` keyword and cannot be instantiated. It is meant to be extended and can mix abstract methods (no body, subclasses must implement) with concrete methods.
 
-**Serialization**
+* Can have constructors (called via `super(...)` from subclasses), instance fields, and any access modifier on members
+* A class with at least one abstract method must be declared abstract
+* A subclass must implement all abstract methods or be abstract itself
+* A class can extend only one abstract class
+
+```java
+abstract class Shape {
+    abstract double area();                 // subclasses must implement
+
+    void describe() {                       // shared concrete behaviour
+        System.out.println("Area: " + area());
+    }
+}
+
+class Circle extends Shape {
+    private final double r;
+    Circle(double r) { this.r = r; }
+    @Override double area() { return Math.PI * r * r; }
+}
+```
+
+| Aspect | Abstract class | Interface |
+| :---- | :---- | :---- |
+| Instantiable | No | No |
+| State (instance fields) | Yes | No (only `public static final` constants) |
+| Constructors | Yes | No |
+| Method bodies | Abstract and concrete | Abstract, plus `default`, `static`, `private` (Java 8/9+) |
+| Inheritance | Single (`extends`) | Multiple (`implements`) |
+| Use when | Related classes share state and code | Defining a capability or contract across unrelated classes |
+
+### Serialization
 
 * conversion of the state of an object into a byte stream; deserialization does the opposite, to store the object in file, transfer over a network
 * When a class implements the *java.io.Serializable* interface, all its sub-classes are serializable as well
-* **The JVM associates a version (*long*) number with each serializable class.** We use it to verify that the saved and loaded
-
-objects have the same attributes, and thus are compatible with serialization.
-
+* **The JVM associates a version (*long*) number (`serialVersionUID`) with each serializable class.** We use it to verify that the saved and loaded objects have the same attributes, and thus are compatible with serialization.
 * Custom serialization can be particularly useful when trying to serialize an object that has some unserializable attributes(Transient)
 
-**Serialization & Deserialization**
-
-**Optional**
+### Optional
 
 * container object which may or may not contain a non-null value
 * *isPresent()* and *isEmpty()*
@@ -518,7 +392,7 @@ objects have the same attributes, and thus are compatible with serialization.
 * *orElse()*
 * *get()*
 
-**Generics**
+### Generics
 
 * Code reuse - handle multiple param type
 * Type Safety - compile time check of the type (e.g., List<String> only accepts String)
@@ -530,90 +404,176 @@ objects have the same attributes, and thus are compatible with serialization.
 * N – Number
 * V – Value
 
-**Records**
+### Records
 
 * fast way to create POJO or DTO
-* public record Employee(int id, String firstName, String lastName) {}
 
-**hashCode() -**  unique value for each object**,** hash-based implementations use Hashcode - hashSet , hashMap
+```java
+public record Employee(int id, String firstName, String lastName) {}
+```
 
-**Java Constructor Patterns**
+### hashCode()
+
+* An `int` digest of an object. Hash-based collections (`HashSet`, `HashMap`) use it to choose a bucket.
+* Equal objects must return equal hash codes, so override `hashCode()` together with `equals()`. Different objects may share a hash code (a collision), so it is not a unique ID.
+
+### Java Constructor Patterns
 
 * Default constructor (no parameters)
 * Parametrized constructor (with parameters)
 * Copy constructor (initialize from another object)
 * Builder pattern (fluent construction)
 
-Annotations, custom annotations
+### Annotations
 
-Immutable class implementation
+Annotations attach metadata to classes, methods, fields, and parameters. They don't change program logic by themselves; a compiler, framework, or reflection code reads them.
 
-Marker interface
+* **Built-in:** `@Override`, `@Deprecated`, `@SuppressWarnings`, `@FunctionalInterface`, `@SafeVarargs`
+* **Meta-annotations** (used to define annotations): `@Retention` (SOURCE, CLASS, RUNTIME), `@Target` (where it can be applied), `@Documented`, `@Inherited`, `@Repeatable`
+
+**Custom annotation**
+
+```java
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME)   // keep it available at runtime
+@Target(ElementType.METHOD)           // only usable on methods
+public @interface Audit {
+    String value() default "";
+}
+
+class OrderService {
+    @Audit("place-order")
+    void placeOrder() { /* ... */ }
+}
+```
+
+**Reading it with reflection**
+
+```java
+for (Method m : OrderService.class.getDeclaredMethods()) {
+    if (m.isAnnotationPresent(Audit.class)) {
+        System.out.println(m.getName() + " -> " + m.getAnnotation(Audit.class).value());
+    }
+}
+```
+
+Frameworks such as Spring build on this idea (`@Component`, `@Transactional`). Only `RUNTIME` retention is visible to reflection.
+
+### Immutable class implementation
+
+An immutable object's state can't change after construction. This makes it inherently thread-safe and safe to share or use as a map key. `String`, the wrapper classes, and `LocalDate` are immutable.
+
+**Recipe**
+
+1. Declare the class `final` so it can't be subclassed.
+2. Make all fields `private final`.
+3. Set fields only in the constructor; provide no setters.
+4. Defensively copy mutable inputs in the constructor and mutable outputs in getters.
+
+```java
+public final class Order {
+    private final String id;
+    private final List<String> items;
+
+    public Order(String id, List<String> items) {
+        this.id = id;
+        this.items = List.copyOf(items);   // defensive copy, unmodifiable
+    }
+
+    public String getId() { return id; }
+    public List<String> getItems() { return items; }   // already unmodifiable
+}
+```
+
+A `record` gives you an immutable data carrier with less code, but its fields are only shallowly immutable: a mutable component (such as an `ArrayList`) can still change unless you copy it.
+
+### Marker interface
+
+An interface with no methods, used to tag a class so other code can check for it (`instanceof`) and change behaviour. Examples: `Serializable`, `Cloneable`, `RandomAccess`. Annotations are the modern alternative because they can carry values and apply to methods and fields.
+
 [https://www.geeksforgeeks.org/marker-interface-java/](https://www.geeksforgeeks.org/marker-interface-java/)
-[https://www.baeldung.com/java-marker-interfaces\](https://www.baeldung.com/java-marker-interfaces\)
+[https://www.baeldung.com/java-marker-interfaces](https://www.baeldung.com/java-marker-interfaces)
 
-Java autoboxing
+### Autoboxing and wrapper classes
+
 [https://www.baeldung.com/java-wrapper-classes](https://www.baeldung.com/java-wrapper-classes)
 
-Java Casting
+Each primitive has a wrapper class (`int` → `Integer`, `long` → `Long`, `double` → `Double`, `boolean` → `Boolean`, `char` → `Character`, and so on). Wrappers are objects, so they can be used in generics and collections and can be `null`.
 
-Wrapper class
-[https://www.baeldung.com/java-wrapper-classes](https://www.baeldung.com/java-wrapper-classes)
+* **Autoboxing:** automatic primitive → wrapper conversion (`Integer a = 5;`)
+* **Unboxing:** automatic wrapper → primitive conversion (`int b = a;`)
 
-**Passing Class Name as Input Parameter**
+**Gotchas**
+
+* Unboxing a `null` wrapper throws `NullPointerException`.
+* `Integer` values from -128 to 127 are cached, so `==` can be `true` for small values and `false` for larger ones. Compare wrappers with `.equals()`.
+* Boxing inside hot loops creates many short-lived objects; prefer primitives there.
+
+```java
+Integer a = 127, b = 127;
+System.out.println(a == b);        // true  (cached)
+Integer c = 1000, d = 1000;
+System.out.println(c == d);        // false (different objects)
+System.out.println(c.equals(d));   // true
+```
+
+### Java Casting
+
+* **Widening (implicit):** a smaller primitive type to a larger one, with no data loss (`int` → `long` → `double`).
+* **Narrowing (explicit cast):** a larger type to a smaller one; data can be lost (`double` → `int` drops the fraction, `int` → `byte` can overflow).
+* **Upcasting:** subclass reference to a superclass or interface type; implicit and always safe.
+* **Downcasting:** superclass reference to a subclass type; needs an explicit cast and throws `ClassCastException` if the object isn't actually that type.
+
+```java
+int i = 10;
+long l = i;                    // widening, implicit
+double d = 9.99;
+int n = (int) d;               // narrowing, n == 9
+
+Object o = "hello";
+// Integer bad = (Integer) o;  // ClassCastException at runtime
+if (o instanceof String s) {   // pattern matching instanceof (Java 16)
+    System.out.println(s.length());
+}
+```
+
+### Passing Class Name as Input Parameter
 
 Useful for reflection and dynamic object creation:
+
 ```java
 public <T> T createInstance(Class<T> clazz) {
     return clazz.getDeclaredConstructor().newInstance();
 }
 ```
 
-**‘==‘**
+### == vs .equals()
 
-* operator
-* address comparison
+* `==` is an operator that compares addresses (references) for objects.
+* `.equals()` is a method that compares content, but it must be overridden. The default implementation from `Object` behaves like `==`.
 
-**.equals**
+| Feature | `==` | `.equals()` |
+| :---- | :---- | :---- |
+| Comparison type | Reference equality (memory address) for objects, value equality for primitives | Content equality (can be overridden) |
+| Usage | Objects and primitives | Objects only |
+| Overridable | No | Yes |
+| Example | `obj1 == obj2`, `int1 == int2` | `obj1.equals(obj2)`, `"hello".equals(str)` |
 
-* method
-* content comparison
-* need to override or default implementation (==) is used
+### Comparable vs Comparator
 
-Feature
-==
-.equals()
-Comparison Type
-Reference equality (memory address) or value equality for primitives
-Content equality (can be overridden)
-Usage
-Objects and primitives
-Objects only
-Overridable
-No
-Yes
-Example
-obj1 == obj2, int1 == int2
-obj1.equals(obj2), "hello".equals(str)
-
-**Comparable Interface**
-
-* single sorting sequence - defined inside the class
-* affects the original class
-* Uses compareTo()
-* Collections.sort(List)
-
-**Comparator Interface**
-
-* multiple sorting sequences - defined outside the class
-* doesn't affect the original class
-* Uses compare()
-* **Collections.sort(List, Comparator)**
+| Feature | Comparable | Comparator |
+| :---- | :---- | :---- |
+| Sorting sequences | Single, natural ordering | Multiple custom orderings |
+| Defined | Inside the class | Outside the class |
+| Effect on original class | Modifies the class (it must implement the interface) | Doesn't affect the original class |
+| Method | `compareTo()` | `compare()` |
+| Usage | `Collections.sort(List)` | `Collections.sort(List, Comparator)` |
 
 [https://www.geeksforgeeks.org/comparable-vs-comparator-in-java/](https://www.geeksforgeeks.org/comparable-vs-comparator-in-java/)
 [https://www.baeldung.com/java-comparator-comparable](https://www.baeldung.com/java-comparator-comparable)
 
-#### final vs finally vs finalize
+### final vs finally vs finalize
 
 In Java, final, finally, and finalize serve distinct purposes:
 
@@ -625,12 +585,12 @@ It is a keyword used to apply restrictions on variables, methods, and classes.
 * A final class cannot be extended.
 
 **finally**:
-It is a block used in exception handling, typically following a try or catch block. The code within the finally block is always executed, regardless of whether an exception occurred or was caught. It's commonly used for cleanup operations like closing resources.
+It is a block used in exception handling, typically following a try or catch block. The code within the finally block always executes, regardless of whether an exception occurred or was caught. It's commonly used for cleanup operations like closing resources.
 
 **finalize**:
 It is a method of the Object class in Java. It's called by the garbage collector before an object is reclaimed. The finalize() method allows an object to perform any necessary cleanup before it is garbage collected. However, its use is discouraged in modern Java development due to its unpredictable timing and potential performance issues. Alternatives like try-with-resources are preferred.
 
-#### Hashing vs Encryption
+### Hashing vs Encryption
 
 Hashing and encryption are both techniques used to secure data in Java, but they serve different purposes and have distinct characteristics.
 
@@ -649,9 +609,10 @@ Hashing and encryption are both techniques used to secure data in Java, but they
 
 In essence, hashing ensures that data hasn't been tampered with, while encryption ensures that only authorized parties can access the data.
 
-### Java Beans, POJO, EJB
+## Java Beans, POJO, EJB
 
-**Java Beans**
+### Java Beans
+
 JavaBeans are classes that encapsulate many objects into a single object (the bean)
 
 1. Must implement Serializable.
@@ -665,6 +626,8 @@ Advantage
 3. Easy interaction with other components
 
 Eg:
+
+```java
 import java.io.Serializable;
 
 public class StudentBean implements Serializable {
@@ -690,20 +653,30 @@ public class StudentBean implements Serializable {
        this.age = age;
    }
 }
+```
 
-**POJO - Plain Old Java Objects**
+### POJO - Plain Old Java Objects
+
 A POJO is a simple Java object that doesn’t extend or implement some specialized classes or interfaces in the Java framework. POJOs offer the advantage of simplicity and flexibility, but they lack some of the features provided by Java Beans, such as event handling and persistence.
+
 Eg:
+
+```java
 public class StudentPOJO {
    private String name;
    private int age;
 
    // Constructor, getters, and setters omitted for brevity
 }
+```
 
-**EJB - Enterprise JavaBeans**
+### EJB - Enterprise JavaBeans
+
 EJBs are a part of the Java EE (Enterprise Edition) framework and provide a robust architecture for building large-scale, distributed applications. EJBs offer advanced features such as **transaction** **management** and **security**, but they are more **complex** and **heavier** than Java Beans and POJOs.
+
 Eg:
+
+```java
 import javax.ejb.Stateless;
 
 @Stateless
@@ -712,3 +685,4 @@ public class StudentEJB {
        return "John Doe, 22";
    }
 }
+```

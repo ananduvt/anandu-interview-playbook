@@ -86,7 +86,7 @@ Infrastructure, deployment, containerization, CI/CD, cloud platforms, and operat
 5. Deploy to Kubernetes
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/devops/docker.md">Learn more: Docker & Containers</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/docker/">Learn more: Docker & Containers</a></p>
 
 </details>
 
@@ -175,7 +175,7 @@ Layer 5: Configuration
 Each layer = file system diff
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/devops/docker.md">Learn more: Docker Images & Containers</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/docker/">Learn more: Docker Images & Containers</a></p>
 
 </details>
 
@@ -265,7 +265,7 @@ Scheduler (finds node for new pod)
 kubelet on Node (pulls image, runs container)
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes.md">Learn more: Kubernetes</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes</a></p>
 
 </details>
 
@@ -350,7 +350,7 @@ Pod (actual container)
 <p><strong>Pod:</strong> Temporary debugging, one-off jobs</p>
 <p><strong>Deployment:</strong> Production applications (99% of cases)</p>
 
-<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes.md">Learn more: Kubernetes Pods & Deployments</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes Pods & Deployments</a></p>
 
 </details>
 
@@ -447,7 +447,7 @@ Step 4: Route 100% to v2
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-deployment-strategies.md">Learn more: Deployment Strategies</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes-deployment-strategies/">Learn more: Deployment Strategies</a></p>
 
 </details>
 
@@ -516,7 +516,7 @@ Kubernetes Cluster (applies changes)
 <li><strong>✅ Consistency:</strong> Same deploy process everywhere</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes.md">Learn more: Kubernetes & GitOps</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/kubernetes/">Learn more: Kubernetes & GitOps</a></p>
 
 </details>
 
@@ -629,7 +629,7 @@ jobs:
       - run: kubectl apply -f k8s/
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/devops/ci-cd.md">Learn more: CI/CD Pipelines</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/ci-cd/">Learn more: CI/CD Pipelines</a></p>
 
 </details>
 
@@ -731,7 +731,7 @@ readinessProbe:     # Ready to serve traffic?
 <li>Deployment replicas not matching desired</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/devops/observability.md">Learn more: Monitoring & Observability</a></p>
+<p>📚 <a href="/anandu-interview-playbook/devops/observability/">Learn more: Monitoring & Observability</a></p>
 
 </details>
 

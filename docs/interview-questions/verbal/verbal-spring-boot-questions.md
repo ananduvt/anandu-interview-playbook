@@ -165,7 +165,7 @@ public void process() { ... }
 
 <p><strong>Unchecked exceptions roll back by default; checked exceptions do not.</strong> This is often surprising and a common interview question!</p>
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-advanced.md">Learn more: Spring Boot Advanced</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-advanced/">Learn more: Spring Boot Advanced</a></p>
 
 </details>
 
@@ -272,7 +272,7 @@ public class DataSourceBean {
 }
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot.md">Learn more: Spring Boot</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot/">Learn more: Spring Boot</a></p>
 
 </details>
 
@@ -365,7 +365,7 @@ public class AppConfig {
 @RestController // REST endpoints
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-annotations-components.md">Learn more: Spring Annotations</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-annotations-components/">Learn more: Spring Annotations</a></p>
 
 </details>
 
@@ -436,7 +436,7 @@ dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8A  // Signature
 
 <p><strong>Header + Payload + Signature</strong> (signed with secret)</p>
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/security.md">Learn more: Security & Authentication</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/security/">Learn more: Security & Authentication</a></p>
 
 </details>
 
@@ -506,7 +506,7 @@ GET /api/users?v=2
 
 <p><strong>Use URL path versioning</strong> for clarity and simplicity. It's the most straightforward and widely understood approach.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/api-styles.md">Learn more: API Styles</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/api-styles/">Learn more: API Styles</a></p>
 
 </details>
 
@@ -586,7 +586,7 @@ public ResponseEntity<?> checkStatus(@PathVariable String jobId) {
 <li><strong>Server-Sent Events (SSE):</strong> One-way server push</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/api-styles.md">Learn more: API Styles & REST Design</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/api-styles/">Learn more: API Styles & REST Design</a></p>
 
 </details>
 
@@ -683,7 +683,7 @@ Response:
 <p><strong>SOAP:</strong> Everything is a method call (GetUser, CreateUser, DeleteUser)</p>
 <p><strong>REST:</strong> Resources with HTTP methods (GET /users/123, POST /users, DELETE /users/123)</p>
 
-<p>📚 <a href="/anandu-interview-playbook/foundations/web-fundamentals.md">Learn more: Web Fundamentals</a></p>
+<p>📚 <a href="/anandu-interview-playbook/foundations/web-fundamentals/">Learn more: Web Fundamentals</a></p>
 
 </details>
 

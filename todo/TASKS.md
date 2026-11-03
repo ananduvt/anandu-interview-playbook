@@ -37,12 +37,12 @@ Questions to add live in `todo/to-process/QUESTIONS_TODO.json`.
 
 ## Batch 4 — Content clean-up
 
-- [ ] `docs/java-core/basics.md`: clean up formatting and split into subtopics if needed
-  - Empty/stub headings: "Static" (duplicate of the Static section), "Abstract" (empty bullet), "Serialization & Deserialization"
-  - `==` vs `.equals()` comparison is a broken flat list; convert to a table
-  - Bare one-liners with no content: "Java out of memory, heap memory issue", "Annotations, custom annotations", "Immutable class implementation", "Java Casting"
-  - Inconsistent heading levels (`**bold**` used as headings alongside `####`)
-  - Malformed Baeldung marker-interface link (trailing backslash)
+- [x] `docs/java-core/basics.md`: clean up formatting and split into subtopics if needed (done; JVM sections split out to `jvm-internals.md`, since the cleanup pushed the page past 800 lines)
+  - [x] Empty/stub headings: "Static" (duplicate of the Static section), "Abstract" (empty bullet), "Serialization & Deserialization"
+  - [x] `==` vs `.equals()` comparison is a broken flat list; convert to a table
+  - [x] Bare one-liners with no content: "Java out of memory, heap memory issue", "Annotations, custom annotations", "Immutable class implementation", "Java Casting" (also filled in the bare "Marker interface", "Java autoboxing", "Wrapper class" entries)
+  - [x] Inconsistent heading levels (`**bold**` used as headings alongside `####`)
+  - [x] Malformed Baeldung marker-interface link (trailing backslash)
 - [ ] Consolidate overlapping threading pages: `java-collections-concurrency/concurrency.md` and `threading.md` both cover Runnable vs Callable, synchronization, and thread pools. Keep each topic in one place and cross-link (`threading.md` uniquely has virtual threads and concurrency patterns; `concurrency.md` has CompletableFuture and IPC)
 - [ ] Consolidate overlapping web/API pages: SOAP, REST, GraphQL, and gRPC appear in `foundations/web-fundamentals.md`, `spring-web/api-styles.md`, and `spring-web/web-services.md`. Pick one home per topic and cross-link. `web-services.md` uniquely has the authentication methods section
 - [ ] Consolidate the DSA reference in `interview-questions/coding/index.md`: its complexity cheat sheet and common-techniques table overlap `dsa/algorithms.md` and `dsa/data-structures.md`. Keep the reference in `dsa/`, and leave the coding overview with the interview approach plus links

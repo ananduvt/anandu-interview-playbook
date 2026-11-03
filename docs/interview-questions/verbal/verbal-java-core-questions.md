@@ -93,7 +93,7 @@ class Person {
 }
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/oop.md">Learn more: OOP</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/oop/">Learn more: OOP</a></p>
 
 </details>
 
@@ -219,7 +219,7 @@ if (a > Integer.MAX_VALUE - b) {
 int result = Math.addExact(a, b);
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/basics.md">Learn more: Java Basics</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/basics/">Learn more: Java Basics</a></p>
 
 </details>
 
@@ -266,7 +266,7 @@ int temp2 = ++a;       // a is 7
 int result = temp1 + temp2;  // 5 + 7 = 12
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/basics.md">Learn more: Java Basics</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/basics/">Learn more: Java Basics</a></p>
 
 </details>
 
@@ -325,7 +325,7 @@ y == Double.POSITIVE_INFINITY  // true
 Double.isInfinite(y)           // true
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/basics.md">Learn more: Java Basics</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/basics/">Learn more: Java Basics</a></p>
 
 </details>
 
@@ -486,7 +486,7 @@ Arrays.sort(students, byNameThenAge);       // Sort by name, then age
 <li><strong>Comparator:</strong> When you need multiple orderings or the class doesn't implement Comparable</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/oop.md">Learn more: OOP</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/oop/">Learn more: OOP</a></p>
 
 </details>
 

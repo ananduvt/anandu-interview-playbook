@@ -18,7 +18,7 @@ Hosted on GitHub Pages. Auto-rebuilds on merge to `main`.
 │   ├── java-core/     # Java fundamentals
 │   ├── spring-web/    # Spring Framework
 │   └── ...            # other topic sections
-├── todo/              # content intake pipeline and internal task list (not published)
+├── todo/              # internal intake workspace and task list (not published; layout provisional)
 ├── mkdocs.yml         # site config (theme, navigation)
 ├── CONTRIBUTING.md    # contributor guide
 └── README.md          # this file

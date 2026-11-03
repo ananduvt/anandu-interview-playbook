@@ -21,7 +21,7 @@ A structured interview-preparation knowledge base, published with MkDocs (Materi
 │   │   └── verbal/        # verbal Q&A, one file per domain
 │   ├── resources/         # long-form references (roadmap, code-review guidelines)
 │   └── feedback.md        # public feedback page
-├── todo/                  # content intake pipeline + TASKS.md (committed, NOT published)
+├── todo/                  # internal intake workspace and task list (committed, NOT published; layout is provisional)
 ├── mkdocs.yml             # site config and navigation
 ├── CONTRIBUTING.md        # this file
 └── README.md              # project intro and local setup
@@ -33,7 +33,7 @@ A structured interview-preparation knowledge base, published with MkDocs (Materi
 
 ### Content Visibility
 - Everything under `docs/` is **published to a public site**.
-- `todo/` is committed to git but **not published**. The GitHub repository may still be public, so the same safety rules apply to it.
+- `todo/` is committed to git but **not published**. The GitHub repository may still be public, so the same safety rules apply to anything taken from it. The sensitivity check is done per item when it is processed (see the Content Intake Pipeline section below), not as a sweep of the whole `todo/` folder.
 - Editing notes, format instructions, and meta-guidance belong in this file, never on published pages.
 
 ### What NOT to Include
@@ -134,7 +134,7 @@ When splitting, add "See also" cross-references between the resulting files and 
 5. Check the size limits; split if needed.
 6. Make the follow-on updates in [Keep the Site Working](#keep-the-site-working) (nav, index pages, links).
 7. Link related interview questions to the new content (and vice versa).
-8. If the topic was listed in `todo/TASKS.md`, tick it off.
+8. If the topic is tracked in the internal task list (see [Tracking Work](#tracking-work-internal-task-list-and-feedbackmd)), mark it done.
 9. Run `mkdocs build --strict` and check the page renders correctly with `mkdocs serve`.
 
 ### Adding Interview Questions
@@ -142,11 +142,12 @@ When splitting, add "See also" cross-references between the resulting files and 
 2. Pick the domain file. If it already has 25 questions, split it first (see [Size Limits](#size-limits)).
 3. **Append** new questions at the end with the next number. Don't renumber existing questions — other pages may link to them.
 4. Use the matching [question template](#interview-question-templates).
-5. Add a "📚 Learn more" link to the related learning page. If no learning page covers the concept, add the concept to that page (or log it in `todo/TASKS.md` → Content gaps).
-6. If the question came from the `todo/` pipeline, mark it `ADDED` in `QUESTIONS_TODO.json`.
+5. Add a "📚 Learn more" link to the related learning page. If no learning page covers the concept, add the concept to that page (or log it as a content gap in the internal task list).
+6. If the question came from the `todo/` intake pipeline and is tracked in a question queue, mark it `ADDED` there.
 
-### Tracking Work: `TASKS.md` and `feedback.md`
-- [`todo/TASKS.md`](todo/TASKS.md) is the single internal list of pending work: fixes, refactors, splits, **and topics still to be written**. Tick items off when done. Don't create "backlog" or "to add" pages under `docs/`.
+### Tracking Work: internal task list and `feedback.md`
+- The internal task list in `todo/` is the single list of pending work: fixes, refactors, splits, **and topics still to be written**. Tick items off when done. Don't create "backlog" or "to add" pages under `docs/`.
+- The exact file name and structure of the task list may change while the `todo/` workflow is being finalized. Check the current `todo/` folder for its location.
 - `docs/feedback.md` is the public feedback page; don't use it for internal notes.
 
 ---
@@ -351,35 +352,37 @@ One file per domain: `verbal-{domain}-questions.md`
 
 Raw interview notes and topic ideas pass through `todo/` before they reach `docs/`. The folder is committed but **not published**.
 
-| Folder | Contents | Rules |
+> **Provisional:** the folder names, file names, and queue format under `todo/` are not finalized. The roles below describe what each stage is for. Check the current `todo/` folder and its own notes for the exact layout, and follow them when they exist.
+
+| Stage | Purpose | Rules |
 | :-- | :-- | :-- |
-| `todo/raw/` | Unprocessed input: interview notes, question dumps, topic ideas. | Paste as-is, but **scrub employer/client names and personal data before committing**. Use a `.txt` or `.md` extension. |
-| `todo/to-process/` | Cleaned-up, deduplicated items **ready to add** to `docs/`. | Questions go in `QUESTIONS_TODO.json`. Topic ideas go in `todo/TASKS.md` → Content gaps. |
-| `todo/processed/` | Raw files that have been fully extracted. | Kept for reference only; don't edit. |
-| `todo/TASKS.md` | All pending work: fixes, refactors, splits, and topics to write. | Work through it batch by batch; tick items off when done. |
+| **Raw input** | Unprocessed material: interview notes, question dumps, topic ideas. | Paste as-is. Do **not** sweep it for sensitive data on arrival. Run the sensitivity check when an item is processed (see step 2 below). |
+| **Ready to add** | Cleaned-up, deduplicated items that are ready to go into `docs/`. | Questions go in the question queue (if one is in use). Topic ideas go in the internal task list as content gaps. |
+| **Processed** | Raw material that has been fully extracted. | Kept for reference only; don't edit. |
+| **Task list** | All pending work: fixes, refactors, splits, and topics to write. | Work through it in batches; tick items off when done. |
 
 ### Flow
 
 ```mermaid
 graph TD
     A[raw/ notes] --> B[Clean up and dedupe]
-    B --> C[to-process/ QUESTIONS_TODO.json]
+    B --> C[Ready to add: question queue]
     C --> D[Add to docs/ with answers]
-    D --> E[Mark ADDED in JSON]
-    A --> F[Move raw file to processed/]
+    D --> E[Mark ADDED in queue]
+    A --> F[Move raw file to processed]
     style A fill:#1a3a52,stroke:#00bfff,color:#fff
     style C fill:#3a2a4a,stroke:#da70d6,color:#fff
     style D fill:#4a2a1a,stroke:#ff8c00,color:#fff
 ```
 
-1. **Capture**: drop raw content into `todo/raw/`.
-2. **Clean up**: rewrite each item as a clear, standalone question; split combined questions; drop pure behavioural or company-specific ones unless they're useful generically.
-3. **Deduplicate**: check against `QUESTIONS_TODO.json` **and** the existing `docs/interview-questions/` files.
-4. **Queue**: add the cleaned items to `todo/to-process/QUESTIONS_TODO.json` with a unique ID, source file, status, and short notes.
-5. **Archive**: move the raw file to `todo/processed/` once everything is extracted.
+1. **Capture**: drop raw content into the raw-input area of `todo/`.
+2. **Clean up**: rewrite each item as a clear, standalone question; split combined questions; drop pure behavioural or company-specific ones unless they're useful generically. **Run the sensitivity check on each item you carry forward** (no employer/client names, internal identifiers, or personal data; see Publishing Model & Safety above). Do this per item as it is processed, not across the whole `todo/` folder.
+3. **Deduplicate**: check against the question queue (if one is in use) **and** the existing `docs/interview-questions/` files.
+4. **Queue**: add the cleaned items to the question queue (if one is in use) with a unique ID, source file, status, and short notes.
+5. **Archive**: move the raw file to the processed area once everything is extracted.
 6. **Publish in batches**: add questions to `docs/` using the [question templates](#interview-question-templates), then mark them `ADDED`.
 
-### `QUESTIONS_TODO.json` Rules
+### Question Queue Rules (when a queue file is in use)
 - **IDs**: category prefix + number (`SB_001`, `KFK_004`). IDs are never reused or renumbered.
 - **Status values**:
 
@@ -390,7 +393,7 @@ graph TD
 | `DUPLICATE` | Already covered in the repo (note where); skip |
 | `ADDED` | Added to `docs/` (note the file and question number) |
 
-- **Counts are derived, never hand-typed**: if the file keeps `count`/`total` fields, recompute them from the actual entries whenever the file changes.
+- **Counts are derived, never hand-typed**: if the queue keeps `count`/`total` fields, recompute them from the actual entries whenever the file changes.
 - Question text may be edited during clean-up; once a question is `ADDED`, update only `status` and `notes`.
 
 ---
@@ -430,7 +433,7 @@ graph TD
 
 ### 6. Verify & Commit
 - [ ] `mkdocs build --strict` passes; changed pages render correctly in `mkdocs serve`
-- [ ] `QUESTIONS_TODO.json` / `TASKS.md` updated if relevant
+- [ ] Internal `todo/` task list and question queue updated if relevant
 - [ ] Only intended files staged (`git status`, `git diff --staged`)
 - [ ] Changes summarized; approval received (AI assistants and PR contributors)
 

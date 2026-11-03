@@ -87,7 +87,7 @@ Reduces noise, improves efficiency
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals.md">Learn more: ML Fundamentals</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals/">Learn more: ML Fundamentals</a></p>
 
 </details>
 
@@ -180,7 +180,7 @@ If λ high: Model stays simple
 If λ low: Can overfit
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals.md">Learn more: Model Validation</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals/">Learn more: Model Validation</a></p>
 
 </details>
 
@@ -263,7 +263,7 @@ Underfitting          Optimal            Overfitting
 (straight line)   (slight curve)    (wiggly line)
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals.md">Learn more: Bias-Variance</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals/">Learn more: Bias-Variance</a></p>
 
 </details>
 
@@ -348,7 +348,7 @@ Applies filter across image, detecting features
 <li><strong>❌ Not for:</strong> Tabular data, time series (use RNN/LSTM)</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/deep-learning.md">Learn more: Deep Learning & CNNs</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/deep-learning/">Learn more: Deep Learning & CNNs</a></p>
 
 </details>
 
@@ -440,7 +440,7 @@ Output: "Hola mundo"
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/llms-transformers.md">Learn more: Transformers & LLMs</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/llms-transformers/">Learn more: Transformers & LLMs</a></p>
 
 </details>
 
@@ -536,7 +536,7 @@ RAG: Retrieves relevant section
      Cites policy document
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/rag-generative.md">Learn more: RAG & Generative AI</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/rag-generative/">Learn more: RAG & Generative AI</a></p>
 
 </details>
 
@@ -641,7 +641,7 @@ F1 = 2 × (Precision × Recall) / (Precision + Recall)
    Harmonic mean, penalizes imbalance
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals.md">Learn more: Model Evaluation</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals/">Learn more: Model Evaluation</a></p>
 
 </details>
 
@@ -746,7 +746,7 @@ Action: Retrain on recent emails with new patterns
 Result: 94% accuracy restored
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals.md">Learn more: Model Monitoring</a></p>
+<p>📚 <a href="/anandu-interview-playbook/ai-ml/fundamentals/">Learn more: Model Monitoring</a></p>
 
 </details>
 

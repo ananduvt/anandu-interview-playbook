@@ -88,7 +88,7 @@ counter.incrementAndGet();  // Hardware CAS operation
 
 <p>✅ Fast and atomic, best for simple operations.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/concurrency.md">Learn more: Concurrency</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/concurrency/">Learn more: Concurrency</a></p>
 
 </details>
 
@@ -151,7 +151,7 @@ Future<Integer> future = executor.submit(task);
 Integer result = future.get();  // Block and get result
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/threading.md">Learn more: Threading</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/threading/">Learn more: Threading</a></p>
 
 </details>
 
@@ -238,7 +238,7 @@ CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
 <li><strong>.anyOf():</strong> Wait for first future</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/concurrency.md">Learn more: Concurrency & Futures</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-collections-concurrency/concurrency/">Learn more: Concurrency & Futures</a></p>
 
 </details>
 
@@ -315,7 +315,7 @@ CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns.md">Learn more: Design Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
 
 </details>
 
@@ -384,7 +384,7 @@ Old Generation (Infrequent GC)
 
 <p>✅ Optimize for young generation garbage collection.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/versions-features.md">Learn more: JVM & Garbage Collection</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/versions-features/">Learn more: JVM & Garbage Collection</a></p>
 
 </details>
 
@@ -443,7 +443,7 @@ List<? extends String> producer = list;
 List<? super String> consumer = list;
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/java-core/basics.md">Learn more: Java Generics</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-core/basics/">Learn more: Java Generics</a></p>
 
 </details>
 
@@ -507,7 +507,7 @@ List<? super String> consumer = list;
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/logging-performance.md">Learn more: Performance Optimization</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/logging-performance/">Learn more: Performance Optimization</a></p>
 
 </details>
 
@@ -581,7 +581,7 @@ System.out.println(coffee.cost());         // 2.7
 <p><strong>Decorator:</strong> Combine at runtime, flexible, multiple decorators</p>
 <p><strong>Inheritance:</strong> Fixed at compile-time, rigid class hierarchy</p>
 
-<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns.md">Learn more: Design Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/java-patterns-advanced/design-patterns/">Learn more: Design Patterns</a></p>
 
 </details>
 

@@ -72,6 +72,7 @@ nav:
           - Java Core:
               - Overview: java-core/index.md
               - Basics: java-core/basics.md
+              - JVM Internals: java-core/jvm-internals.md
               - OOP: java-core/oop.md
               - Strings & Primitives: java-core/strings-primitives.md
               - Exceptions: java-core/exceptions.md

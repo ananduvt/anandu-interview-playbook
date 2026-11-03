@@ -75,7 +75,7 @@ Architecture patterns, scalability, resilience, messaging, and distributed compu
 
 <p><strong>Start with monolith, migrate to microservices when you outgrow it.</strong> Most companies shouldn't start with microservices.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles.md">Learn more: Microservices Principles</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Principles</a></p>
 
 </details>
 
@@ -179,7 +179,7 @@ Client receives event via callback/subscription
 </tr>
 </table>
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/messaging.md">Learn more: Messaging & Events</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/messaging/">Learn more: Messaging & Events</a></p>
 
 </details>
 
@@ -285,7 +285,7 @@ AccountService: "TransferInitiated" event
 <li><strong>Reserve Inventory:</strong> Compensate with Release Inventory</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles.md">Learn more: Microservices Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Patterns</a></p>
 
 </details>
 
@@ -380,7 +380,7 @@ public class PaymentService {
 <li><strong>Cascading failure prevention:</strong> Stop propagating errors</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-circuit-breaker.md">Learn more: Circuit Breaker Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/spring-web/spring-boot-circuit-breaker/">Learn more: Circuit Breaker Patterns</a></p>
 
 </details>
 
@@ -462,7 +462,7 @@ Time 2: Service B syncs and shows $50 (eventually consistent)
 <li><strong>Compensating transactions:</strong> Fix inconsistencies with sagas</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/system-design/fundamentals.md">Learn more: System Design Fundamentals</a></p>
+<p>📚 <a href="/anandu-interview-playbook/system-design/fundamentals/">Learn more: System Design Fundamentals</a></p>
 
 </details>
 
@@ -552,7 +552,7 @@ AnalyticsService → Elasticsearch (search)
 
 <p><strong>Start monolithic (shared DB), migrate to database-per-service as you scale.</strong> The operational overhead is significant.</p>
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles.md">Learn more: Microservices Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Microservices Patterns</a></p>
 
 </details>
 
@@ -665,7 +665,7 @@ C2 crashes
 After:  C1→P0+P1, C3→P2 (rebalance)
 ```
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/messaging.md">Learn more: Kafka & Messaging</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/messaging/">Learn more: Kafka & Messaging</a></p>
 
 </details>
 
@@ -762,7 +762,7 @@ Read:   Update materialized views
 <li><strong>Exactly-once:</strong> Perfect, but expensive (use for critical operations)</li>
 </ul>
 
-<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles.md">Learn more: Distributed Patterns</a></p>
+<p>📚 <a href="/anandu-interview-playbook/microservices-distributed/principles/">Learn more: Distributed Patterns</a></p>
 
 </details>
 
