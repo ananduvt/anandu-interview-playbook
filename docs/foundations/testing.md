@@ -45,6 +45,19 @@ See [SDLC → BDD & TDD](sdlc.md#bdd-tdd) for the driven-development approaches.
 - Java: **JUnit 5** + **Mockito**; `@SpringBootTest` / `@WebMvcTest` (MockMvc) for Spring; Testcontainers for real deps.
 - Test doubles: dummy · stub · spy · mock · fake. Coverage (JaCoCo) is a guide, not a goal.
 
+
+### Static analysis and vulnerability scanning
+
+**SonarQube** is an open-source static analysis platform (SAST) that inspects source code continuously and reports **bugs, code smells, vulnerabilities and security hotspots** across 30+ languages.
+
+| Concern | Tool type | Examples |
+|---------|-----------|----------|
+| Vulnerabilities in **your code** | SAST | SonarQube (runs in CI: Jenkins, GitHub Actions) |
+| Vulnerabilities in **third-party / transitive libraries** | SCA (checks `pom.xml` / `build.gradle` against CVE databases) | OWASP Dependency-Check, Snyk, GitHub Dependabot |
+
+- A **Quality Gate** fails the build or blocks the merge when new code has critical issues, unreviewed security hotspots, or coverage below the threshold.
+- SonarQube mainly analyses your own source, so pair it with an SCA tool; neither replaces code review or tests.
+
 ---
 
 ## JUnit 5 Basics
@@ -445,13 +458,59 @@ public void testWithSpy() {
 }
 ```
 
+### Argument Captor and JUnit 5 Extension
+
+```java
+@ExtendWith(MockitoExtension.class)   // initialises @Mock/@Spy/@Captor/@InjectMocks, strict stubs
+class EmployeeServiceTest {
+    @Mock EmployeeRepository repo;
+    @InjectMocks EmployeeService service;
+    @Captor ArgumentCaptor<Employee> captor;
+
+    @Test
+    void createSavesEmployee() {
+        when(repo.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+        service.create(new Employee("Alice"));
+
+        verify(repo).save(captor.capture());      // inspect what was actually passed
+        assertEquals("Alice", captor.getValue().getName());
+    }
+
+    @Test
+    void failureStopsFlow() {
+        when(repo.findById(999L)).thenThrow(new ResourceNotFoundException("missing"));
+        assertThrows(ResourceNotFoundException.class, () -> service.get(999L));
+        verifyNoInteractions(notifier);           // fallback path never touched the other collaborator
+    }
+}
+```
+
+### Mockito Cheat Sheet
+
+| Rule | Detail |
+|------|--------|
+| `doReturn().when(spy)` | Use for spies; `when(spy.method())` executes the real method during setup and may throw |
+| Matchers are all-or-nothing | If one argument uses `any()`, all must be matchers: `eq("topic")`, not a raw literal |
+| `verifyNoInteractions(mock)` | Proves a branch never touched a collaborator |
+| `thenAnswer` | Computes the return value from the invocation arguments |
+| Strict stubs | `MockitoExtension` fails with `UnnecessaryStubbingException` on unused stubs |
+| Spring Boot 3.4+ | `@MockitoBean` replaces the deprecated `@MockBean` |
+
+### How Mockito Works Internally
+
+- `mock()` / `@Mock` uses **Byte Buddy** to generate a subclass (or interface implementation) in memory whose methods all route to one interceptor. Since Mockito 5 the default mock maker is the **inline** one (an agent redefines bytecode), so `final` classes and methods can be mocked.
+- The interceptor looks up a matching stub, and records every invocation (method, arguments) for later verification.
+- **Stubbing:** in `when(mock.call())` the mock call really runs on the mock and is recorded as "last invocation"; `thenReturn` binds the value to it. That is why `when(spy.call())` is dangerous.
+- **Verification:** `verify(mock, times(n))` switches the mock to verification mode, so the next call is compared with the recorded history (`WantedButNotInvoked` / `TooManyActualInvocations` / argument mismatch).
+- **Limits:** static methods need `Mockito.mockStatic(...)` (thread-local, use in try-with-resources); private methods cannot be mocked, and needing to is a design smell (extract a collaborator).
+
 ### Spring + Mockito Integration
 
 ```java
 @SpringBootTest
 public class UserServiceIntegrationTest {
     
-    @MockBean  // Mock bean in Spring context
+    @MockBean  // Boot 3.4+: prefer @MockitoBean
     private UserRepository userRepository;
     
     @Autowired

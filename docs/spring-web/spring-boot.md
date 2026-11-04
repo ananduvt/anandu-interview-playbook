@@ -319,10 +319,12 @@ public class OrderService {
 
 ### Properties Precedence (highest to lowest)
 1. Command-line args: `java -jar app.jar --server.port=9000`
-2. System properties: `-Dkey=value`
-3. Environment variables: `SPRING_APPLICATION_NAME=myapp`
-4. `application.yml` (active profile overrides base): `application-prod.yml`
-5. `application-default.properties`
+2. `SPRING_APPLICATION_JSON`, Java system properties (`-Dkey=value`)
+3. OS environment variables: `SERVER_PORT=9000` (relaxed binding: `SPRING_DATASOURCE_URL` maps to `spring.datasource.url`)
+4. Profile-specific files outside the jar, then inside the jar: `application-{profile}.yml`
+5. Default `application.yml`/`.properties` outside the jar, then inside the jar (lowest)
+
+If `application.properties` and `application.yml` sit side by side, `.properties` wins on conflicting keys; stick to one format. Config files are also searched in `./config/`, `./` and the classpath; `spring.config.import` can pull in extra files.
 
 ```yaml
 # application.yml
@@ -350,6 +352,69 @@ app:
   name: My App
   version: 1.0.0
 ```
+
+### Common Property Overrides
+Auto-configuration backs off to your value when you set its key:
+
+```properties
+server.port=9090                              # default 8080
+server.servlet.context-path=/api/v1           # prefix for all endpoints
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydb
+spring.datasource.username=dbuser             # keep passwords in env vars/secrets, not in git
+spring.jpa.hibernate.ddl-auto=validate        # none/validate in prod; update/create-drop dev only
+spring.jackson.default-property-inclusion=non_null
+logging.level.root=INFO
+logging.level.com.example.app=DEBUG           # per-package level
+logging.file.name=logs/app.log
+app.benchmark.max-runs=50                     # custom key, read with @Value / @ConfigurationProperties
+```
+
+!!! tip "Interview tip"
+    Prefer `@ConfigurationProperties` over scattered `@Value` for grouped, type-safe, validated settings. Never use `ddl-auto=update` in production.
+
+### How Auto-Configuration Works
+`@SpringBootApplication` includes `@EnableAutoConfiguration`. At startup Spring Boot reads the candidate list from `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Boot 2.7+/3.x; older versions used `spring.factories`) and applies each class whose `@Conditional...` checks pass.
+
+| Condition | Meaning |
+|-----------|---------|
+| `@ConditionalOnClass` | A class is on the classpath (e.g. `h2.jar` leads to an in-memory `DataSource`) |
+| `@ConditionalOnMissingBean` | Back off if you defined your own bean of that type |
+| `@ConditionalOnProperty` | A property has a given value |
+
+Debug with `--debug` or `/actuator/conditions` to see which auto-configurations matched and why. Boot 3.2+ also supports virtual threads via `spring.threads.virtual.enabled=true` (Java 21+). For native executables see [Spring Native Images (GraalVM)](spring-native-graalvm.md).
+
+### Central Config with Spring Cloud Config
+To load YAML from a remote Git repo, run a Config Server and point clients at it:
+
+```java
+@EnableConfigServer          // spring-cloud-config-server dependency
+@SpringBootApplication
+public class ConfigServerApplication {
+    public static void main(String[] args) { SpringApplication.run(ConfigServerApplication.class, args); }
+}
+```
+
+```yaml
+# Config Server application.yml
+server:
+  port: 8888
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/your-org/config-repo   # placeholder
+          search-paths: config-folder
+
+# Client application.yml
+spring:
+  application:
+    name: payment-service        # loads payment-service.yml / payment-service-{profile}.yml
+  config:
+    import: "optional:configserver:http://localhost:8888"
+```
+
+The client fetches the remote properties over HTTP and merges them into its `Environment` before beans are created. Secrets belong in Vault or encrypted values, not plain Git. See [Spring Cloud](../microservices-distributed/spring-cloud.md).
 
 ### Profiles
 ```yaml

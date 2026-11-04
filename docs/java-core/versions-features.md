@@ -458,6 +458,16 @@ What can break or warn:
    - Performance benchmarks (compare latency)
    - Load tests (especially for GC changes)
 
+### Migration Workflow: Audit, Upgrade, Clean Up
+
+| Step | Actions |
+|------|---------|
+| **1. Audit** | `mvn dependency:tree` / `./gradlew dependencies` to list every library; `jdeps --jdk-internals --multi-release <target> app.jar` to flag `sun.*`/`jdk.internal.*` use; `jdeprscan --release <target> app.jar` to find APIs deprecated for removal |
+| **2. Climb the LTS ladder** | 8 → 11 → 17 → 21 → 25, fixing breaks at each hop. 8→11: removed Java EE modules (JAXB, JAX-WS, CORBA), add them as explicit dependencies. 11→17: strong encapsulation breaks reflective hacks; upgrade Lombok, ByteBuddy, ASM, Mockito |
+| **3. Frameworks and build** | Newer Maven/Gradle and compiler/test plugins. Spring Boot 3.x needs Java 17+ and moves `javax.*` to `jakarta.*`. For large codebases, automate with **OpenRewrite** recipes |
+| **4. JVM flags and defaults** | Remove flags for removed collectors (CMS was removed in Java 14). JDK 9+ uses CLDR locale data; legacy formatting can be restored temporarily with `-Djava.locale.providers=COMPAT,CLDR`. Java 18+ defaults to UTF-8, so check file I/O that assumed the OS charset |
+| **5. Adopt new features** | Only after tests pass: records, sealed classes, pattern matching for `switch`, sequenced collections, virtual threads for blocking I/O workloads |
+
 ### Troubleshooting Common Migration Issues
 
 ```
@@ -477,6 +487,23 @@ Error: "java.lang.module.FindException: Module not found"
 Fix: Module system changes in Java 9+
 Solution: Add --add-modules java.base, or use --illegal-access flag temporarily
 ```
+
+---
+
+## Looking Ahead: Project Valhalla (Value Classes)
+
+Valhalla is a long-running OpenJDK project; value classes (JEP 401) are still in preview/early access and **not part of Java 25**. Treat the syntax below as proposed, not final.
+
+**The problem:** primitives are fast but not objects; objects have identity, a header (about 8 to 16 bytes) and pointer indirection, which hurts cache locality.
+
+| Concept | Today | Valhalla direction |
+|---------|-------|--------------------|
+| **Records** (Java 16) | Remove boilerplate (constructor, accessors, `equals`, `hashCode`, `toString`). Still identity objects on the heap, so **no performance gain** | Can be declared as value classes |
+| **Value objects** | Do not exist | Immutable, **no identity** (no `synchronized`, `==` compares state). JVM may flatten them inline in arrays and fields and drop the header, like an `int[]` |
+| **Generics** | **Type erasure**: `List<Integer>` is `List<Object>` holding pointers to boxed `Integer`s | **Universal generics / specialization**: `List<int>` backed by a flat `int[]`, with no boxing and fewer cache misses |
+| **Null-restricted types** | Primitives cannot be `null`; references can | Proposed markers (`Point!` non-null, `Point?` nullable) so non-null values can be flattened without a null marker |
+
+Interview line: "Records fix boilerplate, Valhalla fixes memory layout. Until it ships, avoid boxing in hot paths (see [Autoboxing and wrapper classes](basics.md#autoboxing-and-wrapper-classes))."
 
 ---
 

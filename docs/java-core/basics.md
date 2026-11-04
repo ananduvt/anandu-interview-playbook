@@ -166,6 +166,19 @@ Limits and restrictions to the use of var in Java include the following:
 3. var cannot be used to declare static variables.
 4. var cannot be used if a variable is initially set to null.
 
+Where `var` is allowed and key gotchas:
+
+| Rule | Detail |
+| :-- | :-- |
+| Compile-time only | The variable is still statically typed; no dynamic typing. The compiler writes the inferred type into the bytecode. |
+| Where | Local variables, `for`/enhanced-`for` variables, try-with-resources; lambda parameters (Java 11) |
+| Needs an initializer | `var s;`, `var x = null;`, `var f = () -> 1;` and `var a = {1, 2};` do not compile (no type to infer) |
+| Diamond trap | `var list = new ArrayList<>();` infers `ArrayList<Object>`; write `new ArrayList<String>()` |
+
+```java
+var userMapping = new HashMap<String, List<User>>();  // instead of Map<String, List<User>> x = new HashMap<...>()
+```
+
 | Pros | Cons |
 | :---- | :---- |
 | A simplified syntax for method block logic. Useful to simplify complex expressions; | It makes the readability worse, specially outside the IDE, for example in GitHub; |
@@ -508,7 +521,8 @@ Each primitive has a wrapper class (`int` → `Integer`, `long` → `Long`, `dou
 
 * Unboxing a `null` wrapper throws `NullPointerException`.
 * `Integer` values from -128 to 127 are cached, so `==` can be `true` for small values and `false` for larger ones. Compare wrappers with `.equals()`.
-* Boxing inside hot loops creates many short-lived objects; prefer primitives there.
+* Boxing inside hot loops creates many short-lived objects and extra GC work; prefer primitives there. `Integer sum = 0; for (...) sum += i;` unboxes, adds, and boxes a **new** `Integer` on every iteration once values leave the cached range.
+* Under the hood the compiler emits `Integer.valueOf(42)` for boxing and `wrapper.intValue()` for unboxing; `valueOf` is what returns cached instances.
 
 ```java
 Integer a = 127, b = 127;
@@ -517,6 +531,42 @@ Integer c = 1000, d = 1000;
 System.out.println(c == d);        // false (different objects)
 System.out.println(c.equals(d));   // true
 ```
+
+### Primitive vs Reference Types
+
+| Feature | Primitive | Reference (object) |
+|---------|-----------|--------------------|
+| Examples | `int`, `char`, `boolean`, `double` | `String`, `Integer`, `List`, arrays, your classes |
+| Holds | The raw value | A reference (address) to an object on the heap |
+| Location | Local variables live on the stack; as fields they live inside their object | Reference lives on the stack (or in a field); the object lives on the heap |
+| `null` | Never; has a default (`0`, `false`) | Allowed; unhandled use gives `NullPointerException` |
+| Cost | No header, no indirection | Object header (about 8 to 16 bytes) plus pointer dereference |
+| Generics | Not allowed (`List<int>` is invalid) | Allowed (`List<Integer>`) |
+
+```java
+int x = 10;
+int y = x;  y = 20;           // independent copies: x stays 10
+
+int[] a = {1, 2, 3};
+int[] b = a;  b[0] = 99;      // same object: a[0] is now 99
+```
+
+### Pass by Value (Java Is Always Pass-by-Value)
+
+Java copies the argument into the parameter. For primitives it copies the value; for objects it copies the **reference**, so caller and callee point to the same object.
+
+* Mutating the object through the parameter **is visible** to the caller.
+* Reassigning the parameter (`param = new Foo()`) **is not** visible to the caller.
+
+```java
+static void change(StringBuilder sb, int n) {
+    sb.append("!");          // visible: same object
+    sb = new StringBuilder("new"); // invisible: only the local copy changes
+    n = 99;                  // invisible
+}
+```
+
+Pass-by-reference (C++ `&`, C# `ref`) would let the callee rebind the caller's variable; Java cannot. Interview tip: "objects are passed by reference" is the classic wrong answer.
 
 ### Java Casting
 

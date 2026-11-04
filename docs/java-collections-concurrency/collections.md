@@ -82,6 +82,39 @@ The process of resizing the internal array of a HashMap when the number of entri
 **Collision**:
 Occurs when two or more keys produce the same hash code, resulting in them mapping to the same index in the internal array. HashMap handles collisions using techniques like separate chaining (using linked lists or trees) to store multiple entries at the same index.
 
+### HashMap Internals: put() and get()
+
+A `HashMap` holds an array of buckets (`Node<K,V>[] table`). Each node stores `hash`, `key`, `value` and `next` (the next node in the same bucket).
+
+**`put(key, value)`**
+
+1. Call `key.hashCode()`, then spread the bits (`h ^ (h >>> 16)`) so high bits also influence the index.
+2. Compute the bucket index: `index = hash & (n - 1)`, where `n` is the table length (always a power of two).
+3. Empty bucket: store the new node there. Occupied: walk the chain; if a node has the same hash and an `equals()` key, replace its value, otherwise append a new node.
+4. If the size now exceeds `capacity * loadFactor` (default 16 * 0.75 = 12, so the 13th entry), resize.
+
+**`get(key)`**: hash the key, jump to the bucket, then compare chain nodes with `equals()` until one matches.
+
+| Concept | Detail |
+|---------|--------|
+| Collision | Different keys land in the same bucket; resolved by chaining |
+| Treeification (Java 8) | Chain reaches 8 nodes (`TREEIFY_THRESHOLD`) and table has 64+ buckets: bucket becomes a Red-Black tree. If the table is smaller, it resizes instead. Shrinks back to a list at 6 nodes |
+| Resize | Table doubles (16 to 32); entries are redistributed using the new mask |
+| Lookup cost | Average O(1); worst case O(n) with a chain, O(log n) with a tree |
+
+### Avoiding Collisions
+
+- **Good `hashCode()`**: spread values evenly. `return 42;` puts every key in one bucket. Prefer `Objects.hash(id, name)`, or a record, which generates a correct `equals()`/`hashCode()`. `String` already has a well-distributed hash.
+- **Immutable keys**: if a key field changes after `put()`, its hash changes, so `get()` looks in the wrong bucket and returns `null`; the old entry is stuck and unreachable. Use `final` fields (or `String`, `Integer`, records).
+- **Pre-size**: for a known entry count, avoid repeated resizes with `new HashMap<>((int) (n / 0.75f) + 1)`, or `HashMap.newHashMap(n)` (Java 19+).
+- Always override `equals()` and `hashCode()` together.
+
+**Common interview questions**
+
+- *Why is the capacity a power of two?* So `hash & (n - 1)` replaces a slower modulo and distributes evenly.
+- *Two keys have the same hashCode, what happens?* They share a bucket; `equals()` tells them apart.
+- *Why does a mutable key break a HashMap?* Its hash changes, so lookups go to a different bucket.
+
 ### Load Factor
 
 [https://www.baeldung.com/java-hashmap-load-factor#:\~:text=The%20load%20factor%20is%20the,code%20of%20already%20stored%20entries](https://www.baeldung.com/java-hashmap-load-factor#:~:text=The%20load%20factor%20is%20the,code%20of%20already%20stored%20entries).
@@ -114,7 +147,7 @@ A lower load factor means that the hash table will be resized more frequently, l
 |----------|--------|
 | **Hashing** | Uses hash codes to map keys to bucket positions |
 | **Collisions** | Handled via chaining (linked list) or tree (since Java 8) |
-| **Bucket Conversion** | When chain length > 8, converts to Red-Black tree for O(log n) |
+| **Bucket Conversion** | Chain of 8+ nodes and table size 64+ becomes a Red-Black tree (O(log n)); see below |
 | **Thread Safety** | Not synchronized (use ConcurrentHashMap or Collections.synchronizedMap) |
 | **Null Keys** | Allows one null key |
 | **Null Values** | Allows multiple null values |
@@ -123,12 +156,12 @@ A lower load factor means that the hash table will be resized more frequently, l
 
 **HashMap vs ConcurrentHashMap vs Hashtable:**
 - **HashMap:** Fast, not thread-safe, preferred for single-threaded
-- **ConcurrentHashMap:** Thread-safe with segment-level locking, best for multi-threaded
+- **ConcurrentHashMap:** Thread-safe (CAS plus per-bucket locking in Java 8+), best for multi-threaded
 - **Hashtable:** Legacy, fully synchronized (slow), avoid in modern code
 
 ## ConcurrentHashMap: Thread-Safe HashMap
 
-**ConcurrentHashMap** provides thread-safe operations without locking the entire map. Uses segment-level locking (or bucket-level in Java 8+).
+**ConcurrentHashMap** provides thread-safe operations without locking the entire map. Java 7 used segment-level locks; Java 8+ uses CAS for empty buckets and locks only the first node of a bucket.
 
 ### Internal Structure (Java 8+)
 

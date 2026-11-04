@@ -92,6 +92,12 @@ sumWithCondition(numbers, i -> i>5)
 
 The double colon (::) operator, also known as method reference operator in Java, is used to call a **method by referring** to it with the help of its class directly. They behave exactly as the lambda expressions. The only difference it has from lambda expressions is that this uses **direct reference to the method** by name instead of providing a delegate to the method.
 
+| | `MyClass.myMethod()` | `MyClass::myMethod` |
+| :-- | :-- | :-- |
+| What it is | Method invocation | Method reference (lambda shortcut, Java 8) |
+| When it runs | Immediately, on that line | Later, when the functional interface is invoked |
+| Result | The method's return value | An instance of a functional interface (`Runnable`, `Function`...) |
+
 There are four kinds of method references:
 
 * Reference to a static method ClassName::staticMethodName
@@ -451,6 +457,33 @@ Operation<Integer> repeated = double_op.repeat(4);
 int doubled = repeated.execute(1);  // 16 (1 * 2 * 2 * 2 * 2)
 ```
 
+### Passing a Method as a Parameter
+
+Java has no function pointers; a method parameter is typed with a functional interface, and callers pass a lambda or method reference.
+
+| Interface | Signature | Use |
+|-----------|-----------|-----|
+| `Function<T,R>` | `R apply(T)` | transform |
+| `Consumer<T>` | `void accept(T)` | side effect |
+| `Supplier<T>` | `T get()` | produce / lazy value |
+| `Runnable` | `void run()` | no input, no output |
+| Custom `@FunctionalInterface` | any | needed for 3+ arguments or checked exceptions |
+
+```java
+static String execute(String target, Function<String, String> algorithm) {
+    return algorithm.apply(target);
+}
+
+execute("hello", String::toUpperCase);        // method reference
+execute("java", s -> s + " language");        // lambda
+
+@FunctionalInterface
+interface TriOperation { int compute(int a, int b, int c); }
+
+static int run(TriOperation op) { return op.compute(1, 2, 3); }
+int sum = run((a, b, c) -> a + b + c);        // 6
+```
+
 ### Key Points About Functional Interfaces
 
 | Aspect | Details |
@@ -501,6 +534,38 @@ interface Good<T> {
     boolean equals(Object o);  // Override Object method OK
 }
 ```
+
+## Optional (Java 8+)
+
+`Optional<T>` is a container that holds a value or is empty. Use it as a **return type** to make "might be absent" explicit instead of returning `null`.
+
+```java
+Optional<String> empty = Optional.empty();
+Optional<String> present = Optional.of("Spring Boot");        // NPE if the argument is null
+Optional<String> maybe = Optional.ofNullable(findName());     // empty if null
+
+String name = maybe.map(String::toUpperCase).orElse("UNKNOWN");
+present.ifPresent(v -> System.out.println("Value: " + v));
+maybe.orElseThrow(() -> new IllegalArgumentException("Data is missing"));
+```
+
+| Method | Behaviour |
+|--------|-----------|
+| `map(fn)` / `flatMap(fn)` | transform the value; `flatMap` when `fn` itself returns an `Optional` |
+| `filter(pred)` | empty if the predicate fails |
+| `orElse(x)` | fallback value, always evaluated |
+| `orElseGet(supplier)` | fallback computed only when empty (use for expensive defaults) |
+| `orElseThrow(supplier)` | throw when empty; no-arg `orElseThrow()` is Java 10+ |
+| `ifPresent` / `ifPresentOrElse` | side effect; `ifPresentOrElse` is Java 9+ |
+| `or(supplier)`, `stream()` | Java 9+ |
+| `isEmpty()` | Java 11+ |
+
+**Gotchas**
+
+- Avoid `get()` without a check; prefer `orElseThrow()`.
+- Do not use `Optional` for fields, method parameters or collection elements; return an empty collection instead of `Optional<List<T>>`.
+- `orElse(expensiveCall())` calls the method even when a value is present; use `orElseGet`.
+- `Optional` is not `Serializable`.
 
 ## References
 

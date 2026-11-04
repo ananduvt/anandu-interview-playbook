@@ -208,6 +208,18 @@ public User getUser(String id) { ... }
 
 ### Communication Patterns
 
+**Two-Phase Commit (2PC / XA)**
+- A **coordinator** (XA transaction manager such as Atomikos or Narayana) drives several **participants** (databases) to commit atomically.
+- **Phase 1, prepare:** coordinator sends `PREPARE`; each participant executes the work, writes its transaction log, keeps row locks and votes yes/no.
+- **Phase 2, commit/abort:** if all vote yes the coordinator logs `COMMIT` and tells everyone to commit; if any votes no (e.g. out of stock) it sends `ROLLBACK` to all. Participants ACK.
+
+| Pros | Cons |
+|------|------|
+| Strong ACID consistency across databases | **Blocking:** locks held from prepare until the decision; a coordinator crash leaves participants in doubt and rows locked |
+| Simple model (XA, no compensation code) | Extra round-trips lower throughput; coordinator is a SPOF; many NoSQL stores and brokers do not support XA |
+
+Because of this, microservices usually avoid 2PC and use Saga or the outbox pattern instead.
+
 **Saga Pattern (Distributed Transactions)**
 - Coordinates work across multiple services without distributed 2PC locks
 - Two approaches:

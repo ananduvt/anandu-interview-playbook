@@ -181,6 +181,14 @@ public class Flag {
 **Use case:** Simple flag changes, not counters  
 **Difference from synchronized:** Visibility only; no mutual exclusion
 
+**What it guarantees (Java Memory Model):** a write to a `volatile` variable happens-before every later read of it, so the reader sees that write and everything the writer did before it. It also forbids reordering around the access (why double-checked locking needs `volatile`). It does not lock, and `count++` (read, add, write) is still a race.
+
+| | `volatile` | Atomic classes (`AtomicInteger`...) |
+| :-- | :-- | :-- |
+| Visibility | Yes | Yes (internally volatile) |
+| Atomic read-modify-write | No | Yes, via CAS (`incrementAndGet`, `compareAndSet`) |
+| Use for | Single-writer flags, safe publication | Shared counters (`LongAdder` under high contention) |
+
 ---
 
 ### 3. **Atomic Variables**
@@ -312,6 +320,35 @@ try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
 - `newCachedThreadPool()`: Creates threads as needed; reuses idle threads
 - `newSingleThreadExecutor()`: One thread; tasks run sequentially
 - `newScheduledThreadPool(n)`: For delayed/periodic tasks
+
+**Executor hierarchy:** `Executor` (only `execute(Runnable)`) -> `ExecutorService` (lifecycle plus `submit`, `invokeAll`, `invokeAny`) -> `ScheduledExecutorService` (delayed and periodic tasks; a more robust replacement for `java.util.Timer`).
+
+| Method | Behaviour |
+|--------|-----------|
+| `execute(Runnable)` | Fire and forget; no result; an uncaught exception goes to the thread's handler |
+| `submit(Callable<T>)` / `submit(Runnable)` | Returns a `Future`; exceptions are captured inside it (see [Future exceptions](concurrency.md#future-exception-handling)) |
+| `invokeAll(tasks)` | Runs a batch, blocks until all finish, returns `List<Future<T>>` |
+| `invokeAny(tasks)` | Returns the result of the first task to succeed and cancels the rest |
+| `shutdown()` | Stops accepting tasks; queued tasks still run |
+| `shutdownNow()` | Interrupts running tasks and returns the never-started ones |
+| `awaitTermination(t, unit)` | Blocks until the pool terminates or the timeout expires |
+
+Pools never close on their own; non-daemon worker threads keep the JVM alive. Standard shutdown pattern:
+
+```java
+executor.shutdown();
+try {
+    if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+        executor.shutdownNow();
+    }
+} catch (InterruptedException e) {
+    executor.shutdownNow();
+    Thread.currentThread().interrupt();
+}
+```
+
+!!! warning "Executors factory caveats"
+    `newFixedThreadPool` and `newSingleThreadExecutor` use an unbounded queue (possible `OutOfMemoryError` under load); `newCachedThreadPool` has no thread limit. For production, build a `ThreadPoolExecutor` with a bounded queue and a rejection policy. Cached idle threads are removed after 60 seconds.
 
 **Risks of thread pools:**
 - **Pool deadlock:** every pool thread waits for a result from a task still queued because no thread is free.

@@ -495,6 +495,33 @@ public class UserService {
 
 ---
 
+## Bean Definition Strategies
+
+| Strategy | Use when | Style |
+|----------|----------|-------|
+| Stereotypes (`@Component`, `@Service`, `@Repository`, `@Controller`) | Classes you own | Implicit, found by component scanning |
+| `@Configuration` + `@Bean` | Third-party classes you cannot annotate, or conditional/complex construction | Explicit Java factory methods |
+| XML `<bean>` | Legacy migration only | External file; avoid in new Boot code |
+
+```java
+@Component                       // own class: discovered by scanning
+public class EncryptionEngine {
+    public String hash(String input) { return Integer.toHexString(input.hashCode()); }
+}
+
+@Configuration                   // factory for a class you cannot modify
+public class JacksonConfig {
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper().findAndRegisterModules();
+    }
+}
+```
+
+`@Configuration` classes are CGLIB-proxied, so calling one `@Bean` method from another returns the same singleton; with `@Component` ("lite mode") such inter-bean calls create new objects. Use `@Configuration(proxyBeanMethods = false)` when beans do not call each other (faster startup, native-friendly). `@Repository` also translates persistence exceptions into Spring's `DataAccessException` hierarchy.
+
+---
+
 ## Common Annotations Reference
 
 | Annotation | Purpose |

@@ -240,3 +240,38 @@ public class Z implements X, Y {
    }
 
 **Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md)
+
+
+## Records (Java 16+)
+
+A `record` is a concise, immutable data carrier (preview in Java 14-15, standard in Java 16). One line replaces a POJO with fields, constructor, accessors, `equals()`, `hashCode()` and `toString()`.
+
+```java
+public record Employee(int id, String name, double salary) {}
+
+Employee a = new Employee(101, "Alice", 85000.0);
+a.name();                                   // accessor is name(), not getName()
+a.equals(new Employee(101, "Alice", 85000.0)); // true: compares values
+System.out.println(a);                      // Employee[id=101, name=Alice, salary=85000.0]
+```
+
+The compiler generates: `private final` fields, the canonical constructor, accessors named after the components, and value-based `equals()`/`hashCode()`/`toString()`.
+
+**Compact constructor** (validation; fields are assigned automatically afterwards):
+
+```java
+public record Employee(int id, String name, double salary) {
+    public Employee {
+        if (id <= 0) throw new IllegalArgumentException("ID must be positive");
+        if (salary < 0) throw new IllegalArgumentException("Salary cannot be negative");
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name is required");
+    }
+}
+```
+
+**Rules**
+
+- Immutable: no setters, fields are final (a mutable component such as a `List` can still be mutated internally; copy it with `List.copyOf` in the compact constructor).
+- Implicitly `final` and extends `java.lang.Record`: cannot extend a class or be extended.
+- Can implement interfaces, declare static members and extra methods, but not instance fields.
+- Good as `HashMap` keys and DTOs; see [record patterns](versions-features.md) and [switch patterns](basics.md#switch-statements).

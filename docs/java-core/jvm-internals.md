@@ -191,6 +191,16 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 
 Open the `.hprof` file in a heap analyzer such as Eclipse MAT or VisualVM and look for the objects with the largest retained size.
 
+### JVM Arguments: -D, -X, -XX
+
+| Prefix | Category | Purpose | Example |
+|--------|----------|---------|---------|
+| `-D` | System property | Application-level setting, read with `System.getProperty()` | `-Dserver.port=9090` |
+| `-X` | Non-standard (HotSpot-specific) | Common resource settings such as heap and stack size | `-Xmx2g` (max heap), `-Xms512m`, `-Xss1m` |
+| `-XX` | Advanced / developer | GC behavior, JIT, diagnostics; may change between releases | `-XX:+UseG1GC`, `-XX:MaxMetaspaceSize=256m` |
+
+`-XX:+Flag` enables and `-XX:-Flag` disables a boolean option; value options use `-XX:Name=value`. Use `java -XX:+PrintFlagsFinal -version` to list effective values.
+
 ---
 
 ## Garbage Collection: Algorithms & Tuning

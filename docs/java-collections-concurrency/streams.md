@@ -119,6 +119,18 @@ stream.map(x -> x \* x)
 
 stream.flatMap(list -> list.stream())
 
+**map vs flatMap:** `map` is one-to-one, so a function returning a collection yields a nested `Stream<Stream<String>>`. `flatMap` takes a function returning a `Stream` and merges all of them into one flat stream.
+
+```java
+List<List<String>> nested = List.of(List.of("a", "b"), List.of("c"));
+nested.stream().map(List::stream);           // Stream<Stream<String>> (nested)
+List<String> flat = nested.stream()
+        .flatMap(List::stream)               // Stream<String>: a, b, c
+        .toList();                           // Java 16+
+```
+
+The same split exists on `Optional` and `CompletableFuture` (`thenApply` vs `thenCompose`).
+
 4. **distinct()**
 
 Removes duplicate elements from the stream.

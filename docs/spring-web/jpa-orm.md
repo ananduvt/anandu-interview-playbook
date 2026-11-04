@@ -6,6 +6,18 @@
 
 ## Hibernate: Object-Relational Mapping
 
+### Hibernate Architecture
+
+| Component | Scope / thread-safety | Role |
+|-----------|----------------------|------|
+| `SessionFactory` | One per database, thread-safe, expensive to build | Holds compiled mapping metadata; creates `Session`s |
+| `Session` (`EntityManager` in JPA) | Short-lived, **not** thread-safe; one per transaction/request | Unit of work; CRUD (`persist`, `merge`, `remove`, `find`); holds the first-level cache |
+| `Transaction` | Per unit of work | Abstracts JDBC/JTA commit and rollback |
+| Query / Criteria | Per query | HQL/JPQL on entity names, or type-safe programmatic queries |
+| First-level cache | Tied to the `Session` | Same row requested twice in a session returns the same instance, no second SQL |
+
+Flow: bootstrap builds `SessionFactory` once, then each unit of work opens a `Session`, entities move transient to managed, and on flush/commit Hibernate generates SQL and sends it through JDBC. In Spring Boot, `spring-boot-starter-data-jpa` builds the `SessionFactory`/`EntityManagerFactory` for you, and `@Transactional` binds one `EntityManager` to the transaction.
+
 ### Entity Definition
 
 ```java
@@ -197,6 +209,9 @@ public class UserService {
 
 ### Session Lifecycle: persist() vs save() vs merge() vs update()
 
+!!! note "persist() and INSERT timing"
+    `persist()` only queues the INSERT until flush/commit, except with `GenerationType.IDENTITY`, where Hibernate must INSERT immediately to obtain the ID (this also disables JDBC insert batching). Passing an entity that already has an ID to `persist()` fails with `PersistentObjectException` ("detached entity passed to persist").
+
 **Entity State Transitions:**
 
 ```
@@ -322,42 +337,45 @@ managed.setEmail("new@example.com");
 
 ### Lazy Loading & N+1 Problem
 
+**N+1**: 1 query loads N parents, then touching a lazy association fires N more queries (one per parent). `EAGER` does not cure it: a JPQL/derived query still loads the association with N follow-up selects. Prefer `LAZY` everywhere and fetch explicitly per use case.
+
+| | `LAZY` | `EAGER` |
+| :-- | :-- | :-- |
+| Loads | Parent first; association is a proxy, queried on first access | Association loaded together with the parent (join or follow-up select) |
+| JPA defaults | `@OneToMany`, `@ManyToMany` | `@ManyToOne`, `@OneToOne` |
+| Risk | `LazyInitializationException` when accessed after the session/transaction closed | Loads data you may not need; memory and N+1 cost |
+
+Fix for `LazyInitializationException`: fetch what you need inside the transaction (`JOIN FETCH`, entity graph, DTO projection), not `EAGER` or open-session-in-view.
+
 ```java
-// ❌ N+1 problem
-@Repository
-public class UserRepository extends JpaRepository<User, Long> {
-    public List<User> findAllWithOrders() {
-        List<User> users = findAll();  // 1 query
-        for (User user : users) {
-            System.out.println(user.getOrders());  // N queries (one per user)
-        }
-        return users;
-    }
-}
+// ❌ N+1: 1 query for users + N queries for orders
+List<User> users = userRepository.findAll();
+users.forEach(u -> u.getOrders().size());
 
-// ✅ Fix 1: JOIN FETCH
-@Repository
-public class UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
+    // ✅ Fix 1: JOIN FETCH (single query; DISTINCT avoids duplicate parents on older Hibernate)
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.orders")
-    public List<User> findAllWithOrdersJoinFetch();
-}
+    List<User> findAllWithOrders();
 
-// ✅ Fix 2: Entity Graph
-@Repository
-public class UserRepository extends JpaRepository<User, Long> {
+    // ✅ Fix 2: Entity graph (declarative, reusable)
     @EntityGraph(attributePaths = "orders")
-    @Query("SELECT u FROM User u")
-    public List<User> findAllWithOrdersGraph();
+    List<User> findByActiveTrue();
 }
 
-// ✅ Fix 3: Batch loading
+// ✅ Fix 3: Batch loading (N+1 becomes N/size + 1)
 @Entity
 public class User {
     @OneToMany(mappedBy = "user")
-    @BatchSize(size = 10)  // Load 10 users' orders in single query
+    @BatchSize(size = 10)
     private Set<Order> orders;
 }
 ```
+
+| Gotcha | Detail |
+|--------|--------|
+| Pagination + collection fetch | `JOIN FETCH` on a collection with `Pageable` makes Hibernate paginate in memory (HHH000104 warning); fetch IDs first or use `@BatchSize` |
+| Two `List` fetches | Fetching two bag collections at once throws `MultipleBagFetchException`; use `Set`, or fetch one collection per query |
+| Detecting it | `spring.jpa.show-sql=true` (dev only), `hibernate.generate_statistics`, or a query-count test |
 
 ### Dirty Checking & Flush
 

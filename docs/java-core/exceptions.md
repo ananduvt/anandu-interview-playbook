@@ -34,6 +34,17 @@ Throwable
 | **Unchecked** | Runtime, programming errors | NullPointerException, IllegalArgumentException, IndexOutOfBoundsException | Optional to catch |
 | **Error** | JVM-level, unrecoverable | OutOfMemoryError, StackOverflowError | Never catch |
 
+### Checked Exceptions: Pros and Cons
+
+| Advantages | Disadvantages |
+|------------|---------------|
+| Compiler forces callers to plan for recoverable failures (missing file, network drop) | Boilerplate `try`/`catch` clutters business logic |
+| Self-documenting: the `throws` clause is part of the API contract | Infrastructure exceptions (`SQLException`) leak up through service and controller layers, breaking layering |
+| | Encourages empty `catch (Exception e) {}` that silently swallows bugs |
+| | Awkward with lambdas/streams (standard functional interfaces declare no checked exceptions) |
+
+Modern practice (Spring, many libraries): wrap checked exceptions in a domain unchecked exception, keeping the cause.
+
 ---
 
 ## Exception Handling Patterns

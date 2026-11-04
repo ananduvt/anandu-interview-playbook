@@ -39,6 +39,10 @@ String mechanics: immutability, StringBuilder vs. StringBuffer, wrapper types, a
 **Exception Hierarchy - Try-Catch-Finally - Checked vs. Unchecked - Custom Exceptions - Try-With-Resources**  
 Error handling: exception propagation, custom exceptions, try-with-resources (AutoCloseable), stack traces, recovery patterns.
 
+### [Date & Time](date-time.md)  
+**java.time - LocalDate - ZonedDateTime - Duration - Period - DateTimeFormatter**  
+Modern date/time API: immutable types, time zones, formatting and parsing, legacy `Date` conversion.
+
 ### [Versions & Features](versions-features.md)  
 **Java 8 - 11 - 17 - 21 - 25 - LTS - Feature Timeline - Virtual Threads**  
 Version history: Java 1.0–25 timeline, LTS releases (8/11/17/21/25), marquee features (lambdas → HTTP/2 → sealed classes → virtual threads), support windows.

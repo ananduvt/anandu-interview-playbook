@@ -406,6 +406,17 @@ public class UserRepository implements Repository<User> {
 }
 ```
 
+**Four kinds of interface methods**
+
+| Kind | Since | Notes |
+| :-- | :-- | :-- |
+| Abstract | 1.0 | No body; implemented by classes |
+| `default` | Java 8 | Has a body; inherited and overridable. Lets you evolve an interface without breaking implementors |
+| `static` | Java 8 | Belongs to the interface; called as `Iface.m()`; not inherited by implementing classes |
+| `private` / `private static` | Java 9 | Share code between default/static methods; invisible to implementors |
+
+**Conflicting defaults:** if a class implements two interfaces with the same default method, it will not compile until it overrides the method; pick one with `InterfaceA.super.logMessage()`. A class method always wins over an interface default. See [Diamond Problem](oop.md#diamond-problem).
+
 **This doesn't make interfaces obsolete:**
 - Interfaces still can't have state (instance variables)
 - Interfaces still express "can do" (capability)

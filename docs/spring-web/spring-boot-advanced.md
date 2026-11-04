@@ -104,6 +104,28 @@ public class MyService implements InitializingBean, DisposableBean {
 }
 ```
 
+**Container startup flow (`ApplicationContext`):**
+
+1. Read configuration metadata (`@Configuration`, `@Component` scanning, XML) and parse it into `BeanDefinition` blueprints.
+2. `BeanFactoryPostProcessor` runs and may modify the blueprints before any bean exists (e.g. resolving `${db.url}` placeholders).
+3. Singleton beans are instantiated (constructor, via reflection) and dependencies are injected.
+4. `BeanPostProcessor`s wrap or modify the new beans (AOP and `@Transactional` proxies are created here).
+
+**Full order for one bean:**
+
+| # | Phase | Hook |
+| :-- | :-- | :-- |
+| 1 | Instantiate | Constructor |
+| 2 | Populate | Setter / field injection |
+| 3 | Aware callbacks | `BeanNameAware`, `ApplicationContextAware` |
+| 4 | Pre-init | `BeanPostProcessor.postProcessBeforeInitialization()` |
+| 5 | Init (in this order) | `@PostConstruct`, then `InitializingBean.afterPropertiesSet()`, then `@Bean(initMethod=...)` |
+| 6 | Post-init | `postProcessAfterInitialization()` (proxies created); bean is ready |
+| 7 | Destroy (in this order) | `@PreDestroy`, then `DisposableBean.destroy()`, then `@Bean(destroyMethod=...)` |
+
+!!! note "Prototype beans"
+    Spring does not call destroy callbacks for `prototype` beans; the container hands them off after creation.
+
 ---
 
 ## Spring Application Lifecycle

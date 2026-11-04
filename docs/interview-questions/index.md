@@ -4,6 +4,7 @@ How to prepare for and handle technical and behavioral interview rounds. For pra
 
 - **[Coding Questions](coding/index.md)**: algorithm and implementation problems with multiple approaches and complexity analysis.
 - **[Verbal Questions](verbal/index.md)**: conceptual Q&A by domain (Java, Spring, databases, microservices, system design, DevOps, ML/AI).
+- **[Behavioral & Soft Skills](behavioral/behavioral-questions.md)**: STAR-format answers on communication, business alignment, code review, and continuous learning.
 
 ---
 

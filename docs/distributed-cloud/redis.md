@@ -475,16 +475,17 @@ redis-cli DEBUG OBJECT key    # Memory info
 ### Configuration
 ```yaml
 spring:
-  redis:
-    host: localhost
-    port: 6379
-    password: your-password
-    timeout: 2000
-    lettuce:
-      pool:
-        max-active: 20
-        max-idle: 10
-        min-idle: 5
+  data:
+    redis:               # Boot 3+: spring.data.redis (was spring.redis in Boot 2)
+      host: localhost
+      port: 6379
+      password: your-password
+      timeout: 2000ms
+      lettuce:
+        pool:            # needs commons-pool2 on the classpath
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
 ```
 
 ### Basic Operations
@@ -522,6 +523,45 @@ public class CacheService {
     }
 }
 ```
+
+### Plain Java: Jedis
+
+Spring Boot defaults to **Lettuce** (async, thread-safe connection); **Jedis** is a simple blocking driver whose `Jedis` instance is not thread-safe, so use `JedisPool` in real apps.
+
+```java
+try (JedisPool pool = new JedisPool("localhost", 6379);
+     Jedis jedis = pool.getResource()) {
+    jedis.set("session:token", "XYZ12345");
+    jedis.setex("otp:user:45", 60, "998877");   // TTL 60 s: essential for caching
+    String token = jedis.get("session:token");
+    jedis.del("session:token");
+}
+```
+
+### StringRedisTemplate and JSON Serialization
+
+- Prefer **`StringRedisTemplate`** when keys/values are strings or JSON. The default `RedisTemplate<Object,Object>` uses JDK serialization, so values look like `\xac\xed\x00\x05` in `redis-cli` and break when classes change.
+- For objects, configure explicit serializers:
+
+```java
+@Bean
+public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory cf) {
+    RedisTemplate<String, Object> t = new RedisTemplate<>();
+    t.setConnectionFactory(cf);
+    t.setKeySerializer(new StringRedisSerializer());
+    t.setHashKeySerializer(new StringRedisSerializer());
+    t.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+    t.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+    return t;
+}
+```
+
+| Use case | Choice |
+|----------|--------|
+| Cache DB queries / expensive calls | `@EnableCaching` + `@Cacheable` / `@CacheEvict` (see [Caching](caching.md)) |
+| Rate limiting, locks, queues, leaderboards | `RedisTemplate` / `StringRedisTemplate` (`opsForValue/Hash/List/Set/ZSet`) |
+
+**Quick reference:** Strings `opsForValue` (counters via `increment`), Hashes `opsForHash` (update one field without rewriting the object), Lists `opsForList` (`rightPush` + `leftPop` = FIFO queue), Sets `opsForSet` (`intersect` for common tags), Sorted sets `opsForZSet` (`incrementScore`, `reverseRange(key,0,1)` = top 2).
 
 ---
 

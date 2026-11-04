@@ -245,6 +245,27 @@ class FutureTaskExample {
    }
 }
 
+### Future Exception Handling
+
+If a task throws (checked or unchecked), the pool thread survives and the exception is stored in the `Future`. It surfaces only at `future.get()`, wrapped in an `ExecutionException`; call `getCause()` for the real error.
+
+```java
+Future<String> future = executor.submit(() -> {
+    throw new IOException("Database connection timed out");
+});
+
+try {
+    future.get();
+} catch (InterruptedException e) {
+    Thread.currentThread().interrupt();          // the waiting thread was interrupted
+} catch (ExecutionException e) {
+    Throwable cause = e.getCause();              // the IOException
+    System.out.println(cause.getClass().getName() + ": " + cause.getMessage());
+}
+```
+
+Submitting a `Runnable` also returns a `Future`, but `get()` returns `null`. An exception thrown inside a task passed to `submit()` is never printed unless you call `get()`.
+
 ### Runnable vs Callable
 
 ![](../assets/runnable-vs-callable.png)
@@ -256,6 +277,8 @@ class FutureTaskExample {
 | **Exceptions** | Cannot throw checked exceptions | Can throw checked exceptions |
 | **Usage** | Simple tasks, no return needed | Tasks requiring a return value or exception handling |
 | **Execution** | Can be run by Thread or ExecutorService | Needs an ExecutorService (or wrap it in a `FutureTask` to run on a `Thread`) |
+
+Choose `Runnable` for side effects (logging, cleanup, metrics) and `Callable` for computations, remote calls or code that throws checked exceptions. `Runnable` was added in Java 1.0, `Callable` in Java 5. Both are `@FunctionalInterface`s, so they can be lambdas. See [Future exception handling](#future-exception-handling) for what `submit()` does with failures.
 
 ---
 
@@ -378,6 +401,42 @@ CompletableFuture<String> f5 = CompletableFuture.supplyAsync(() -> "Second",
 CompletableFuture<Object> first = CompletableFuture.anyOf(f4, f5);
 System.out.println(first.get());  // Whichever completes first
 ```
+
+### Dependent Calls, Timeouts and Custom Executors
+
+| Method | Use |
+|--------|-----|
+| `thenApply(fn)` | Synchronous transform (like `map`) |
+| `thenCompose(fn)` | `fn` returns another `CompletableFuture`; flattens it (like `flatMap`). Use for a call that depends on a previous result |
+| `thenCombine(other, fn)` | Combine two independent futures |
+| `allOf(...)` | Barrier: completes when all complete; returns `Void`, so read each result with `join()` |
+| `orTimeout(t, unit)` (Java 9+) | Fails with `TimeoutException` if not done in time |
+| `completeOnTimeout(v, t, unit)` (Java 9+) | Completes with a fallback value on timeout |
+
+```java
+ExecutorService io = Executors.newFixedThreadPool(10);   // dedicated pool for blocking I/O
+
+CompletableFuture<UserProfile> profile =
+    CompletableFuture.supplyAsync(() -> fetchProfile(userId), io);
+
+CompletableFuture<List<Order>> orders =
+    CompletableFuture.supplyAsync(() -> fetchOrders(userId), io)
+        .exceptionally(ex -> List.of());                  // fallback if the order service fails
+
+// Depends on the profile result: thenCompose avoids CompletableFuture<CompletableFuture<...>>
+CompletableFuture<List<Recommendation>> recs =
+    profile.thenCompose(p -> CompletableFuture.supplyAsync(() -> fetchRecs(p), io));
+
+Dashboard dashboard = CompletableFuture.allOf(profile, orders, recs)
+    .thenApply(v -> new Dashboard(profile.join(), orders.join(), recs.join()))
+    .orTimeout(3, TimeUnit.SECONDS)
+    .join();                                              // blocks; throws CompletionException on failure
+```
+
+- Profile and orders run in parallel; total time is about the slowest chain, not the sum.
+- Without an executor argument, tasks run on `ForkJoinPool.commonPool()`. Blocking network calls there can starve other work, so pass a dedicated executor for I/O.
+- `join()` throws an unchecked `CompletionException`; `get()` throws a checked `ExecutionException`. Both wrap the original error in `getCause()`.
+- Shut the executor down when finished.
 
 ### Real-World: API Call Pipeline
 

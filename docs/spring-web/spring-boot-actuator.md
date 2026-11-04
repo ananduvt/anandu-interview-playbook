@@ -292,6 +292,38 @@ Result in `/actuator/health`:
 }
 ```
 
+### Custom Endpoint (`@Endpoint`)
+Expose your own diagnostics (cache hit ratio, gateway status) at `/actuator/custom-diagnostics`:
+
+```java
+@Component
+@Endpoint(id = "custom-diagnostics")
+public class CustomDiagnosticsEndpoint {
+
+    @ReadOperation                       // HTTP GET
+    public Map<String, Object> diagnostics() {
+        return Map.of("status", "OPERATIONAL", "activeConnections", 42);
+    }
+
+    @WriteOperation                      // HTTP POST (JSON body fields map to parameters)
+    public String update(String newStatus) { return "Status updated to " + newStatus; }
+
+    @DeleteOperation                     // HTTP DELETE
+    public String reset() { return "Diagnostics cleared"; }
+}
+```
+
+Remember to include it: `management.endpoints.web.exposure.include=health,info,custom-diagnostics`. Use `@WebEndpoint` for HTTP-only, `@JmxEndpoint` for JMX-only.
+
+### Separate Management Port
+```properties
+management.server.port=9001      # app on 8080, Actuator on 9001 (block it at the firewall)
+management.endpoints.web.base-path=/management
+```
+
+!!! note "Boot 3.4+ shutdown"
+    The shutdown endpoint is off by default. Enable with `management.endpoint.shutdown.enabled=true` (Boot 3.0-3.3) or `management.endpoint.shutdown.access=unrestricted` (3.4+), and expose it. It accepts POST only.
+
 ---
 
 ## Liveness & Readiness Probes

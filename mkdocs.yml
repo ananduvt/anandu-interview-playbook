@@ -75,6 +75,7 @@ nav:
               - JVM Internals: java-core/jvm-internals.md
               - OOP: java-core/oop.md
               - Strings & Primitives: java-core/strings-primitives.md
+              - Date & Time: java-core/date-time.md
               - Exceptions: java-core/exceptions.md
               - Versions & Features: java-core/versions-features.md
               - Interface vs Abstract Class: java-core/interface-vs-abstract-class.md
@@ -98,6 +99,7 @@ nav:
               - Annotations & Components: spring-web/spring-annotations-components.md
               - Spring Boot Advanced: spring-web/spring-boot-advanced.md
               - Exception Handling: spring-web/spring-exceptions.md
+              - AOP & Proxy Pitfalls: spring-web/spring-aop.md
           - Web & APIs:
               - API Styles & Protocols: spring-web/api-styles.md
               - Web Services: spring-web/web-services.md
@@ -110,6 +112,7 @@ nav:
               - Circuit Breaker & Resilience: spring-web/spring-boot-circuit-breaker.md
               - Threading & Async: spring-web/spring-threading.md
               - Actuator & Monitoring: spring-web/spring-boot-actuator.md
+              - Native Images (GraalVM): spring-web/spring-native-graalvm.md
       - Databases:
           - Overview (ACID/BASE/CAP): databases/index.md
           - SQL & Relational: databases/sql.md
@@ -122,6 +125,7 @@ nav:
           - LLMs & Transformers: ai-ml/llms-transformers.md
           - RAG & Generative AI: ai-ml/rag-generative.md
           - AI & Java Integration: ai-ml/ai-java.md
+          - AI Agent Building Blocks: ai-ml/agents.md
       - Microservices & Distributed Systems:
           - Overview: microservices-distributed/index.md
           - Principles & Patterns: microservices-distributed/principles.md
@@ -188,6 +192,7 @@ nav:
           - Testing: interview-questions/verbal/verbal-testing-questions.md
           - DevOps & Cloud: interview-questions/verbal/verbal-devops-questions.md
           - Machine Learning & AI: interview-questions/verbal/verbal-ml-ai-questions.md
+      - Behavioral & Soft Skills: interview-questions/behavioral/behavioral-questions.md
   - Resources:
       - Overview: resources/index.md
       - Java Roadmap: resources/java-roadmap/java-developer-roadmap.md

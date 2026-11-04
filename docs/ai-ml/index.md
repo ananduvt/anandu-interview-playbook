@@ -137,6 +137,10 @@ Large language models: transformer architecture, self-attention, pre-training an
 **Retrieval Augmented Generation - Vector Databases - Embeddings - Semantic Search - LLM Integration - AI Applications**  
 Generative AI patterns: combining LLMs with retrieval systems, vector embeddings and similarity search, building AI-powered applications.
 
+### [AI Agent Building Blocks](agents.md)
+**Agents - Tools - Memory - Planning - MCP**  
+How LLM agents decide, call tools and loop towards a goal.
+
 ### [AI & Java Integration](ai-java.md)
 **TensorFlow Java - DL4J - Spring AI - LLM APIs - Model Serving - Production AI**  
 Integrating AI in Java applications: TensorFlow and DL4J for model inference, Spring AI framework, calling LLM APIs, deploying models at scale.

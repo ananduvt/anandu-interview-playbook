@@ -104,4 +104,35 @@ When an int variable is declared, the memory is allocated directly on the stack.
 2. If you require thread safety, especially in a multi-threaded environment, use **StringBuffer**.
 3. Use **String** when you need an immutable string, and you don't anticipate frequent modifications.
 
+## String Formatting
+
+| Method | Notes |
+|--------|-------|
+| `String.format(fmt, args...)` | Static; returns a new `String`. C-style specifiers mapped to arguments in order |
+| `System.out.printf(fmt, args...)` | Same engine, but writes to the console instead of returning a string |
+| `"template".formatted(args...)` (Java 15) | Instance method; convenient on text blocks |
+
+| Specifier | Meaning | Example | Result |
+|-----------|---------|---------|--------|
+| `%s` / `%S` | String (any object via `toString()`) / uppercase | `format("%S", "hello")` | `HELLO` |
+| `%d` | Integer (`byte`, `short`, `int`, `long`) | `format("%d", 42)` | `42` |
+| `%,d` | Thousands separator (locale-specific) | `format("%,d", 1000000)` | `1,000,000` |
+| `%05d` | Zero-padded to width 5 | `format("%05d", 7)` | `00007` |
+| `%f` | Floating point (6 decimals by default) | `format("%f", 3.14)` | `3.140000` |
+| `%.2f` | Fixed precision, rounded (half-up) | `format("%.2f", 42.589)` | `42.59` |
+| `%b` | Boolean | `format("%b", 5 > 2)` | `true` |
+| `%c` | Character | `format("%c", 'A')` | `A` |
+| `%x` | Hexadecimal | `format("%x", 255)` | `ff` |
+| `%e` | Scientific notation | `format("%e", 1234.56)` | `1.234560e+03` |
+| `%n` | Platform line separator (prefer over `
+`) | `format("a%nb")` | two lines |
+
+```java
+String msg = """
+        Hello %s, you have %d new messages.
+        """.formatted("Anandu", 3);
+```
+
+Gotchas: a wrong specifier type throws `IllegalFormatConversionException`; too few arguments throws `MissingFormatArgumentException`. Pass a `Locale` as the first argument for locale-independent output.
+
 **Practice questions:** [Java Core](../interview-questions/verbal/verbal-java-core-questions.md), [Coding Problems & Solutions](../interview-questions/coding/coding-problems.md)

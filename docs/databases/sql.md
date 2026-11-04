@@ -667,6 +667,21 @@ EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
 DROP INDEX idx_users_email ON users;
 ```
 
+**How it works:** most relational engines (PostgreSQL, MySQL/InnoDB, Oracle) store an index as a **B+ tree**: root, internal nodes, and sorted leaf nodes holding the key plus a row pointer. A lookup walks the tree in O(log N), roughly 3-4 node reads for a million rows, instead of an O(N) full table scan.
+
+**Cost:** extra disk space, and every INSERT/UPDATE/DELETE must also update the tree, so do not index every column.
+
+**Verify with `EXPLAIN`:**
+
+```sql
+EXPLAIN SELECT * FROM users WHERE email = 'alex@example.com';
+-- no index: Seq Scan on users (PostgreSQL) / type=ALL (MySQL)
+-- indexed:  Index Scan using idx_users_email (PostgreSQL) / type=ref (MySQL)
+-- EXPLAIN ANALYZE also runs the query and shows real timings
+```
+
+Low-selectivity columns (a boolean, `country`) benefit little; a function on the column (`WHERE LOWER(email) = ...`) prevents index use unless a functional index exists.
+
 ---
 
 ## WHERE vs HAVING

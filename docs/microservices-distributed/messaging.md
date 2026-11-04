@@ -73,7 +73,7 @@ To summarize, a message system is deployed in an application stack for the follo
 
 **Partitions**: The data or message is divided into small subparts, known as partitions. Each partition carries data within it having an offset value. The data is always written in a sequential manner. We can have an infinite number of partitions with infinite offset values. However, it is not guaranteed that to which partition the message will be written.
 
-**ZooKeeper**: A ZooKeeper is used to store information about the Kafka cluster and details of the consumer clients. It manages brokers by maintaining a list of them. Also, a ZooKeeper is responsible for choosing a leader for the partitions. If any changes like a broker die, new topics, etc., occurs, the ZooKeeper sends notifications to Apache Kafka. A ZooKeeper is designed to operate with an odd number of Kafka servers. Zookeeper has a leader server that handles all the writes, and rest of the servers are the followers who handle all the reads. However, a user does not directly interact with the Zookeeper, but via brokers. No Kafka server can run without a zookeeper server. It is mandatory to run the zookeeper server.
+**Cluster metadata (ZooKeeper / KRaft)**: Historically ZooKeeper tracked live brokers and elected partition leaders, so every cluster needed a ZooKeeper ensemble. Modern Kafka uses **KRaft** (Kafka Raft): a controller quorum of brokers manages metadata itself. ZooKeeper mode is deprecated and removed in Kafka 4.0, so new clusters should use KRaft.
 
 ## Use Cases
 
@@ -207,6 +207,65 @@ If new Consumer E joins:
 - Multiple partitions → Multiple consumers can process in parallel
 - More consumers than partitions = some idle
 - Fewer partitions than consumers = uneven load
+
+---
+
+### Plain Java Client (no Spring)
+
+```java
+// Producer
+Properties p = new Properties();
+p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+p.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+p.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+try (KafkaProducer<String, String> producer = new KafkaProducer<>(p)) {
+    // Same key -> same partition -> per-key ordering
+    producer.send(new ProducerRecord<>("orders", "id_1", "created"),
+        (meta, ex) -> { if (ex == null) log.info("p{} @{}", meta.partition(), meta.offset()); });
+}
+
+// Consumer
+Properties c = new Properties();
+c.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+c.put(ConsumerConfig.GROUP_ID_CONFIG, "shipping");
+c.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+c.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+c.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // only when the group has no committed offset
+try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(c)) {
+    consumer.subscribe(List.of("orders"));
+    while (true) {
+        for (ConsumerRecord<String, String> r : consumer.poll(Duration.ofMillis(100))) {
+            handle(r); // must be idempotent
+        }
+    }
+}
+```
+
+- Consumers **pull** with `poll()`, so a slow consumer is never overwhelmed by the broker.
+- Messages are appended to an immutable commit log (sequential disk writes) and kept until the retention limit, not until read.
+- Ordering is guaranteed only **within a partition**.
+
+---
+
+### Consumer Groups: Queue vs Pub/Sub
+
+| Goal | Setup |
+|------|-------|
+| Queue (each message handled once by the app) | All instances share one `group.id` |
+| Pub/Sub (several apps each get every message) | Each app uses its own `group.id`; each group keeps independent offsets |
+
+Example: one `orders` message is read independently by `shipping`, `inventory` and `email` groups.
+
+**Rebalance:** when a consumer misses heartbeats or joins/leaves, its partitions are revoked and reassigned; the new owner resumes from the last **committed** offset.
+
+**Why the same message is processed twice**
+
+| Cause | Fix |
+|-------|-----|
+| Slow processing exceeds `max.poll.interval.ms`, group assumes the consumer is dead and rebalances | Raise `max.poll.interval.ms`, lower `max.poll.records` |
+| Consumer processed the message but crashed before committing the offset | Make processing **idempotent** (unique-key check, upsert) |
+
+Delivery is at-least-once by default; idempotent consumers are the standard answer.
 
 ---
 

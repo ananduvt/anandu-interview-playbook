@@ -60,6 +60,14 @@ Fault tolerance patterns: circuit breaker states (CLOSED/OPEN/HALF_OPEN), Resili
 **@Async - CompletableFuture - TaskExecutor - Virtual Threads - Non-Blocking REST - Async Patterns**  
 Asynchronous processing: @Async annotation with TaskExecutor configuration, CompletableFuture composition and chaining, REST endpoints returning futures, Java 21 virtual threads integration, comparison with WebFlux, production patterns.
 
+### [Spring AOP & Proxy Pitfalls](spring-aop.md)
+**AOP - Aspects - Proxies - @Transactional self-invocation**  
+Cross-cutting concerns with runtime proxies and why self-invocation bypasses them.
+
+### [Spring Native Images (GraalVM)](spring-native-graalvm.md)
+**GraalVM - AOT - Native Image - Startup time**  
+Ahead-of-time compiled Spring Boot apps: trade-offs and build steps.
+
 ### [Actuator & Monitoring](spring-boot-actuator.md)
 **Actuator - Health Checks - Metrics - Liveness/Readiness Probes - Prometheus/Grafana - Endpoint Security**  
 Production monitoring: built-in endpoints, configuration, Kubernetes liveness and readiness probes, Prometheus and Grafana integration, securing actuator endpoints, best practices.

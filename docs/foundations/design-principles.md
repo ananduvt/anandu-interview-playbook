@@ -42,6 +42,12 @@ If the child Class doesn’t meet these requirements, it means the child Class i
 
 *Goal: This principle aims to enforce consistency so that the parent Class or its child Class can be used in the same way without any errors.*
 
+**Contract rules for subclasses:** do not strengthen preconditions, do not weaken postconditions, preserve the parent's invariants, and do not throw new checked exceptions.
+
+**Classic violation: `Square extends Rectangle`.** A rectangle allows width and height to change independently. If `Square.setWidth()` also changes the height, code written against `Rectangle` (`r.setWidth(5); r.setHeight(4);` expecting area 20) breaks when handed a `Square`. Fix: avoid the inheritance; use a common `Shape` interface with separate classes.
+
+**If a subclass must be substitutable, why do we need inheritance?** LSP constrains inheritance; it does not replace it. Inheritance provides subtyping (the mechanism that makes substitution and polymorphism possible) and code reuse. LSP is the rulebook that keeps those hierarchies from being fragile. Smells of a violation: an override throws `UnsupportedOperationException`, or callers need `instanceof` checks.
+
 **I — Interface Segregation**
 **![](../assets/isp-interface-segregation.png)**
 **Clients should not be forced to depend on methods that they do not use.**
