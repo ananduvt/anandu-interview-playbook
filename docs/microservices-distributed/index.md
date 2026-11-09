@@ -22,6 +22,34 @@ Dynamic service location: client-side vs. server-side discovery, Eureka registra
 **Event Streaming - Kafka - Topics - Partitions - Consumers - Producers - Event-Driven Architecture**  
 Message-driven systems: Kafka architecture (broker, topic, partition, consumer group), event sourcing, asynchronous communication, failure handling, exactly-once semantics.
 
+### [Kafka Reliability](kafka-reliability.md)
+**Retry topics - Dead letter topics - Offset reset - Reprocessing**  
+Handling poison messages and replaying events safely.
+
+### [Data Consistency Patterns](data-consistency-patterns.md)
+**Transactional outbox - Idempotency keys - Strangler fig - Legacy wrapping**  
+Keeping data consistent across services and migrating legacy systems.
+
+### [DDD & Bounded Contexts](ddd-bounded-contexts.md)
+**Bounded context - Context map - Anti-corruption layer**  
+Drawing service boundaries with domain-driven design.
+
+### [Distributed Consensus](distributed-consensus.md)
+**Raft - Paxos - Leader election - Eventual consistency**  
+How clusters agree on state and what consistency you give up.
+
+### [gRPC vs REST](grpc.md)
+**Protobuf - Streaming - Deadlines**  
+When to choose gRPC over REST for service-to-service calls.
+
+### [Sidecar Pattern](sidecar-pattern.md)
+**Sidecar - Ambassador - Service mesh**  
+Offloading cross-cutting concerns to a companion container.
+
+### [Testing & Contract Testing](microservices-testing.md)
+**Pact - Spring Cloud Contract - Test pyramid**  
+Test strategy for independently deployable services.
+
 ---
 
 ## Quick Interview Prep

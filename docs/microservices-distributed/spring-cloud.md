@@ -10,6 +10,7 @@ Services register and look each other up dynamically (no hard-coded hosts).
 ## Centralized config
 - **Spring Cloud Config Server** serves config from a git repo; clients refresh via `/actuator/refresh` or
   Spring Cloud Bus. Externalizes config per environment.
+- Encrypt sensitive values with `{cipher}` or back Config Server with Vault: see [Secrets Management](../security/secrets-management.md).
 
 ## API gateway
 - **Spring Cloud Gateway** — routing, filters (auth, rate limiting), circuit breaking at the edge.

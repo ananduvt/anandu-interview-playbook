@@ -32,4 +32,6 @@ Complements auth topics in [Spring & Web → Security](../spring-web/security.md
 Least privilege · defense in depth · fail securely · validate at boundaries · never trust client input ·
 secrets in a vault (not code) · constant-time comparison for secrets · rotate credentials · audit logging.
 
+**Deep dives:** [Secrets Management](secrets-management.md) · [Compliance (PCI DSS)](compliance-pci.md)
+
 **Practice questions:** [Security](../interview-questions/verbal/verbal-security-questions.md)

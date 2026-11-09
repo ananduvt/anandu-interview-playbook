@@ -210,6 +210,46 @@ If new Consumer E joins:
 
 ---
 
+### Rebalance Protocols, Static Membership & Assignment Strategies
+
+A **rebalance** redistributes partitions among group members when a consumer joins, leaves, crashes (no heartbeat within `session.timeout.ms`), stalls (no `poll()` within `max.poll.interval.ms`), or when topic partitions change.
+
+| Protocol | Behaviour | Cost |
+| :-- | :-- | :-- |
+| **Eager** (default for Range/RoundRobin) | Every member revokes **all** partitions, rejoins, gets a new assignment ("stop the world") | Whole group pauses; caches and state lost |
+| **Cooperative incremental** (`CooperativeStickyAssignor`) | Only partitions that must move are revoked; others keep processing. Takes two rounds | Much less downtime |
+| **KIP-848 next-gen protocol** (`group.protocol=consumer`, Kafka 4.0+) | Broker-side coordination, no group-wide barrier, incremental by design | Needs Kafka 4.x brokers and a recent client |
+
+| Assignment strategy (`partition.assignment.strategy`) | Idea |
+| :-- | :-- |
+| `RangeAssignor` | Per topic, contiguous ranges; can skew when many topics have few partitions |
+| `RoundRobinAssignor` | Spread all partitions evenly across members |
+| `StickyAssignor` | Even spread plus keep previous assignments (eager) |
+| `CooperativeStickyAssignor` | Sticky plus cooperative rebalancing (recommended with classic protocol) |
+
+```yaml
+spring:
+  kafka:
+    consumer:
+      properties:
+        partition.assignment.strategy: org.apache.kafka.clients.consumer.CooperativeStickyAssignor
+        group.instance.id: ${HOSTNAME}      # static membership: stable per pod (e.g. StatefulSet)
+        session.timeout.ms: 45000           # how long a restart may take without a rebalance
+        max.poll.interval.ms: 300000
+```
+
+**Static membership** (`group.instance.id`): a consumer that restarts within `session.timeout.ms` keeps its partitions and triggers **no rebalance**. Useful for rolling deploys and stateful consumers; ids must be unique per instance, or the older one is fenced (`FencedInstanceIdException`). Trade-off: a truly dead member's partitions are unprocessed until the session timeout expires.
+
+**Reducing rebalance storms**
+- Use cooperative assignor and static membership for rolling restarts.
+- Keep processing time per `poll()` below `max.poll.interval.ms`; lower `max.poll.records` if needed.
+- Avoid long GC pauses and tune `heartbeat.interval.ms` to about a third of `session.timeout.ms`.
+- Commit offsets in `onPartitionsRevoked` (Spring Kafka does this for you) to avoid duplicates.
+
+**Interview**: *Eager vs cooperative?* Eager revokes everything, cooperative only the moved partitions. *Why do rebalances hurt?* Consumption pauses and in-flight work may be reprocessed. For retries, DLTs and offset resets see [Kafka Reliability](kafka-reliability.md).
+
+---
+
 ### Plain Java Client (no Spring)
 
 ```java

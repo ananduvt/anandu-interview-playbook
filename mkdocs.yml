@@ -146,10 +146,20 @@ nav:
           - AI Agent Building Blocks: ai-ml/agents.md
       - Microservices & Distributed Systems:
           - Overview: microservices-distributed/index.md
-          - Principles & Patterns: microservices-distributed/principles.md
-          - Spring Cloud Implementation: microservices-distributed/spring-cloud.md
-          - Service Discovery: microservices-distributed/service-discovery.md
-          - Messaging (Kafka): microservices-distributed/messaging.md
+          - Architecture:
+              - Principles & Patterns: microservices-distributed/principles.md
+              - DDD & Bounded Contexts: microservices-distributed/ddd-bounded-contexts.md
+              - Distributed Consensus: microservices-distributed/distributed-consensus.md
+              - Sidecar Pattern: microservices-distributed/sidecar-pattern.md
+          - Implementation:
+              - Spring Cloud Implementation: microservices-distributed/spring-cloud.md
+              - Service Discovery: microservices-distributed/service-discovery.md
+              - gRPC vs REST: microservices-distributed/grpc.md
+              - Testing & Contract Testing: microservices-distributed/microservices-testing.md
+          - Messaging & Data:
+              - Messaging (Kafka): microservices-distributed/messaging.md
+              - Kafka Reliability (DLT, Retry): microservices-distributed/kafka-reliability.md
+              - Data Consistency Patterns: microservices-distributed/data-consistency-patterns.md
       - Cloud Services:
           - Overview: distributed-cloud/index.md
           - Caching: distributed-cloud/caching.md
@@ -167,7 +177,10 @@ nav:
               - Kubernetes Deployment Strategies: devops/kubernetes-deployment-strategies.md
               - Kubernetes Advanced (Helm & Istio): devops/kubernetes-advanced.md
           - Observability: devops/observability.md
-      - Security & Vulnerabilities: security/index.md
+      - Security:
+          - Security & Vulnerabilities: security/index.md
+          - Secrets Management: security/secrets-management.md
+          - Compliance (PCI DSS): security/compliance-pci.md
   - Interview Questions:
       - Preparation: interview-questions/index.md
       - Coding Questions:
