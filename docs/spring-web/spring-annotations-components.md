@@ -603,6 +603,57 @@ public class UserController {
 
 ---
 
+## Component Scanning Scope and Startup Hooks
+
+`@SpringBootApplication` scans its own package and sub-packages. Entities and Spring Data repositories are discovered **separately**, so classes outside that package need explicit registration.
+
+| Annotation | Purpose |
+| :-- | :-- |
+| `@ComponentScan(basePackages=...)` | Extra packages for `@Component`/`@Service`/`@Controller` beans |
+| `@EntityScan(basePackages=...)` | Where JPA looks for `@Entity` classes |
+| `@EnableJpaRepositories(basePackages=...)` | Where Spring Data finds repository interfaces |
+
+```java
+@SpringBootApplication(scanBasePackages = {"com.acme.app", "com.acme.shared"})
+@EntityScan("com.acme.shared.domain")
+@EnableJpaRepositories("com.acme.shared.repo")
+public class App { }
+```
+
+Gotchas: declaring `@EnableJpaRepositories` turns off Boot's default repository scanning (list every package you need). A missed scan shows up as `Not a managed type` or `No qualifying bean of type ...Repository`. Keeping the main class in the root package avoids all of this.
+
+### Startup Hooks: `CommandLineRunner` and `ApplicationRunner`
+
+Both run **after the context is refreshed**, just before `SpringApplication.run` returns. Use them for seeding data, warm-up or one-off tasks.
+
+| | `CommandLineRunner` | `ApplicationRunner` |
+| :-- | :-- | :-- |
+| Argument | `String... args` (raw) | `ApplicationArguments` (parsed `--key=value` options and plain args) |
+| Ordering | `@Order` / `Ordered`, shared across both runner types | same |
+
+```java
+@Component
+@Order(1)
+class SeedData implements ApplicationRunner {
+    private final UserRepository repo;
+    SeedData(UserRepository repo) { this.repo = repo; }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        if (repo.count() == 0) repo.save(new User("admin"));   // idempotent
+        if (args.containsOption("reindex")) { /* ... */ }
+    }
+}
+```
+
+| Hook | When it runs |
+| :-- | :-- |
+| `@PostConstruct` / `InitializingBean` | During that bean's creation (other beans may not be ready) |
+| `ApplicationRunner` / `CommandLineRunner` | After context refresh; all beans available |
+| `ApplicationReadyEvent` listener | After the runners; the app is ready to serve traffic |
+
+Runners execute on the main thread: a slow runner delays startup and an exception aborts it. Make seed logic idempotent (it runs on every instance and restart), and prefer Flyway/Liquibase for production schema changes.
+
 ## Interview Talking Points
 
 - **@Component vs @Service vs @Repository?** All auto-register as beans; semantic difference signals layer (@Service = business logic, @Repository = data access)

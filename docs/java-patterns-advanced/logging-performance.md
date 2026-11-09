@@ -110,9 +110,10 @@ public void deleteUser(Long id) {
 - **JProfiler**: CPU sampling, memory snapshots, hotspot identification
 - **JFR (Java Flight Recorder)**: Built-in, low-overhead recording
   ```bash
-  java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder MyApp
+  java -XX:StartFlightRecording=filename=app.jfr,duration=60s MyApp   # JDK 11+, no unlock flag
   jcmd <pid> JFR.start duration=60s filename=profile.jfr
   ```
+- **async-profiler**, thread dumps and heap dumps: step-by-step in [Profiling and Diagnostics](profiling-diagnostics.md)
 - **jstat**: Real-time GC, class loading, compilation stats
   ```bash
   jstat -gc -h10 <pid> 1s  # GC every 1 second

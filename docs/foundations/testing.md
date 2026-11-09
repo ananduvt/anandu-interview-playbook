@@ -533,6 +533,8 @@ public class UserServiceIntegrationTest {
 }
 ```
 
+See [Spring Boot Testing](../spring-web/spring-testing.md) for `@Mock` vs `@InjectMocks`, `@WebMvcTest`, `@DataJpaTest` and Testcontainers in depth.
+
 ### Best Practices
 
 ✅ **Do's**

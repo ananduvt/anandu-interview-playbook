@@ -484,6 +484,68 @@ public class UserService {
 UserProfile profile = userService.getUserProfile(123).get();
 ```
 
+### Parallel Service Calls with CompletableFuture
+
+Fan out independent calls on a **dedicated executor**, then join. Latency becomes roughly the slowest call, not the sum. Java 9+ for `orTimeout`/`completeOnTimeout`; Java 21+ for the virtual-thread executor.
+
+```java
+import java.util.List;
+import java.util.concurrent.*;
+
+public class ProfileAggregator {
+    // I/O-bound: own pool (Java 21+: Executors.newVirtualThreadPerTaskExecutor())
+    private final ExecutorService io = Executors.newFixedThreadPool(20);
+
+    record Profile(String user, List<String> orders, String recs) {}
+
+    Profile load(String id) {
+        CompletableFuture<String> user = CompletableFuture
+            .supplyAsync(() -> userClient.get(id), io)
+            .orTimeout(2, TimeUnit.SECONDS);
+
+        CompletableFuture<List<String>> orders = CompletableFuture
+            .supplyAsync(() -> orderClient.list(id), io)
+            .orTimeout(2, TimeUnit.SECONDS)
+            .exceptionally(ex -> List.of());            // optional data: degrade gracefully
+
+        CompletableFuture<String> recs = CompletableFuture
+            .supplyAsync(() -> recClient.get(id), io)
+            .completeOnTimeout("none", 500, TimeUnit.MILLISECONDS);
+
+        return CompletableFuture.allOf(user, orders, recs)
+            .thenApply(v -> new Profile(user.join(), orders.join(), recs.join()))
+            .join();                                    // failures arrive as CompletionException
+    }
+}
+
+// N calls of the same kind
+static <T> List<T> fetchAll(List<Callable<T>> calls, Executor ex) {
+    List<CompletableFuture<T>> futures = calls.stream()
+        .map(c -> CompletableFuture.supplyAsync(() -> {
+            try { return c.call(); } catch (Exception e) { throw new CompletionException(e); }
+        }, ex))
+        .toList();                                      // start ALL before joining any
+    return futures.stream().map(CompletableFuture::join).toList();
+}
+```
+
+(`userClient`, `orderClient`, `recClient` are placeholder service clients.)
+
+**Rules of thumb**
+
+- Always pass an executor for blocking work; the default is the shared common pool.
+- Collect futures into a list first, then join. Calling `join()` inside the same lazy `map` serialises the calls.
+- Put a timeout on every call; decide per call whether failure is fatal or optional (`exceptionally`/`handle`).
+- `allOf` completes exceptionally if any future fails (after all finish); inspect each future for partial results.
+- Size pools from downstream capacity; cap concurrency with a bulkhead or `Semaphore`.
+- Request context (MDC, security, transaction) is **not** propagated to pool threads; decorate the executor (Spring: `TaskDecorator`, see [Spring threading](../spring-web/spring-threading.md)).
+- Java 21+ alternative: virtual threads with plain blocking code.
+
+**Common interview questions**
+
+- *Parallel stream vs CompletableFuture for 5 REST calls?* CompletableFuture with a custom executor: control over pool, timeouts and errors; parallel streams use the shared pool.
+- *`allOf` returns `Void`, how do you get results?* Keep the individual futures and `join()` them after `allOf` completes.
+
 ### CompletableFuture vs Future
 
 | Aspect | Future | CompletableFuture |

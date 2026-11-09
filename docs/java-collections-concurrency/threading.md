@@ -158,6 +158,48 @@ public class Counter {
 
 ---
 
+### Class Lock vs Object Lock
+
+Every object has one intrinsic monitor, and every `Class` object (`Counter.class`) has its own. `synchronized` decides which one is locked.
+
+| Form | Lock acquired | Effect |
+| :-- | :-- | :-- |
+| `synchronized void m()` | `this` (object lock) | One thread per **instance** |
+| `synchronized (this) { }` | `this` | Same as above |
+| `static synchronized void m()` | `Counter.class` (class lock) | One thread per **class** (per classloader), across all instances |
+| `synchronized (Counter.class) { }` | Class object | Same as above |
+| `synchronized (lock) { }` | a private `lock` object | Fine-grained, not exposed to callers |
+
+```java
+public class Counter {
+    private static int total;
+    private int count;
+
+    public synchronized void inc()             { count++; }  // locks this
+    public static synchronized void incTotal() { total++; }  // locks Counter.class
+
+    public void both() {
+        synchronized (this)          { count++; }
+        synchronized (Counter.class) { total++; }
+    }
+}
+```
+
+**Key behaviours**
+
+- Threads on **different instances** calling instance-synchronized methods do not block each other.
+- Instance-synchronized and static-synchronized methods use **different locks**, so they run concurrently. `inc()` does not protect `total`; a shared static field needs the class lock (or an `AtomicInteger`).
+- Locks are reentrant: a thread holding a lock can enter other code guarded by the same lock.
+- Non-synchronized methods are never blocked by either lock.
+- Prefer a **private final lock object**: outside code can lock `this` or `Counter.class` too, causing contention or deadlock.
+- Virtual threads: blocking inside `synchronized` pinned the carrier thread in Java 21; Java 24+ (so the Java 25 LTS) removed most pinning ([JEP 491](https://openjdk.org/jeps/491)).
+
+**Common interview questions**
+
+- *Can a static synchronized and an instance synchronized method run at the same time?* Yes, different monitors.
+- *What does `wait()` release?* Only the monitor of the object it is called on; other held locks stay held.
+- *Class lock with several classloaders?* The lock is per `Class` object, so the same class loaded by two loaders has two locks.
+
 ### 2. **Volatile Keyword**
 
 Ensures visibility of changes across threads, but NOT atomicity.
@@ -221,6 +263,64 @@ public class AtomicCounter {
 **Use:** Counters, flags, simple values
 
 ---
+
+### AtomicReference Example and the ABA Problem
+
+`AtomicReference<V>` gives lock-free compare-and-set on an **object reference** (compared by identity `==`, not `equals`). Typical use: publish an immutable snapshot and swap it atomically.
+
+```java
+import java.util.concurrent.atomic.AtomicReference;
+
+public class Config {
+    record Settings(int timeoutMs, String region) {}
+
+    private final AtomicReference<Settings> ref =
+        new AtomicReference<>(new Settings(1000, "eu"));
+
+    public Settings current() { return ref.get(); }
+
+    // Retry loop: read, build new immutable value, CAS; retry if another thread won
+    public void raiseTimeout(int delta) {
+        Settings prev, next;
+        do {
+            prev = ref.get();
+            next = new Settings(prev.timeoutMs() + delta, prev.region());
+        } while (!ref.compareAndSet(prev, next));
+    }
+
+    // Equivalent shorthand (Java 8+)
+    public void raiseTimeout2(int delta) {
+        ref.updateAndGet(s -> new Settings(s.timeoutMs() + delta, s.region()));
+    }
+}
+```
+
+The function given to `updateAndGet`/`accumulateAndGet` may run several times under contention, so it must be **side-effect free**.
+
+**ABA problem:** a thread reads `A`; another thread changes `A -> B -> A`; the first thread's CAS succeeds because the value looks unchanged although state changed in between. It bites lock-free stacks and queues that reuse nodes. Fix by attaching a version stamp.
+
+```java
+import java.util.concurrent.atomic.AtomicStampedReference;
+
+AtomicStampedReference<String> asr = new AtomicStampedReference<>("A", 0);
+
+int[] holder = new int[1];
+String val = asr.get(holder);   // value "A", stamp 0
+int stamp = holder[0];
+
+// Meanwhile another thread does A -> B -> A, bumping the stamp to 2
+
+boolean ok = asr.compareAndSet(val, "C", stamp, stamp + 1);
+System.out.println(ok);         // false: stamp changed, ABA detected
+```
+
+| Class | Use |
+| :-- | :-- |
+| `AtomicReference` | Swap immutable snapshots; ABA harmless if only the latest value matters |
+| `AtomicStampedReference` | Reference plus `int` version; detects ABA |
+| `AtomicMarkableReference` | Reference plus `boolean` mark (for example a logically-deleted flag) |
+
+**Interview tips:** garbage collection prevents the C/C++ memory-reuse form of ABA (an object is not recycled while referenced), but logical ABA remains. Keep values in an `AtomicReference` **immutable**; mutating the object inside defeats the CAS.
 
 ### 4. **Locks (java.util.concurrent.locks)**
 

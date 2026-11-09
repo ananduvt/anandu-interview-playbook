@@ -282,6 +282,49 @@ Collectors is one of the utility class in JDK which contains a lot of utility fu
 | More reliable and less error,  | Less reliable and error-prone.   |
 | Platform independent, | Platform dependent |
 
+## Parallel Streams: Production Pitfalls
+
+`parallelStream()` splits the source (via its `Spliterator`) and runs chunks on the **common ForkJoinPool** (`ForkJoinPool.commonPool()`, parallelism = cores - 1; the calling thread also works). That pool is **shared by the whole JVM**: other parallel streams, `CompletableFuture.supplyAsync` without an executor, parallel `Arrays.sort`.
+
+| Pitfall | Why it hurts | Fix |
+| :-- | :-- | :-- |
+| Blocking calls (HTTP, JDBC, `sleep`) | Few threads; one slow call stalls every other parallel task in the app | Dedicated executor, `CompletableFuture`, or virtual threads |
+| Shared mutable state (`list.add`, `count++`) | Race conditions, lost updates | `collect`, `reduce`, thread-safe collectors |
+| Small data or cheap work | Split and merge overhead exceeds the gain | Benchmark (JMH); parallel pays for large, CPU-bound, independent work |
+| Poorly splittable sources | `LinkedList`, `Stream.iterate`, `BufferedReader.lines` split badly | `ArrayList`, arrays, `IntStream.range` |
+| Order-dependent ops (`findFirst`, `limit`, `sorted`, `forEachOrdered`) | Forces coordination | `findAny`, `unordered()` when order is irrelevant |
+| Non-associative or stateful reduce | Wrong results | Combiner must be associative and stateless |
+| `ThreadLocal`, transaction or security context | Worker threads do not inherit it | Pass data explicitly |
+
+```java
+// ❌ Bad: race condition
+List<Integer> out = new ArrayList<>();
+IntStream.range(0, 10_000).parallel().forEach(out::add);   // lost elements or exception
+
+// ✅ Good: the collector merges safely (Java 16+ toList)
+List<Integer> ok = IntStream.range(0, 10_000).parallel().boxed().toList();
+
+// ❌ Bad: blocking I/O on the shared common pool
+ids.parallelStream().map(id -> restClient.fetch(id)).toList();
+
+// ✅ Workaround: run the stream inside your own pool (relies on implementation behaviour)
+ForkJoinPool pool = new ForkJoinPool(16);
+try {
+    List<User> users = pool.submit(() ->
+        ids.parallelStream().map(restClient::fetch).toList()).get();
+} finally {
+    pool.shutdown();
+}
+```
+
+Tune the shared pool with `-Djava.util.concurrent.ForkJoinPool.common.parallelism=N`. For I/O prefer explicit executors: see [parallel service calls with CompletableFuture](concurrency.md#parallel-service-calls-with-completablefuture).
+
+**Common interview questions**
+
+- *When is a parallel stream appropriate?* Large, in-memory, CPU-bound, stateless, independent operations on a splittable source, confirmed by a benchmark.
+- *Why avoid it in a web service?* All requests share the common pool, so one blocking pipeline degrades the rest; behaviour is unpredictable under load.
+- *Is `forEach` ordered on a parallel stream?* No; `forEachOrdered` is, at a cost.
+
 ## Questions
 
 1. **What is a Stream in Java?**

@@ -136,7 +136,7 @@ Types of DB ?
 | **Relationships** | Graph (Neo4j) | Social network |
 | **Full-text search** | Search (Elasticsearch) | Search results |
 
-**[See more: SQL & Relational](sql.md) | [NoSQL & Scaling](scaling.md)**
+**[See more: SQL & Relational](sql.md) | [NoSQL & Scaling](scaling.md) | [Schema Migrations](schema-migrations.md)**
 
 Db improvements / efficiency - design principles
 

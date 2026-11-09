@@ -154,7 +154,7 @@ public class UserDataService {
     public void saveUserData(User user) { repo.save(user); }
 }
 
-// Fix 4: TransactionTemplate
+// Fix 4: TransactionTemplate (details: spring-transactions.md)
 @Service
 public class UserTxService {
     private final TransactionTemplate tx;

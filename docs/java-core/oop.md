@@ -275,3 +275,100 @@ public record Employee(int id, String name, double salary) {
 - Implicitly `final` and extends `java.lang.Record`: cannot extend a class or be extended.
 - Can implement interfaces, declare static members and extra methods, but not instance fields.
 - Good as `HashMap` keys and DTOs; see [record patterns](versions-features.md) and [switch patterns](basics.md#switch-statements).
+
+### Mapping query results to records
+
+Records suit read-only projections because they are immutable and need no boilerplate.
+
+**Spring Data JPA** (DTO projection):
+
+```java
+public record EmployeeSummary(Long id, String name) {}
+
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
+    // Derived query: Spring Data selects only the record's components
+    List<EmployeeSummary> findByDepartment(String department);
+
+    // Explicit JPQL constructor expression (fully qualified name required)
+    @Query("select new com.example.EmployeeSummary(e.id, e.name) from Employee e where e.salary > :min")
+    List<EmployeeSummary> findWellPaid(@Param("min") double min);
+}
+```
+
+Only the selected columns are fetched, and the result is not a managed entity (no dirty checking). For more on JPA, see [JPA and ORM](../spring-web/jpa-orm.md).
+
+**JdbcTemplate RowMapper** (plain SQL):
+
+```java
+List<EmployeeSummary> list = jdbcTemplate.query(
+    "select id, name from employee where department = ?",
+    (rs, rowNum) -> new EmployeeSummary(rs.getLong("id"), rs.getString("name")),
+    department);
+
+// Or bind columns to the canonical constructor automatically (Spring 6+)
+RowMapper<EmployeeSummary> mapper = new DataClassRowMapper<>(EmployeeSummary.class);
+```
+
+| Approach | Use when |
+|----------|----------|
+| Derived query / JPQL `select new` | JPA, a few columns, no entity needed |
+| Interface projection | Same, but proxy-based |
+| `RowMapper` lambda | Plain SQL, full control |
+| `DataClassRowMapper` | Column names match record components (snake_case is converted) |
+
+Tip: column order and types must match the canonical constructor; compact-constructor validation runs on every row, so a bad row fails at mapping time.
+
+## Encapsulation Example
+
+Encapsulation = hide state behind a controlled API so the class can enforce its **invariants**.
+
+```java
+public class BankAccount {
+    private final String id;              // private + final: set once
+    private long balanceCents;            // never exposed for direct writes
+    private final List<String> history = new ArrayList<>();
+
+    public BankAccount(String id, long openingCents) {
+        if (id == null || id.isBlank()) throw new IllegalArgumentException("id required");
+        if (openingCents < 0) throw new IllegalArgumentException("opening balance < 0");
+        this.id = id;
+        this.balanceCents = openingCents;
+    }
+
+    public String getId() { return id; }
+    public long getBalanceCents() { return balanceCents; }
+
+    // Behaviour methods instead of a blind setBalance()
+    public void deposit(long cents) {
+        if (cents <= 0) throw new IllegalArgumentException("deposit must be positive");
+        balanceCents += cents;
+        history.add("DEPOSIT " + cents);
+    }
+
+    public void withdraw(long cents) {
+        if (cents <= 0 || cents > balanceCents) throw new IllegalStateException("invalid withdrawal");
+        balanceCents -= cents;
+        history.add("WITHDRAW " + cents);
+    }
+
+    public List<String> getHistory() {
+        return List.copyOf(history);      // defensive copy: caller cannot mutate internals
+    }
+}
+```
+
+| Modifier | Class | Package | Subclass | World |
+|----------|:-----:|:-------:|:--------:|:-----:|
+| `private` | yes | | | |
+| (default) | yes | yes | | |
+| `protected` | yes | yes | yes | |
+| `public` | yes | yes | yes | yes |
+
+- Make fields `private` and expose the minimum: no setter unless a change is meaningful; validate in the constructor and setters.
+- Return copies or unmodifiable views of mutable fields (and copy mutable constructor arguments).
+- Prefer immutability (`final` fields, [records](#records-java-16)) where possible.
+- Getters/setters alone are not encapsulation: a `setBalance` that does no checks exposes state just like a `public` field.
+
+!!! tip "Interview tip"
+    Encapsulation hides **state** and protects invariants; abstraction hides **complexity** behind an interface (see [Exploring Inheritance and Abstraction](#exploring-inheritance-and-abstraction)).

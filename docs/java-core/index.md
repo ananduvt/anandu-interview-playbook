@@ -31,6 +31,10 @@ Platform architecture: JDK/JRE/JVM distinctions, bytecode execution, JIT compila
 **Classes - Inheritance - Polymorphism - Encapsulation - SOLID - Abstraction**  
 Object-oriented principles: method overriding/overloading, access modifiers, super/this, abstract classes vs. interfaces, composition patterns.
 
+### [Bitwise, Conversions & Lambda Capture](operators-conversions.md)  
+**Bitwise operators - List/array/Stream conversions - int/String - effectively final**  
+Bit tricks, common type conversions, and why lambdas capture only effectively final variables.
+
 ### [Strings & Primitives](strings-primitives.md)  
 **String Pool - Immutability - Primitives - Autoboxing - Type Conversion - Collections**  
 String mechanics: immutability, StringBuilder vs. StringBuffer, wrapper types, autoboxing/unboxing, int ↔ String conversions, array/list/stream transformations.

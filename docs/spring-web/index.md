@@ -10,6 +10,10 @@ Master Spring Framework for building enterprise web applications: core concepts,
 **Spring Boot - Auto-Configuration - Request Handling - Configuration Files - Starter Dependencies**  
 Spring Boot fundamentals: @SpringBootApplication, @Configuration, @Bean, request handling annotations, basic property configuration, starter dependencies.
 
+### [Spring Boot Versions](spring-boot-versions.md)
+**Boot 2 - Boot 3 - Java 17 - Jakarta EE - Migration**  
+What changed across Spring Boot major versions and how to migrate.
+
 ### [Spring Annotations & Components](spring-annotations-components.md)
 **@Component - @Service - @Repository - @Controller - @RestController - Bean Lifecycle - Component Scanning - Qualifiers**  
 Stereotype annotations and bean management: @Component, @Service, @Repository, @Controller vs @RestController, bean scopes (singleton/prototype), component scanning process, @Qualifier/@Primary disambiguation, real-world layered architecture.
@@ -22,11 +26,27 @@ Advanced Spring concepts: DI patterns (constructor/setter/field), bean lifecycle
 **@ControllerAdvice - @ExceptionHandler - Global Error Handling - Validation Errors - HTTP Status Codes - Error Response DTO**  
 Centralized exception handling: @ControllerAdvice for global handlers, @ExceptionHandler mapping exceptions to HTTP responses, validation error handling, custom exception hierarchies, async exception handling.
 
+### [Spring AOP & Proxy Pitfalls](spring-aop.md)
+**AOP - Aspects - Proxies - @Transactional self-invocation**  
+Cross-cutting concerns with runtime proxies and why self-invocation bypasses them.
+
+### [Spring Scheduling](spring-scheduling.md)
+**@Scheduled - ShedLock - Quartz - Clustered jobs**  
+Running scheduled jobs safely, including in multi-instance deployments.
+
 ## Web & APIs
+
+### [Spring MVC Internals](spring-mvc-internals.md)
+**DispatcherServlet - HandlerMapping - Interceptors vs Filters - Thymeleaf**  
+Request flow through Spring MVC and server-side templating.
 
 ### [API Styles & Protocols](api-styles.md)
 **REST - GraphQL - gRPC - WebSocket - Webhooks - HTTP Methods - Versioning - HATEOAS - OpenAPI/Swagger**  
 API design: a quick chooser across API styles, HTTP methods deep-dive (GET/POST/PUT/PATCH/DELETE), status codes, REST best practices (versioning, pagination, filtering, HATEOAS), and API documentation with Swagger/OpenAPI.
+
+### [API Evolution & Optimistic Concurrency](api-evolution.md)
+**Backward compatibility - Tolerant reader - ETag - If-Match - 412**  
+Evolving APIs without breaking clients and preventing lost updates.
 
 ### [Web Services](web-services.md)
 **SOAP vs REST - GraphQL - Authentication Methods - SSO - RBAC/ABAC - OAuth2 Scopes**  
@@ -46,11 +66,29 @@ API security fundamentals: user authentication, role-based authorization, Spring
 **JWT Tokens - OAuth2 Flows - Token Refresh - Role-Based Access - Authentication Filters - Security Best Practices**  
 Token-based authentication: JWT structure and validation, OAuth2 grant types, implementation with Spring Security, refresh token patterns, token blacklisting, multi-tenancy, security best practices.
 
-## Data & Production
+### [Spring Security Across Microservices](spring-security-microservices.md)
+**Resource server - Token propagation - Service-to-service auth**  
+Securing a set of services with JWT resource servers and token relay.
+
+## Data
 
 ### [JPA & ORM](jpa-orm.md)
 **JPA - Hibernate - Entity Mapping - Relationships - Query Language - Transactions - Lazy/Eager Loading**  
 Object-relational mapping: entity annotations (@Entity, @Column, @OneToMany), JPQL/HQL queries, transaction propagation (@Transactional), N+1 problem, eager vs. lazy loading.
+
+### [Entity vs DTO & MapStruct](entity-dto-mapping.md)
+**DTO - Projections - MapStruct - Mapping**  
+Separating persistence entities from API models.
+
+### [Spring Data Performance](spring-data-performance.md)
+**StatelessSession - HikariCP - Pool sizing - Monitoring**  
+Bulk processing and connection pool tuning.
+
+### [Programmatic Transactions](spring-transactions.md)
+**TransactionTemplate - PlatformTransactionManager - Propagation - Rollback**  
+Managing transactions in code when `@Transactional` does not fit.
+
+## Production & Testing
 
 ### [Spring Boot Circuit Breaker](spring-boot-circuit-breaker.md)
 **Circuit Breaker - Resilience4j - Hystrix - Failsafe - Sentinel - Vavr - Fault Tolerance - Retry/Timeout/Bulkhead**  
@@ -60,19 +98,17 @@ Fault tolerance patterns: circuit breaker states (CLOSED/OPEN/HALF_OPEN), Resili
 **@Async - CompletableFuture - TaskExecutor - Virtual Threads - Non-Blocking REST - Async Patterns**  
 Asynchronous processing: @Async annotation with TaskExecutor configuration, CompletableFuture composition and chaining, REST endpoints returning futures, Java 21 virtual threads integration, comparison with WebFlux, production patterns.
 
-### [Spring AOP & Proxy Pitfalls](spring-aop.md)
-**AOP - Aspects - Proxies - @Transactional self-invocation**  
-Cross-cutting concerns with runtime proxies and why self-invocation bypasses them.
+### [Actuator & Monitoring](spring-boot-actuator.md)
+**Actuator - Health Checks - Metrics - Liveness/Readiness Probes - Prometheus/Grafana - Endpoint Security**  
+Production monitoring: built-in endpoints, configuration, Kubernetes liveness and readiness probes, Prometheus and Grafana integration, securing actuator endpoints, best practices.
 
 ### [Spring Native Images (GraalVM)](spring-native-graalvm.md)
 **GraalVM - AOT - Native Image - Startup time**  
 Ahead-of-time compiled Spring Boot apps: trade-offs and build steps.
 
-### [Actuator & Monitoring](spring-boot-actuator.md)
-**Actuator - Health Checks - Metrics - Liveness/Readiness Probes - Prometheus/Grafana - Endpoint Security**  
-Production monitoring: built-in endpoints, configuration, Kubernetes liveness and readiness probes, Prometheus and Grafana integration, securing actuator endpoints, best practices.
-
----
+### [Spring Boot Testing](spring-testing.md)
+**Mockito - @WebMvcTest - @DataJpaTest - Testcontainers**  
+Mocks, test slices and integration tests with real dependencies.
 
 ## Quick Interview Prep
 

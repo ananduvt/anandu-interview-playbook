@@ -438,3 +438,51 @@ java -XX:+UseZGC \
 ```
 
 **Practice questions:** [Java Advanced](../interview-questions/verbal/verbal-java-advanced-questions.md), [Spring Boot](../interview-questions/verbal/verbal-spring-boot-questions.md)
+
+## `java` and `javac` CLI Basics
+
+Works the same on Java 8 to 25 unless noted.
+
+```bash
+# Compile: -d sets the output dir (mirrors package folders)
+javac -d out src/com/example/App.java
+javac -d out -cp "lib/*" $(find src -name "*.java")   # many files + dependencies
+
+# Run: -cp (classpath) + fully qualified main class
+java -cp out com.example.App arg1 arg2
+java -cp "out:lib/*" com.example.App                   # use ';' as separator on Windows
+
+# Single-file source launch (Java 11+): compile and run in memory
+java Hello.java
+
+# Executable JAR
+jar --create --file app.jar --main-class com.example.App -C out .
+java -jar app.jar
+```
+
+| Flag | Purpose |
+|------|---------|
+| `-cp` / `--class-path` | Where to find `.class` files and JARs |
+| `-d <dir>` | Output directory for compiled classes |
+| `--release 17` | Compile against a target Java version's API |
+| `-Xmx512m`, `-Xms256m` | Max/initial heap |
+| `-D<key>=<value>` | System property (`System.getProperty`) |
+| `--enable-preview` | Use preview language features (needs matching `javac --release`) |
+
+Rule: the folder structure under the output directory must match the package (`out/com/example/App.class` for `package com.example;`).
+
+### Typical project layout
+
+```
+project/
+  src/main/java/com/example/App.java   # sources (Maven/Gradle convention)
+  src/main/resources/application.yml   # config, copied to the classpath root
+  src/test/java/...                    # tests
+  target/classes/                      # Maven output   (Gradle: build/classes, build/libs)
+  bin/                                 # IDE (Eclipse) output or launcher scripts
+  META-INF/MANIFEST.MF                 # inside the JAR
+```
+
+- `META-INF/MANIFEST.MF` holds `Main-Class` (for `java -jar`), `Class-Path`, and version info; `META-INF/services/` lists `ServiceLoader` implementations; Spring Boot adds `META-INF/spring/` auto-configuration files.
+- `resources` files are loaded with `getResourceAsStream("/application.yml")` from the classpath, not from the file system.
+- `build`/`target` are generated: keep them out of version control.

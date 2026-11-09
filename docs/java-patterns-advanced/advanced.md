@@ -78,13 +78,57 @@ static void fill(List<? super Integer> list) { list.add(1); list.add(2); }
 
 Because of erasure you cannot do `new T()`, `new T[n]`, `instanceof List<String>`, or use primitives (`List<int>`). Overloads that differ only by type argument clash. (Project Valhalla aims to change the primitive limitation; see [Looking Ahead](../java-core/versions-features.md#looking-ahead-project-valhalla-value-classes).)
 
+### Heap pollution and `@SafeVarargs`
+
+**Heap pollution** happens when a variable of a parameterized type refers to an object that is not of that type. Erasure means the compiler cannot catch it, so the failure surfaces later as a `ClassCastException` far from the cause.
+
+```java
+@SuppressWarnings({"unchecked", "rawtypes"})
+static void pollute() {
+    List<String> strings = new ArrayList<>();
+    List raw = strings;              // raw type: unchecked warning
+    raw.add(42);                     // compiles, heap is now polluted
+    String s = strings.get(0);       // ClassCastException here
+}
+```
+
+**Generic varargs** are a common source: `T...` is really a `T[]`, and generic arrays are not reifiable, so the compiler warns ("possible heap pollution from parameterized vararg type").
+
+```java
+static <T> T[] unsafe(T... items) { return items; }   // leaks the array: dangerous
+
+static <T> T[] pair(T a, T b) { return unsafe(a, b); }
+String[] arr = pair("a", "b");   // ClassCastException: the real array is Object[]
+```
+
+`@SafeVarargs` (Java 7+) asserts that the method does not store into or expose the varargs array, which suppresses the warning at every call site.
+
+```java
+@SafeVarargs
+static <T> List<T> listOf(T... items) {      // only reads the array
+    return new ArrayList<>(Arrays.asList(items));
+}
+```
+
+| Rule | Detail |
+|------|--------|
+| Allowed on | `static`, `final`, constructors, and (Java 9+) `private` instance methods |
+| Not allowed on | Overridable (non-final instance) methods; non-varargs methods |
+| Safe if | The method only reads elements and never returns/stores the array or passes it on as `Object[]` |
+| JDK examples | `Arrays.asList`, `List.of(E...)`, `EnumSet.of(E, E...)`, `Collections.addAll` |
+| Alternative | `@SuppressWarnings("unchecked")` on the caller (per call site; less clean) |
+
+!!! tip "Interview tips"
+    - Why can't you write `new List<String>[10]`? Arrays are reifiable and covariant, generics are erased and invariant; allowing it would permit heap pollution without a runtime check.
+    - Prefer a `List<T>` parameter over `T...` where you control the API.
+
 ## Annotations
 - Metadata; **marker** (no members, e.g. `@Override`), single-value, full.
 - Retention: SOURCE / CLASS / **RUNTIME** (readable via reflection).
-- Custom: `@Retention @Target @interface Audit {}`; processed by frameworks (Spring) or annotation processors (Lombok).
+- Custom: `@Retention @Target @interface Audit {}`; processed by frameworks (Spring) or annotation processors (Lombok). Details: [Lombok, Annotation Processing and Reflection](lombok-reflection.md).
 
 ## Reflection
-Inspect/invoke types at runtime (`Class`, `Method`, `Field`). Powerful but slow + breaks encapsulation — used by frameworks.
+Inspect/invoke types at runtime (`Class`, `Method`, `Field`). Powerful but slow + breaks encapsulation — used by frameworks. Pitfalls (Java 17 encapsulation, performance, native image): [Lombok, Annotation Processing and Reflection](lombok-reflection.md#reflection-pitfalls).
 
 ## Garbage Collection (GC)
 
@@ -153,6 +197,8 @@ jmap -dump:live,format=b,file=heap.bin <pid>
 ```
 
 ### GC Monitoring
+For JFR, async-profiler, thread and heap dump walkthroughs see [Profiling and Diagnostics](profiling-diagnostics.md).
+
 
 ```bash
 # Real-time GC stats

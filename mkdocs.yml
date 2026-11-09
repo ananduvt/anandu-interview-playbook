@@ -76,6 +76,7 @@ nav:
               - OOP: java-core/oop.md
               - Strings & Primitives: java-core/strings-primitives.md
               - Date & Time: java-core/date-time.md
+              - Operators & Conversions: java-core/operators-conversions.md
               - Exceptions: java-core/exceptions.md
               - Versions & Features: java-core/versions-features.md
               - Interface vs Abstract Class: java-core/interface-vs-abstract-class.md
@@ -89,34 +90,51 @@ nav:
               - Testing: java-collections-concurrency/testing.md
           - Patterns & Advanced:
               - Overview: java-patterns-advanced/index.md
-              - Design Patterns: java-patterns-advanced/design-patterns.md
-              - Logging & Performance: java-patterns-advanced/logging-performance.md
-              - Advanced Topics: java-patterns-advanced/advanced.md
+              - Design Patterns:
+                  - Catalog & Creational: java-patterns-advanced/design-patterns.md
+                  - Structural: java-patterns-advanced/design-patterns-structural.md
+                  - Behavioral: java-patterns-advanced/design-patterns-behavioral.md
+              - Advanced & Performance:
+                  - Logging & Performance: java-patterns-advanced/logging-performance.md
+                  - Profiling & Diagnostics: java-patterns-advanced/profiling-diagnostics.md
+                  - Lombok & Reflection: java-patterns-advanced/lombok-reflection.md
+                  - Advanced Topics: java-patterns-advanced/advanced.md
       - Spring:
           - Overview: spring-web/index.md
           - Core:
               - Spring Boot: spring-web/spring-boot.md
+              - Boot Versions: spring-web/spring-boot-versions.md
               - Annotations & Components: spring-web/spring-annotations-components.md
               - Spring Boot Advanced: spring-web/spring-boot-advanced.md
               - Exception Handling: spring-web/spring-exceptions.md
               - AOP & Proxy Pitfalls: spring-web/spring-aop.md
+              - Scheduling: spring-web/spring-scheduling.md
           - Web & APIs:
+              - MVC Internals: spring-web/spring-mvc-internals.md
               - API Styles & Protocols: spring-web/api-styles.md
+              - API Evolution & ETag: spring-web/api-evolution.md
               - Web Services: spring-web/web-services.md
               - WebFlux & Reactive: spring-web/spring-webflux.md
           - Security:
               - Security & RBAC: spring-web/security.md
               - JWT & OAuth2: spring-web/jwt-oauth.md
-          - Data & Production:
+              - Security Across Microservices: spring-web/spring-security-microservices.md
+          - Data:
               - JPA & ORM: spring-web/jpa-orm.md
+              - Entity vs DTO & MapStruct: spring-web/entity-dto-mapping.md
+              - Data Performance (Hikari): spring-web/spring-data-performance.md
+              - Programmatic Transactions: spring-web/spring-transactions.md
+          - Production & Testing:
               - Circuit Breaker & Resilience: spring-web/spring-boot-circuit-breaker.md
               - Threading & Async: spring-web/spring-threading.md
               - Actuator & Monitoring: spring-web/spring-boot-actuator.md
               - Native Images (GraalVM): spring-web/spring-native-graalvm.md
+              - Testing: spring-web/spring-testing.md
       - Databases:
           - Overview (ACID/BASE/CAP): databases/index.md
           - SQL & Relational: databases/sql.md
           - Scaling & NoSQL: databases/scaling.md
+          - Schema Migrations: databases/schema-migrations.md
       - AI & Machine Learning:
           - Overview: ai-ml/index.md
           - ML Fundamentals: ai-ml/fundamentals.md

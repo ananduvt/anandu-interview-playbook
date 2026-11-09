@@ -350,6 +350,23 @@ server:
 - App doesn't have high concurrency needs
 - Simpler to maintain and debug is priority
 
+### Virtual Threads vs WebFlux
+
+Since Java 21 (Boot 3.2: `spring.threads.virtual.enabled=true`), Spring MVC can run each request on a **virtual thread**, so blocking JDBC/HTTP calls no longer tie up a scarce platform thread. That removes the main historical reason to pick WebFlux for plain I/O concurrency.
+
+| Question | MVC + virtual threads | WebFlux |
+| :-- | :-- | :-- |
+| Code style | Imperative, blocking, easy stack traces | Reactive chains (`Mono`/`Flux`) |
+| Concurrency for I/O-bound calls | High (cheap threads) | High (event loop) |
+| Blocking JDBC / legacy libs | Fine | Must be offloaded, or use R2DBC |
+| Streaming, backpressure, SSE | Possible, weaker | Native strength |
+| Composing many async calls with timeouts/retries | `CompletableFuture` (structured concurrency is still preview in recent Java; check the version) | Operators (`zip`, `timeout`, `retry`) |
+| Learning curve | Low | High |
+
+Decision rule: default to **MVC + virtual threads** for request/response services with blocking dependencies. Choose **WebFlux** when you need streaming and backpressure, the stack is already reactive, or you compose many async sources.
+
+Caveats for virtual threads: CPU-bound work gains nothing; `synchronized` blocks could pin the carrier thread up to Java 23 (addressed in Java 24, so mostly gone on Java 25); pooled resources such as DB connections are still the real limit, so size the pool. See [Spring Threading](spring-threading.md#virtual-threads-in-spring-java-21) and [Threading Deep-Dive](../java-collections-concurrency/threading.md).
+
 ---
 
 ## Testing Reactive Code

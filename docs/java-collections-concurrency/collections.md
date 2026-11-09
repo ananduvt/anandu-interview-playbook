@@ -159,6 +159,61 @@ A lower load factor means that the hash table will be resized more frequently, l
 - **ConcurrentHashMap:** Thread-safe (CAS plus per-bucket locking in Java 8+), best for multi-threaded
 - **Hashtable:** Legacy, fully synchronized (slow), avoid in modern code
 
+## HashSet Internals
+
+`HashSet` is a thin wrapper around a `HashMap`. Each element is stored as a **key**; every entry shares one dummy value, a static `PRESENT` object. Bucket structure, treeification, resizing and load factor are exactly those of [HashMap](#hashmap-internals-put-and-get) and [collisions](#avoiding-collisions).
+
+```java
+// Simplified from java.util.HashSet (OpenJDK)
+private transient HashMap<E, Object> map;
+private static final Object PRESENT = new Object();
+
+public boolean add(E e) {
+    return map.put(e, PRESENT) == null;   // null => key was absent => new element
+}
+public boolean contains(Object o) { return map.containsKey(o); }
+public boolean remove(Object o)   { return map.remove(o) == PRESENT; }
+```
+
+| Aspect | Behaviour |
+| :-- | :-- |
+| `add(e)` | Returns `true` if added, `false` if an equal element exists. The existing element object is kept, not replaced |
+| Duplicate check | `hashCode()` picks the bucket, then `equals()` compares inside it; both must be consistent |
+| `null` | One `null` element allowed (hash 0); `TreeSet` and `Set.of` reject it |
+| Order | None guaranteed; `LinkedHashSet` keeps insertion order, `TreeSet` sorts |
+| Cost | `add`/`contains`/`remove` average O(1); iteration O(capacity + size) |
+| Thread safety | None; use `ConcurrentHashMap.newKeySet()` or `Collections.synchronizedSet` |
+
+```java
+Set<String> s = new HashSet<>();
+System.out.println(s.add("a"));  // true
+System.out.println(s.add("a"));  // false, duplicate ignored
+
+// Mutable element pitfall: hash changes after insertion
+class P {
+    String name;
+    P(String n) { name = n; }
+    @Override public boolean equals(Object o) { return o instanceof P p && p.name.equals(name); }
+    @Override public int hashCode() { return name.hashCode(); }
+}
+Set<P> ps = new HashSet<>();
+P p = new P("x");
+ps.add(p);
+p.name = "y";
+System.out.println(ps.contains(p));  // false: looked up in the wrong bucket
+```
+
+**Gotchas**
+
+- `new HashSet<>(n)` sets *capacity*, not expected size; use `HashSet.newHashSet(n)` (Java 19+) to hold `n` elements without resizing.
+- Without `equals`/`hashCode` overrides, logically equal objects are both stored.
+
+**Common interview questions**
+
+- *How does HashSet avoid duplicates?* It is a `HashMap` keyed by the element; `put` finds an equal key via hash plus `equals`, so `add` returns `false`.
+- *Why a dummy value?* `HashMap` needs a value; one shared constant adds no per-entry cost.
+- *HashSet vs LinkedHashSet vs TreeSet?* Hash: O(1) unordered. Linked: O(1) insertion order. Tree: O(log n) sorted, needs `Comparable`/`Comparator`.
+
 ## ConcurrentHashMap: Thread-Safe HashMap
 
 **ConcurrentHashMap** provides thread-safe operations without locking the entire map. Java 7 used segment-level locks; Java 8+ uses CAS for empty buckets and locks only the first node of a bucket.

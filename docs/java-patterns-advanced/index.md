@@ -10,6 +10,22 @@ Deep-dive into design patterns, performance tuning, garbage collection, logging,
 **Creational - Structural - Behavioral - Factory - Singleton - Observer - Strategy - Adapter - Decorator**  
 Gang of Four patterns: when to use each, trade-offs, real-world examples in Java frameworks (Spring, Hibernate), anti-patterns to avoid, implementation best practices.
 
+### [Structural Patterns](design-patterns-structural.md)
+**Adapter - Bridge - Composite - Decorator - Facade - Flyweight - Proxy**  
+How to compose classes and objects into larger structures, with Java and Spring examples.
+
+### [Behavioral Patterns](design-patterns-behavioral.md)
+**Chain of Responsibility - Command - Observer - State - Strategy - Template Method - Visitor**  
+How objects communicate and share responsibility, with modern Java examples.
+
+### [Profiling & Diagnostics](profiling-diagnostics.md)
+**JFR - async-profiler - Thread dumps - Heap dumps - GC logs**  
+Diagnosing production performance problems step by step.
+
+### [Lombok, Annotation Processing & Reflection](lombok-reflection.md)
+**Lombok - APT - Reflection - Pitfalls**  
+How Lombok works, annotation processing, and reflection costs and risks.
+
 ### [Logging & Performance](logging-performance.md)
 **SLF4J - Logback - Log4j2 - Structured Logging - Performance Tuning - Caching - Thread Pools - Profiling**  
 Production concerns: logging best practices, avoiding performance pitfalls, database query optimization (N+1 problem), connection pooling, caching strategies, thread pool configuration.
